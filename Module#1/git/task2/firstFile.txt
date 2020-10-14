@@ -6,5 +6,5 @@ java
 java
 java
 java
-java
-java
+javascript
+javascript
