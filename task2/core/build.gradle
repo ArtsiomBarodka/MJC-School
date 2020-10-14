@@ -1,0 +1,6 @@
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.10'
+    testImplementation 'junit:junit:4.13.1'
+}

@@ -1,0 +1,36 @@
+plugins {
+    id 'application'
+}
+
+version '1.0-SNAPSHOT'
+mainClassName = 'com.epam.task2.App'
+
+allprojects{
+    apply plugin: "java"
+
+    group 'com.epam'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies{
+    compile project(':core')
+    compile project(':api')
+}
+
+jar{
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Main-Class': mainClassName)
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
