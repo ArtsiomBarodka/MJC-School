@@ -1,5 +1,5 @@
-java script
-java script
+js
+js
 java
 java
 java
