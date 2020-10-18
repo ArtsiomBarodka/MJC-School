@@ -1,12 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
 .gitignore
 .idea/
-task2/.gradle/
-task2/api/src/main/resources/
-task2/api/src/test/
-task2/core/src/main/resources/
-task2/core/src/test/
-task2/gradle/
-task2/gradlew
-task2/gradlew.bat
-task2/src/
+Module#1/build-tools/Task1/
