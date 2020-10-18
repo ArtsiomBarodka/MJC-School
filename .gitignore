@@ -1,9 +1,2 @@
 # Created by .ignore support plugin (hsz.mobi)
-.gitignore
 .idea/
-
-Module#1/build-tools/Task1/.gradle/
-Module#1/build-tools/Task1/out/
-Module#1/build-tools/Task1/src/main/resources/
-Module#1/build-tools/Task1/src/test/resources/
-Module#1/build-tools/Task1/build/
