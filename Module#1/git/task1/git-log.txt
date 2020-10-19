@@ -1,0 +1,73 @@
+commit 701961de2b6d86d95e6c2f21f4ff60e6f22cb940 (HEAD -> git3)
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Sat Oct 17 20:37:05 2020 +0300
+
+    changed doubting.txt, added fifth line"
+
+commit 28e73bde888835ccdf58bb8ee7901f1a02cf63ec
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Sat Oct 17 20:36:39 2020 +0300
+
+    changed doubting.txt, added fourth line
+
+commit 410962dcbe56c450a81d5fe6560861bed751269d
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Sat Oct 17 20:35:29 2020 +0300
+
+    changed doubting.txt, added third line"
+
+commit 0ae224ed4fc85f9a6ad18ae6c2c712d311da2ea1
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Sat Oct 17 20:34:54 2020 +0300
+
+    changed doubting.txt, added second line
+
+commit e08752380e82d1c41a0c19eec56a265307066850
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Sat Oct 17 20:34:07 2020 +0300
+
+    changed doubting.txt first line
+
+commit e5ea0c0d0646f53ae1a99d20c16bc421f8fdb3b5
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Sat Oct 17 20:32:22 2020 +0300
+
+    added doubtingFile.txt
+
+commit 14acb434ff54cff8079400f52408e35e1b7e0ee6 (origin/Module#1-git-task1-git_task)
+Merge: 7a958ca 0d2d399
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Wed Oct 14 23:05:12 2020 +0300
+
+    Merge branch 'git_0' into git_task
+
+commit 0d2d39990fa8d3512956023d35a4a70fa863bd24 (origin/Module#1-git-task1-git_0)
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Wed Oct 14 23:04:46 2020 +0300
+
+    changed README.md seconf time
+
+commit 7a958ca8cf233ae05549ab44c5836ce852be3274
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Wed Oct 14 23:02:57 2020 +0300
+
+    changed README.md
+
+commit d74f031d589e77e1c7338ddabcf04c202a117552
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Wed Oct 14 23:00:58 2020 +0300
+
+    created README.md
+
+commit d68efa21af430a64cb8614b1c54f83333a148d5b (origin/master, origin/Module#1-git-task2, origin/HEAD, master)
+Author: Artsiom <artsiombarodka@gmail.com>
+Date:   Wed Oct 14 21:38:54 2020 +0300
+
+    added .gitignore
+
+commit 6035ffe1c3272d010917dd952fed70dcc99a2a0f
+Author: Artsiom <34836796+ArtsiomBarodka@users.noreply.github.com>
+Date:   Wed Oct 14 21:31:06 2020 +0300
+
+    Initial commit
+(END)
