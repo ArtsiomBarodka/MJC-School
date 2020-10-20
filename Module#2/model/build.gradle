@@ -3,4 +3,6 @@ version '1.0-SNAPSHOT'
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+    implementation 'javax.validation:validation-api:2.0.1.Final'
 }
