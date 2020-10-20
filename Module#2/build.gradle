@@ -1,14 +1,18 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
+allprojects{
+    apply plugin: "java"
 
-sourceCompatibility = 1.8
+    group 'com.epam.esm'
 
-repositories {
-    mavenCentral()
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
 }
 
 dependencies {
