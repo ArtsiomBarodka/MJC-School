@@ -9,8 +9,18 @@ public interface GiftCertificateDAO {
     GiftCertificate update(GiftCertificate giftCertificate);
     GiftCertificate create(GiftCertificate giftCertificate);
     void delete(long id);
-    List<GiftCertificate> getListCertificatesByTagNameSortByDateAsc(String tagName);
-    List<GiftCertificate> getListCertificatesByTagNameSortByDateDesc(String tagName);
-    List<GiftCertificate> getListCertificatesByTagNameSortByNameAsc(String tagName);
-    List<GiftCertificate> getListCertificatesByTagNameSortByNameDesc(String tagName);
+    List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(String tagName);
+    List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(String tagName);
+    List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(String tagName);
+    List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameDesc(String tagName);
+
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameSortByDateAsc(String giftCertificateName);
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameSortByDateDesc(String giftCertificateName);
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameSortByNameAsc(String giftCertificateName);
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameSortByNameDesc(String giftCertificateName);
+
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateAsc(String searchingWords);
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateDesc(String searchingWords);
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(String searchingWords);
+    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameDesc(String searchingWords);
 }
