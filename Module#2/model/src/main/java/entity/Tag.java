@@ -1,14 +1,12 @@
 package entity;
 
-import lombok.Data;
 import validation.annotation.EnglishLanguage;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
-@Data
 public class Tag implements Serializable {
     public static final long serialVersionUID = 5476611966156520246L;
 
@@ -20,4 +18,55 @@ public class Tag implements Serializable {
     private String name;
 
     private List<GiftCertificate> giftCertificates;
+
+    public Tag() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<GiftCertificate> getGiftCertificates() {
+        return giftCertificates;
+    }
+
+    public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+        this.giftCertificates = giftCertificates;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
+        Tag tag = (Tag) o;
+        return getId() == tag.getId() &&
+                Objects.equals(getName(), tag.getName()) &&
+                Objects.equals(getGiftCertificates(), tag.getGiftCertificates());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getGiftCertificates());
+    }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", giftCertificates=" + giftCertificates +
+                '}';
+    }
 }
