@@ -31,7 +31,7 @@ public class JDBCTagDAO implements TagDAO {
 
         try {
             return Optional.of(
-                    jdbcTemplate.queryForObject(sql, new TagMapper()));
+                    jdbcTemplate.queryForObject(sql, new Object[]{id}, new TagMapper()));
         } catch (IncorrectResultSizeDataAccessException ex){
             return Optional.empty();
         }
@@ -43,13 +43,12 @@ public class JDBCTagDAO implements TagDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
                 "INNER JOIN gift_сertificate AS g ON gct.tag_id = g.id where g.id = ?";
 
-        return jdbcTemplate.query(sql, new TagWithGiftCertificatesExtractor());
+        return jdbcTemplate.query(sql, new TagWithGiftCertificatesExtractor(), id);
     }
 
     @Override
     public long create(Tag tag) {
-        String sql = "INSERT INTO tag (name) " +
-                "VALUES (:name)";
+        String sql = "INSERT INTO tag (name) VALUES (:name)";
 
         MapSqlParameterSource source = new MapSqlParameterSource();
         source.addValue("name", tag.getName());

@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
@@ -26,15 +27,14 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
-
     @Override
     public Optional<GiftCertificate> findById(long id) {
         String sql = "SELECT g.*FROM gift_сertificate AS g WHERE g.id = ?";
 
         try {
             return Optional.of(
-                    jdbcTemplate.queryForObject(sql, new GiftCertificateMapper(), id));
-        } catch (IncorrectResultSizeDataAccessException ex){
+                    jdbcTemplate.queryForObject(sql, new Object[]{id}, new GiftCertificateMapper()));
+        } catch (IncorrectResultSizeDataAccessException ex) {
             return Optional.empty();
         }
     }
@@ -84,7 +84,7 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date ASC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(),tagName);
+        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date DESC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(),tagName);
+        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name ASC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(),tagName);
+        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name DESC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(),tagName);
+        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
     }
 
     @Override

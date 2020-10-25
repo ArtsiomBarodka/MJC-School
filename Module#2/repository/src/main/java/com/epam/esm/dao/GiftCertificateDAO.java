@@ -2,7 +2,6 @@ package com.epam.esm.dao;
 
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.lang.NonNull;
-
 import java.util.List;
 import java.util.Optional;
 

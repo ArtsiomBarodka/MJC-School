@@ -7,14 +7,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
 import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan("com.epam.esm.dao")
-@PropertySource("classpath:properties/database.properties")
+@PropertySource("classpath:database.properties")
 public class DataConfiguration {
     @Value("${driverClassName}")
     private String driverClassName;
