@@ -1,4 +1,4 @@
-package domain;
+package com.epam.esm.domain;
 
 import java.util.Arrays;
 

@@ -1,10 +1,11 @@
-package entity;
+package com.epam.esm.entity;
 
-import validation.annotation.EnglishLanguage;
+import com.epam.esm.validation.annotation.EnglishLanguage;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,6 +36,7 @@ public class GiftCertificate implements Serializable {
     private List<Tag> tags;
 
     public GiftCertificate() {
+        tags = new ArrayList<>();
     }
 
     public long getId() {
@@ -99,6 +101,20 @@ public class GiftCertificate implements Serializable {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public void addTag(Tag tag){
+        if(tag != null){
+            tags.add(tag);
+            tag.addGiftCertificate(this);
+        }
+    }
+
+    public void deleteTag(Tag tag){
+        if(tag != null){
+            tags.removeIf(t -> t.getId() == tag.getId());
+            tag.deleteGiftCertificate(this);
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
-package validation.validator;
+package com.epam.esm.validation.validator;
 
-import validation.annotation.EnglishLanguage;
+import com.epam.esm.validation.annotation.EnglishLanguage;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
