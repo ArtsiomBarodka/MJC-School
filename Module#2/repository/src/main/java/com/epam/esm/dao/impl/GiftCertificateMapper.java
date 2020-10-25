@@ -15,13 +15,13 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
         GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setId(rs.getLong("gift_certificate.id"));
-        giftCertificate.setName(rs.getString("gift_certificate.name"));
-        giftCertificate.setDescription(rs.getString("gift_certificate.description"));
-        giftCertificate.setPrice(rs.getDouble("gift_certificate.price"));
-        giftCertificate.setCreateDate(convertTimestampToString(rs.getTimestamp("gift_certificate_create.date")));
-        giftCertificate.setLastUpdateDate(convertTimestampToString(rs.getTimestamp("gift_certificate.last_update_date")));
-        giftCertificate.setDuration(rs.getInt("gift_certificate.duration"));
+        giftCertificate.setId(rs.getLong("g.id"));
+        giftCertificate.setName(rs.getString("g.name"));
+        giftCertificate.setDescription(rs.getString("g.description"));
+        giftCertificate.setPrice(rs.getDouble("g.price"));
+        giftCertificate.setCreateDate(convertTimestampToString(rs.getTimestamp("g.date")));
+        giftCertificate.setLastUpdateDate(convertTimestampToString(rs.getTimestamp("g.last_update_date")));
+        giftCertificate.setDuration(rs.getInt("g.duration"));
         return giftCertificate;
     }
 
