@@ -16,27 +16,32 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository("GiftCertificateDAO")
-public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
+public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public JDBCGiftCertificatesDAO(DataSource dataSource) {
+    public GiftCertificatesDAOImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Override
-    public Optional<GiftCertificate> findById(long id) {
-        String sql = "SELECT g.*FROM gift_сertificate AS g WHERE g.id = ?";
+    public Optional<GiftCertificate> findById(Long id) {
+        String sql = "SELECT g.*, t.* FROM gift_сertificate AS g " +
+                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "INNER JOIN tag AS t ON gct.tag_id = t.id where g.id = ? ";
 
-        try {
-            return Optional.of(
-                    jdbcTemplate.queryForObject(sql, new Object[]{id}, new GiftCertificateMapper()));
-        } catch (IncorrectResultSizeDataAccessException ex) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), id));
+    }
+
+    @Override
+    public boolean isAlreadyExistByName(String giftCertificateName) {
+        String sql = "SELECT count(*) FROM gift_сertificate WHERE name = ?";
+
+        int count = jdbcTemplate.queryForObject(sql, new Object[]{"giftCertificateName"}, Integer.class);
+        return count > 0;
     }
 
     @Override
@@ -53,11 +58,10 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
         source.addValue("duration", giftCertificate.getDuration());
 
         namedParameterJdbcTemplate.update(sql, source);
-
     }
 
     @Override
-    public long create(GiftCertificate giftCertificate) {
+    public Long create(GiftCertificate giftCertificate) {
         String sql = "INSERT INTO gift_сertificate (name, description, price, duration) " +
                 "VALUES (:name, :description, :price, :duration)";
 
@@ -68,11 +72,11 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
         source.addValue("duration", giftCertificate.getDuration());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        return namedParameterJdbcTemplate.update(sql, source, keyHolder, new String[]{"id"});
+        return (long) namedParameterJdbcTemplate.update(sql, source, keyHolder, new String[]{"id"});
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         String sql = "DELETE FROM gift_сertificate WHERE id = ?";
 
         jdbcTemplate.update(sql, id);
@@ -84,7 +88,7 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date ASC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), tagName);
     }
 
     @Override
@@ -93,7 +97,7 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date DESC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), tagName);
     }
 
     @Override
@@ -102,7 +106,8 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name ASC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), tagName);
+
     }
 
     @Override
@@ -111,35 +116,35 @@ public class JDBCGiftCertificatesDAO implements GiftCertificateDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name DESC";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), tagName);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), tagName);
     }
+
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateAsc(String key) {
         String sql = "CALL searchGiftCertificatesSearchSortByDateAsc(?)";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), key);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), key);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateDesc(String key) {
         String sql = "CALL searchGiftCertificatesSearchSortByDateDesc(?)";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), key);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), key);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(String key) {
         String sql = "CALL searchGiftCertificatesSearchSortByNameAsc(?)";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), key);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), key);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameDesc(String key) {
         String sql = "CALL searchGiftCertificatesSearchSortByNameDesc(?)";
 
-        return jdbcTemplate.query(sql, new GiftCertificateWithTagsExtractor(), key);
+        return jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), key);
     }
-
 }

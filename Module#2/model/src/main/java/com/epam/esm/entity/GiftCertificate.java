@@ -12,7 +12,9 @@ import java.util.Objects;
 public class GiftCertificate implements Serializable {
     public static final long serialVersionUID = 5476611966156520246L;
 
-    private long id;
+    @NotNull
+    @Positive
+    private Long id;
 
     @NotNull
     @Size(min = 3, max = 20)
@@ -23,15 +25,17 @@ public class GiftCertificate implements Serializable {
     @EnglishLanguage
     private String description;
 
+    @NotNull
     @Positive
-    private double price;
+    private Double price;
 
     private String createDate;
 
     private String lastUpdateDate;
 
+    @NotNull
     @Positive
-    private int duration;
+    private Integer duration;
 
     private List<Tag> tags;
 
@@ -39,11 +43,11 @@ public class GiftCertificate implements Serializable {
         tags = new ArrayList<>();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -63,11 +67,11 @@ public class GiftCertificate implements Serializable {
         this.description = description;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -87,11 +91,11 @@ public class GiftCertificate implements Serializable {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
@@ -122,13 +126,13 @@ public class GiftCertificate implements Serializable {
         if (this == o) return true;
         if (!(o instanceof GiftCertificate)) return false;
         GiftCertificate that = (GiftCertificate) o;
-        return getId() == that.getId() &&
-                Double.compare(that.getPrice(), getPrice()) == 0 &&
-                getDuration() == that.getDuration() &&
+        return Objects.equals(getId(), that.getId()) &&
                 Objects.equals(getName(), that.getName()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
+                Objects.equals(getPrice(), that.getPrice()) &&
                 Objects.equals(getCreateDate(), that.getCreateDate()) &&
                 Objects.equals(getLastUpdateDate(), that.getLastUpdateDate()) &&
+                Objects.equals(getDuration(), that.getDuration()) &&
                 Objects.equals(getTags(), that.getTags());
     }
 

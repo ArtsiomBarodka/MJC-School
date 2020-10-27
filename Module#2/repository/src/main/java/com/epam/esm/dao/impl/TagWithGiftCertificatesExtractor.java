@@ -9,24 +9,20 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.TimeZone;
 
-public class TagWithGiftCertificatesExtractor implements ResultSetExtractor<List<Tag>> {
+public class TagWithGiftCertificatesExtractor implements ResultSetExtractor<Tag> {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 
     @Override
-    public List<Tag> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long, Tag> map = new HashMap<>();
-        Tag tag;
+    public Tag extractData(ResultSet rs) throws SQLException, DataAccessException {
+        Tag tag = null;
 
         while (rs.next()){
-            long id = rs.getLong("t.id");
-            tag = map.get(id);
             if(tag == null){
                 tag = new Tag();
-                tag.setId(id);
+                tag.setId(rs.getLong("t.id"));
                 tag.setName(rs.getString("t.name"));
-                map.put(id, tag);
             }
 
             long giftCertificateId = rs.getLong("g.id");
@@ -43,7 +39,7 @@ public class TagWithGiftCertificatesExtractor implements ResultSetExtractor<List
             }
         }
 
-        return new ArrayList<>(map.values());
+        return tag;
     }
 
     private static String convertTimestampToString(Timestamp timestamp){

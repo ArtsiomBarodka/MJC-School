@@ -12,6 +12,6 @@ public enum SortMode {
         return Arrays.stream(SortMode.values())
                 .filter(v->v.name().equalsIgnoreCase(name))
                 .findFirst()
-                .orElseThrow(()->new IllegalArgumentException("Sort mode is not exist: " + name));
+                .orElse(DATE_ASC);
     }
 }

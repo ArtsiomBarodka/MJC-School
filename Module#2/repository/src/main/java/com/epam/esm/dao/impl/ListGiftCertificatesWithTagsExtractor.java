@@ -4,29 +4,35 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.TimeZone;
+import java.util.*;
 
-public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<GiftCertificate> {
+public class ListGiftCertificatesWithTagsExtractor implements ResultSetExtractor<List<GiftCertificate>> {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 
     @Override
-    public GiftCertificate extractData(ResultSet rs) throws SQLException, DataAccessException {
-        GiftCertificate giftCertificate = null;
+    public List<GiftCertificate> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        Map<Long, GiftCertificate> map = new HashMap<>();
+        GiftCertificate giftCertificate;
+
         while (rs.next()){
+            long id = rs.getLong("g.id");
+            giftCertificate = map.get(id);
             if(giftCertificate == null){
                 giftCertificate = new GiftCertificate();
-                giftCertificate.setId(rs.getLong("g.id"));
+                giftCertificate.setId(id);
                 giftCertificate.setName(rs.getString("g.name"));
                 giftCertificate.setDescription(rs.getString("g.description"));
                 giftCertificate.setPrice(rs.getDouble("g.price"));
                 giftCertificate.setCreateDate(convertTimestampToString(rs.getTimestamp("g.create_date")));
                 giftCertificate.setLastUpdateDate(convertTimestampToString(rs.getTimestamp("g.last_update_date")));
                 giftCertificate.setDuration(rs.getInt("g.duration"));
+                map.put(id, giftCertificate);
             }
 
             long tagId = rs.getLong("t.id");
@@ -38,7 +44,7 @@ public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<Gift
             }
         }
 
-        return giftCertificate;
+        return new ArrayList<>(map.values());
     }
 
     private static String convertTimestampToString(Timestamp timestamp){

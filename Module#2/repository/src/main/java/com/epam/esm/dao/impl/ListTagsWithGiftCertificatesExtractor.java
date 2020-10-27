@@ -9,36 +9,41 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.TimeZone;
+import java.util.*;
 
-public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<GiftCertificate> {
+public class ListTagsWithGiftCertificatesExtractor implements ResultSetExtractor<List<Tag>> {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 
     @Override
-    public GiftCertificate extractData(ResultSet rs) throws SQLException, DataAccessException {
-        GiftCertificate giftCertificate = null;
+    public List<Tag> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        Map<Long, Tag> map = new HashMap<>();
+        Tag tag;
+
         while (rs.next()){
-            if(giftCertificate == null){
-                giftCertificate = new GiftCertificate();
-                giftCertificate.setId(rs.getLong("g.id"));
+            long id = rs.getLong("t.id");
+            tag = map.get(id);
+            if(tag == null){
+                tag = new Tag();
+                tag.setId(id);
+                tag.setName(rs.getString("t.name"));
+                map.put(id, tag);
+            }
+
+            long giftCertificateId = rs.getLong("g.id");
+            if(giftCertificateId > 0){
+                GiftCertificate giftCertificate = new GiftCertificate();
+                giftCertificate.setId(giftCertificateId);
                 giftCertificate.setName(rs.getString("g.name"));
                 giftCertificate.setDescription(rs.getString("g.description"));
                 giftCertificate.setPrice(rs.getDouble("g.price"));
                 giftCertificate.setCreateDate(convertTimestampToString(rs.getTimestamp("g.create_date")));
                 giftCertificate.setLastUpdateDate(convertTimestampToString(rs.getTimestamp("g.last_update_date")));
                 giftCertificate.setDuration(rs.getInt("g.duration"));
-            }
-
-            long tagId = rs.getLong("t.id");
-            if(tagId > 0){
-                Tag tag = new Tag();
-                tag.setId(tagId);
-                tag.setName(rs.getString("t.name"));
-                giftCertificate.addTag(tag);
+                tag.addGiftCertificate(giftCertificate);
             }
         }
 
-        return giftCertificate;
+        return new ArrayList<>(map.values());
     }
 
     private static String convertTimestampToString(Timestamp timestamp){

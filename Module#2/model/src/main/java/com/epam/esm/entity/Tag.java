@@ -2,6 +2,7 @@ package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
@@ -10,7 +11,9 @@ import java.util.Objects;
 public class Tag implements Serializable{
     public static final long serialVersionUID = 5476611966156520246L;
 
-    private long id;
+    @NotNull
+    @Positive
+    private Long id;
 
     @NotNull
     @Size(min = 3, max = 20)
@@ -22,11 +25,11 @@ public class Tag implements Serializable{
     public Tag() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -63,7 +66,7 @@ public class Tag implements Serializable{
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
-        return getId() == tag.getId() &&
+        return Objects.equals(getId(), tag.getId()) &&
                 Objects.equals(getName(), tag.getName()) &&
                 Objects.equals(getGiftCertificates(), tag.getGiftCertificates());
     }
