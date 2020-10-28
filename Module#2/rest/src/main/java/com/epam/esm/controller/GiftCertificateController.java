@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -24,9 +24,9 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @NotNull @Positive Long id){
         Optional<GiftCertificate> giftCertificates = giftCertificateService.getGiftCertificatesById(id);
         if(giftCertificates.isPresent()){
-            return new ResponseEntity<>(giftCertificates.get(), HttpStatus.OK);
+            return ResponseEntity.ok(giftCertificates.get());
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/giftCertificates")
@@ -34,8 +34,8 @@ public class GiftCertificateController {
                                                                         @RequestParam("sort") @NotEmpty String sort){
         List<GiftCertificate> listGiftCertificatesWithTagsByTagName = giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, SortMode.of(sort));
         return  listGiftCertificatesWithTagsByTagName.isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(listGiftCertificatesWithTagsByTagName, HttpStatus.OK);
+                ResponseEntity.notFound().build() :
+                ResponseEntity.ok(listGiftCertificatesWithTagsByTagName);
 
     }
 
@@ -44,37 +44,49 @@ public class GiftCertificateController {
                                                                                   @RequestParam("sort") @NotEmpty String sort){
         List<GiftCertificate> listGiftCertificatesWithTagsByTagName = giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort));
         return  listGiftCertificatesWithTagsByTagName.isEmpty() ?
-                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<>(listGiftCertificatesWithTagsByTagName, HttpStatus.OK);
+                ResponseEntity.notFound().build() :
+                ResponseEntity.ok(listGiftCertificatesWithTagsByTagName);
 
     }
 
     @PostMapping("/giftCertificates")
-    public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate){
+    public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate,
+                                                        UriComponentsBuilder uriComponentsBuilder){
         if(giftCertificateService.isAlreadyExist(giftCertificate.getName())){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        giftCertificateService.create(giftCertificate);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Long newId = giftCertificateService.create(giftCertificate);
+        return ResponseEntity.created(
+                uriComponentsBuilder
+                        .path("/giftCertificates/{id}")
+                        .buildAndExpand(newId)
+                        .toUri())
+                .build();
     }
 
     @PutMapping("/giftCertificates/{id}")
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @NotNull @Positive Long id,
-                                                   @RequestBody @Valid GiftCertificate giftCertificate){
+                                                                         @RequestBody @Valid GiftCertificate giftCertificate,
+                                                                         UriComponentsBuilder uriComponentsBuilder){
         if(giftCertificateService.getGiftCertificatesById(id).isPresent()){
-            return new ResponseEntity<> (giftCertificateService.update(giftCertificate, id),HttpStatus.OK);
+            return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
         }
         Long newId = giftCertificateService.create(giftCertificate);
-        return new ResponseEntity<> (giftCertificateService.getGiftCertificatesById(newId).get(),HttpStatus.CREATED);
+        return ResponseEntity.created(
+                uriComponentsBuilder
+                        .path("/giftCertificates/{id}")
+                        .buildAndExpand(newId)
+                        .toUri())
+                .build();
     }
 
     @DeleteMapping("/giftCertificates/{id}")
-    public ResponseEntity deleteGiftCertificate(@PathVariable("id") @NotNull @Positive Long id){
+    public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @NotNull @Positive Long id){
         if(giftCertificateService.getGiftCertificatesById(id).isPresent()){
             giftCertificateService.delete(id);
-            return new ResponseEntity<> (HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 
 }
