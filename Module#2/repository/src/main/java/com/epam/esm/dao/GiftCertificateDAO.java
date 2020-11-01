@@ -1,25 +1,25 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.repository.RepositoryException;
 import org.springframework.lang.NonNull;
 import java.util.List;
 import java.util.Optional;
 
 public interface GiftCertificateDAO {
-    Optional<GiftCertificate> findById(@NonNull Long id);
-    boolean isAlreadyExistByName(@NonNull String  giftCertificateName);
-    void update(@NonNull GiftCertificate giftCertificate);
-    @NonNull Long create(@NonNull GiftCertificate giftCertificate);
-    void delete(@NonNull Long id);
+    Optional<GiftCertificate> findById(@NonNull Long id) throws RepositoryException;
+    boolean isAlreadyExistByName(@NonNull String  giftCertificateName) throws RepositoryException;
+    void update(@NonNull GiftCertificate giftCertificate) throws RepositoryException;
+    @NonNull Long create(@NonNull GiftCertificate giftCertificate) throws RepositoryException;
+    void delete(@NonNull Long id) throws RepositoryException;
 
-    List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(@NonNull String tagName);
-    List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(@NonNull String tagName);
-    List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(@NonNull String tagName);
-    List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameDesc(@NonNull String tagName);
+    @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(@NonNull String tagName) throws RepositoryException;
+    @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(@NonNull String tagName) throws RepositoryException;
+    @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(@NonNull String tagName) throws RepositoryException;
+    @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameDesc(@NonNull String tagName) throws RepositoryException;
 
-    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateAsc(@NonNull String key);
-    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateDesc(@NonNull String key);
-    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(@NonNull String key);
-    List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameDesc(@NonNull String key);
+    @NonNull List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateAsc(@NonNull String key) throws RepositoryException;
+    @NonNull List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateDesc(@NonNull String key) throws RepositoryException;
+    @NonNull List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(@NonNull String key) throws RepositoryException;
+    @NonNull List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameDesc(@NonNull String key) throws RepositoryException;
 }

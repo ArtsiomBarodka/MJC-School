@@ -10,22 +10,22 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan("com.epam.esm.dao")
+@ComponentScan("com.epam.esm")
 @PropertySource("classpath:database.properties")
 public class DataConfiguration {
-    @Value("${driverClassName}")
+    @Value("${jdbc.driverClassName}")
     private String driverClassName;
 
-    @Value("${url}")
+    @Value("${jdbc.url}")
     private String url;
 
-    @Value("${username}")
+    @Value("${jdbc.username}")
     private String username;
 
-    @Value("${password}")
+    @Value("${jdbc.password}")
     private String password;
 
-    @Value("${maximumPoolSize}")
+    @Value("${connection.pool.maximumPoolSize}")
     private int maximumPoolSize;
 
     @Bean

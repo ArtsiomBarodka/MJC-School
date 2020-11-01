@@ -18,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = EnglishLanguageConstraintValidator.class)
 public @interface EnglishLanguage {
 
-    String message() default "EnglishLanguage";
+    String message() default "Value must have only English characters";
     // 0123456789
     boolean withNumbers() default true;
 

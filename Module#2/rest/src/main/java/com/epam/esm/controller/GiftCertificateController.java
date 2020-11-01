@@ -2,6 +2,9 @@ package com.epam.esm.controller;
 
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.exception.service.ResourceAlreadyExistException;
+import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,80 +16,73 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@RequestMapping("/giftCertificates")
 public class GiftCertificateController {
     @Autowired
     private GiftCertificateService giftCertificateService;
 
-    @GetMapping("/giftCertificates/{id}")
-    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @NotNull @Positive Long id){
-        Optional<GiftCertificate> giftCertificates = giftCertificateService.getGiftCertificatesById(id);
-        if(giftCertificates.isPresent()){
-            return ResponseEntity.ok(giftCertificates.get());
-        }
-        return ResponseEntity.notFound().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @NotNull @Positive Long id)
+            throws ResourceNotFoundException, ServiceException {
+
+        return ResponseEntity.ok(giftCertificateService.getGiftCertificatesById(id));
     }
 
-    @GetMapping("/giftCertificates")
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagName(@RequestParam("tag") @NotEmpty String tagName,
-                                                                        @RequestParam("sort") @NotEmpty String sort){
-        List<GiftCertificate> listGiftCertificatesWithTagsByTagName = giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, SortMode.of(sort));
-        return  listGiftCertificatesWithTagsByTagName.isEmpty() ?
-                ResponseEntity.notFound().build() :
-                ResponseEntity.ok(listGiftCertificatesWithTagsByTagName);
+    @GetMapping("/tags/{name}")
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagName(@PathVariable("name") @NotEmpty String tagName,
+                                                                        @RequestParam("sort") @NotEmpty String sort)
+            throws ResourceNotFoundException, ServiceException {
 
+        return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, SortMode.of(sort)));
     }
 
-    @GetMapping("/giftCertificates")
+    @GetMapping
     public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByQuery(@RequestParam("query") @NotEmpty String query,
-                                                                                  @RequestParam("sort") @NotEmpty String sort){
-        List<GiftCertificate> listGiftCertificatesWithTagsByTagName = giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort));
-        return  listGiftCertificatesWithTagsByTagName.isEmpty() ?
-                ResponseEntity.notFound().build() :
-                ResponseEntity.ok(listGiftCertificatesWithTagsByTagName);
+                                                                                  @RequestParam("sort") @NotEmpty String sort)
+            throws ResourceNotFoundException, ServiceException {
 
+        return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort)));
     }
 
-    @PostMapping("/giftCertificates")
+    @PostMapping
     public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate,
-                                                        UriComponentsBuilder uriComponentsBuilder){
-        if(giftCertificateService.isAlreadyExist(giftCertificate.getName())){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        Long newId = giftCertificateService.create(giftCertificate);
+                                                        UriComponentsBuilder uriComponentsBuilder)
+            throws ServiceException, ResourceAlreadyExistException {
+
         return ResponseEntity.created(
                 uriComponentsBuilder
                         .path("/giftCertificates/{id}")
-                        .buildAndExpand(newId)
+                        .buildAndExpand(giftCertificateService.create(giftCertificate))
                         .toUri())
                 .build();
     }
 
-    @PutMapping("/giftCertificates/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @NotNull @Positive Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
-                                                                         UriComponentsBuilder uriComponentsBuilder){
-        if(giftCertificateService.getGiftCertificatesById(id).isPresent()){
+                                                                         UriComponentsBuilder uriComponentsBuilder)
+            throws ServiceException, ResourceAlreadyExistException {
+
+        try {
             return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.created(
+                    uriComponentsBuilder
+                            .path("/giftCertificates/{id}")
+                            .buildAndExpand(giftCertificateService.create(giftCertificate))
+                            .toUri())
+                    .build();
         }
-        Long newId = giftCertificateService.create(giftCertificate);
-        return ResponseEntity.created(
-                uriComponentsBuilder
-                        .path("/giftCertificates/{id}")
-                        .buildAndExpand(newId)
-                        .toUri())
-                .build();
     }
 
-    @DeleteMapping("/giftCertificates/{id}")
-    public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @NotNull @Positive Long id){
-        if(giftCertificateService.getGiftCertificatesById(id).isPresent()){
-            giftCertificateService.delete(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @NotNull @Positive Long id)
+            throws ServiceException, ResourceNotFoundException {
+
+        giftCertificateService.getGiftCertificatesById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

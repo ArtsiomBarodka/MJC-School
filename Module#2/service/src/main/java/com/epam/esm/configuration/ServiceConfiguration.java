@@ -10,8 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@Import(DataConfiguration.class)
-@ComponentScan("com.epam.esm.service")
+@ComponentScan("com.epam.esm")
 @PropertySource("classpath:i18n/message.properties")
 @EnableTransactionManagement
 public class ServiceConfiguration {
