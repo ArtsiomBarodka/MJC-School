@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':model')
+
+    implementation "org.springframework:spring-jdbc:$springVersion"
+    implementation 'com.zaxxer:HikariCP:3.4.5'
+    implementation 'mysql:mysql-connector-java:8.0.22'
+}

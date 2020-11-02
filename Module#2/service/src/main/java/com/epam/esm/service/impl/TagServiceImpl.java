@@ -19,24 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagServiceImpl.class);
 
-    private TagDAO tagDAO;
+    private final TagDAO tagDAO;
 
-    private GiftCertificateTagDAO giftCertificateTagDAO;
+    private final GiftCertificateTagDAO giftCertificateTagDAO;
 
     @Autowired
     public TagServiceImpl(TagDAO tagDAO, GiftCertificateTagDAO giftCertificateTagDAO) {
         this.tagDAO = tagDAO;
         this.giftCertificateTagDAO = giftCertificateTagDAO;
-    }
-
-    @Override
-    public boolean isAlreadyExist(String tagName) throws ServiceException {
-        try{
-            return tagDAO.isAlreadyExistByName(tagName);
-        } catch (RepositoryException ex) {
-            LOGGER.error("Can`t detect if tag exists at service layer.", ex);
-            throw new ServiceException("Can`t detect if tag exists at service layer.", ex, ex.getErrorCode());
-        }
     }
 
     @Override

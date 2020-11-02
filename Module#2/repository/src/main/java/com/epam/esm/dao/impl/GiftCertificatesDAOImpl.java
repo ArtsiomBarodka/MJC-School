@@ -34,7 +34,7 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public Optional<GiftCertificate> findById(Long id) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM gift_сertificate AS g " +
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where g.id = ? ";
 
@@ -50,7 +50,7 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public boolean isAlreadyExistByName(String giftCertificateName) throws RepositoryException {
-        String sql = "SELECT count(*) FROM gift_сertificate WHERE name = ?";
+        String sql = "SELECT count(*) FROM certificate WHERE name = ?";
 
         try {
             int count = jdbcTemplate.queryForObject(sql, new Object[]{"giftCertificateName"}, Integer.class);
@@ -64,7 +64,7 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public void update(GiftCertificate giftCertificate) throws RepositoryException {
-        String sql = "UPDATE gift_сertificate  AS g " +
+        String sql = "UPDATE certificate  AS g " +
                 "SET g.name = :name, g.description = :description, g.price = :price, g.duration = :duration " +
                 "WHERE g.id = :id";
 
@@ -85,7 +85,7 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public Long create(GiftCertificate giftCertificate) throws RepositoryException {
-        String sql = "INSERT INTO gift_сertificate (name, description, price, duration) " +
+        String sql = "INSERT INTO certificate (name, description, price, duration) " +
                 "VALUES (:name, :description, :price, :duration)";
 
         MapSqlParameterSource source = new MapSqlParameterSource();
@@ -105,7 +105,7 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public void delete(Long id) throws RepositoryException {
-        String sql = "DELETE FROM gift_сertificate WHERE id = ?";
+        String sql = "DELETE FROM certificate WHERE id = ?";
 
         try{
             jdbcTemplate.update(sql, id);
@@ -116,39 +116,72 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
+    public List<GiftCertificate> getAllListGiftCertificatesSortByDateAsc() throws RepositoryException {
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
+                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "INNER JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.create_date ASC";
+
+        return getListGiftCertificates(sql);
+    }
+
+    @Override
+    public List<GiftCertificate> getAllListGiftCertificatesSortByDateDesc() throws RepositoryException {
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
+                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "INNER JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.create_date DESC";
+        return getListGiftCertificates(sql);
+    }
+
+    @Override
+    public List<GiftCertificate> getAllListGiftCertificatesSortByNameAsc() throws RepositoryException {
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
+                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "INNER JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.name ASC";
+        return getListGiftCertificates(sql);
+    }
+
+    @Override
+    public List<GiftCertificate> getAllListGiftCertificatesSortByNameDesc() throws RepositoryException {
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
+                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "INNER JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.name DESC";
+        return getListGiftCertificates(sql);
+    }
+
+    @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM gift_сertificate AS g " +
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date ASC";
 
-        return getListGiftCertificatesWithOneParameter(sql, tagName);
+        return getListGiftCertificates(sql, tagName);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM gift_сertificate AS g " +
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date DESC";
 
-        return getListGiftCertificatesWithOneParameter(sql, tagName);
+        return getListGiftCertificates(sql, tagName);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM gift_сertificate AS g " +
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name ASC";
 
-        return getListGiftCertificatesWithOneParameter(sql, tagName);
+        return getListGiftCertificates(sql, tagName);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameDesc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM gift_сertificate AS g " +
+        String sql = "SELECT g.*, t.* FROM certificate AS g " +
                 "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
                 "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name DESC";
 
-        return getListGiftCertificatesWithOneParameter(sql, tagName);
+        return getListGiftCertificates(sql, tagName);
     }
 
 
@@ -156,31 +189,31 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateAsc(String key) throws RepositoryException {
         String sql = "CALL searchGiftCertificatesSearchSortByDateAsc(?)";
 
-        return getListGiftCertificatesWithOneParameter(sql, key);
+        return getListGiftCertificates(sql, key);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByDateDesc(String key) throws RepositoryException {
         String sql = "CALL searchGiftCertificatesSearchSortByDateDesc(?)";
 
-        return getListGiftCertificatesWithOneParameter(sql, key);
+        return getListGiftCertificates(sql, key);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(String key) throws RepositoryException {
         String sql = "CALL searchGiftCertificatesSearchSortByNameAsc(?)";
 
-        return getListGiftCertificatesWithOneParameter(sql, key);
+        return getListGiftCertificates(sql, key);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameDesc(String key) throws RepositoryException {
         String sql = "CALL searchGiftCertificatesSearchSortByNameDesc(?)";
 
-        return getListGiftCertificatesWithOneParameter(sql, key);
+        return getListGiftCertificates(sql, key);
     }
 
-    private List<GiftCertificate> getListGiftCertificatesWithOneParameter(String sql, String parameter) throws RepositoryException {
+    private List<GiftCertificate> getListGiftCertificates(String sql, String ...parameter) throws RepositoryException {
         try {
             List<GiftCertificate> result = jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), parameter);
             return Optional.ofNullable(result).orElse(Collections.emptyList());

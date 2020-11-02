@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +24,7 @@ public class Tag implements Serializable{
     private List<GiftCertificate> giftCertificates;
 
     public Tag() {
+        giftCertificates = new ArrayList<>();
     }
 
     public Long getId() {
@@ -57,7 +59,7 @@ public class Tag implements Serializable{
 
     public void deleteGiftCertificate(GiftCertificate giftCertificate){
         if(giftCertificate != null){
-            giftCertificates.removeIf(g -> g.getId() == giftCertificate.getId());
+            giftCertificates.removeIf(g -> g.getId().equals(giftCertificate.getId()));
         }
     }
 

@@ -36,12 +36,42 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public boolean isAlreadyExist(String giftCertificateName) throws ServiceException {
+    @Transactional(readOnly = true)
+    public List<GiftCertificate> getAllListGiftCertificatesWithTags(SortMode sortMode)
+            throws ServiceException, ResourceNotFoundException {
+
         try {
-            return giftCertificateDAO.isAlreadyExistByName(giftCertificateName);
+            List<GiftCertificate> result;
+            switch (sortMode) {
+                case DATE_ASC:
+                    result = giftCertificateDAO.getAllListGiftCertificatesSortByDateAsc();
+                    break;
+
+                case DATE_DESC:
+                    result = giftCertificateDAO.getAllListGiftCertificatesSortByDateDesc();
+                    break;
+
+                case NAME_ASC:
+                    result = giftCertificateDAO.getAllListGiftCertificatesSortByNameAsc();
+                    break;
+
+                case NAME_DESC:
+                    result = giftCertificateDAO.getAllListGiftCertificatesSortByNameDesc();
+                    break;
+
+                default:
+                    return Collections.emptyList();
+            }
+
+            if(result.isEmpty()){
+                LOGGER.warn("List of all gift certificates with tags  not found");
+                throw new ResourceNotFoundException("List of all gift certificates with tags  not found");
+            }
+
+            return result;
         } catch (RepositoryException ex) {
-            LOGGER.error("Can`t detect if gift certificate exists at service layer.", ex);
-            throw new ServiceException("Can`t detect if gift certificate exists at service layer.", ex, ex.getErrorCode());
+            LOGGER.error("Can`t get gift certificates list from service layer.", ex);
+            throw new ServiceException("Can`t get gift certificates list from service layer.", ex, ex.getErrorCode());
         }
     }
 
@@ -189,7 +219,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             }
 
 
-            return new GiftCertificate();
+            return giftCertificateDAO.findById(id)
+                    .orElseThrow(()->new ServiceException("Can`t find gift certificate after update in service layer."));
         } catch (RepositoryException ex) {
             LOGGER.error("Can`t update gift certificate in service layer.", ex);
             throw new ServiceException("Can`t update gift certificate in service layer.", ex, ex.getErrorCode());

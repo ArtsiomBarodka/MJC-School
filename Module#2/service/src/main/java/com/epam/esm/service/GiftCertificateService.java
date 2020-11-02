@@ -9,7 +9,7 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 
 public interface GiftCertificateService {
-    boolean isAlreadyExist(@NonNull String giftCertificateName) throws ServiceException;
+    @NonNull List<GiftCertificate> getAllListGiftCertificatesWithTags(@NonNull SortMode sortMode) throws ServiceException, ResourceNotFoundException;
     @NonNull List<GiftCertificate> getListGiftCertificatesWithTagsByTagName(@NonNull String tagName, @NonNull SortMode sortMode) throws ServiceException, ResourceNotFoundException;
     @NonNull List<GiftCertificate> getListGiftCertificatesWithTagsBySearch(@NonNull String key, @NonNull SortMode sortMode) throws ServiceException, ResourceNotFoundException;
     @NonNull GiftCertificate getGiftCertificatesById(@NonNull Long id) throws ResourceNotFoundException, ServiceException;

@@ -16,6 +16,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/giftCertificates")
@@ -32,18 +34,20 @@ public class GiftCertificateController {
 
     @GetMapping("/tags/{name}")
     public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagName(@PathVariable("name") @NotEmpty String tagName,
-                                                                        @RequestParam("sort") @NotEmpty String sort)
+                                                                        @RequestParam("sort") String sort)
             throws ResourceNotFoundException, ServiceException {
-
         return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, SortMode.of(sort)));
     }
 
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByQuery(@RequestParam("query") @NotEmpty String query,
-                                                                                  @RequestParam("sort") @NotEmpty String sort)
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificates(@RequestParam("query") String query,
+                                                                                  @RequestParam("sort") String sort)
             throws ResourceNotFoundException, ServiceException {
-
-        return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort)));
+        if(query == null){
+            return ResponseEntity.ok(giftCertificateService.getAllListGiftCertificatesWithTags(SortMode.of(sort)));
+        } else {
+            return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort)));
+        }
     }
 
     @PostMapping

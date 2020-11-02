@@ -17,6 +17,7 @@ public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<Gift
     @Override
     public GiftCertificate extractData(ResultSet rs) throws SQLException, DataAccessException {
         GiftCertificate giftCertificate = null;
+
         while (rs.next()){
             if(giftCertificate == null){
                 giftCertificate = new GiftCertificate();

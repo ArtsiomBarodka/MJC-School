@@ -110,14 +110,12 @@ public class GiftCertificate implements Serializable {
     public void addTag(Tag tag){
         if(tag != null){
             tags.add(tag);
-            tag.addGiftCertificate(this);
         }
     }
 
     public void deleteTag(Tag tag){
         if(tag != null){
-            tags.removeIf(t -> t.getId() == tag.getId());
-            tag.deleteGiftCertificate(this);
+            tags.removeIf(t -> t.getId().equals(tag.getId()));
         }
     }
 

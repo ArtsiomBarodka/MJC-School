@@ -13,6 +13,11 @@ public interface GiftCertificateDAO {
     @NonNull Long create(@NonNull GiftCertificate giftCertificate) throws RepositoryException;
     void delete(@NonNull Long id) throws RepositoryException;
 
+    @NonNull List<GiftCertificate> getAllListGiftCertificatesSortByDateAsc() throws RepositoryException;
+    @NonNull List<GiftCertificate> getAllListGiftCertificatesSortByDateDesc() throws RepositoryException;
+    @NonNull List<GiftCertificate> getAllListGiftCertificatesSortByNameAsc() throws RepositoryException;
+    @NonNull List<GiftCertificate> getAllListGiftCertificatesSortByNameDesc() throws RepositoryException;
+
     @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(@NonNull String tagName) throws RepositoryException;
     @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(@NonNull String tagName) throws RepositoryException;
     @NonNull List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(@NonNull String tagName) throws RepositoryException;

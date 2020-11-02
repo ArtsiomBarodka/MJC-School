@@ -1,93 +1,41 @@
-plugins {
-    id 'application'
-    id 'war'
-}
-
 allprojects{
+    apply plugin: "java"
+
+    group 'com.epam.esm'
+
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    ext{
-        springVersion = "5.2.9.RELEASE"
-        hibernateValidatorVersion = "6.1.6.Final"
-    }
-
     repositories {
         mavenCentral()
+        jcenter()
     }
 }
 
 subprojects {
-    apply plugin: "java"
-
-    version = '0.1'
-    group 'com.epam.esm'
+    ext{
+        springVersion = "5.2.9.RELEASE"
+        hibernateValidatorVersion = "6.1.6.Final"
+    }
 
     dependencies {
         implementation "org.springframework:spring-context:$springVersion"
         implementation "org.springframework:spring-core:$springVersion"
         implementation 'ch.qos.logback:logback-classic:1.2.3'
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-
+        testImplementation "org.junit.jupiter:junit-jupiter-params:5.7.0"
+        testImplementation 'org.mockito:mockito-junit-jupiter:3.6.0'
     }
-}
 
-project(':model'){
-    dependencies {
-        implementation 'javax.validation:validation-api:2.0.1.Final'
-    }
-}
-
-project(':repository'){
-    dependencies {
-        compile project(':model')
-
-        implementation "org.springframework:spring-jdbc:$springVersion"
-        implementation 'com.zaxxer:HikariCP:3.4.5'
-        implementation 'mysql:mysql-connector-java:8.0.22'
-    }
-}
-
-project(':service'){
-    dependencies {
-        compile project(':model')
-        compile project(':repository')
-
-        implementation "org.springframework:spring-tx:$springVersion"
-        implementation "org.springframework:spring-jdbc:$springVersion"
+    test {
+        useJUnitPlatform()
     }
 }
 
 project(':rest'){
     apply plugin: 'war'
-
-    dependencies {
-        compile project(':model')
-        compile project(':service')
-
-        implementation "org.springframework:spring-webmvc:$springVersion"
-        implementation "org.springframework:spring-web:$springVersion"
-
-        providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
-        implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
-        implementation "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
-    }
 }
 
-
-//dependencies {
-//    compile project(':model')
-//    compile project(':repository')
-//    compile project(':service')
-//    compile project(':rest')
-//}
-
-//war {
-//    from project(':model').sourceSets.main.output.classesDir
-//    from project(':repository').sourceSets.main.output.classesDir
-//    from project(':service').sourceSets.main.output.classesDir
-//    from project(':rest').sourceSets.main.output.classesDir
-//}
 
 
 

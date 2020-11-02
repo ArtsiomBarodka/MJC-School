@@ -34,7 +34,7 @@ public class TagDAOImpl implements TagDAO {
     public Optional<Tag> findById(Long id) throws RepositoryException {
         String sql = "SELECT t.*, g.* FROM tag AS t " +
                 "INNER JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
-                "INNER JOIN gift_сertificate AS g ON gct.tag_id = g.id where t.id = ?";
+                "INNER JOIN certificate AS g ON gct.gift_certificate_id = g.id where t.id = ?";
 
         try{
             return Optional.ofNullable(jdbcTemplate.query(sql, new TagWithGiftCertificatesExtractor(), id));
@@ -61,7 +61,7 @@ public class TagDAOImpl implements TagDAO {
     public List<Tag> getListTagsByGiftCertificateId(Long id) throws RepositoryException {
         String sql = "SELECT t.*, g.* FROM tag AS t " +
                 "INNER JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
-                "INNER JOIN gift_сertificate AS g ON gct.tag_id = g.id where g.id = ?";
+                "INNER JOIN certificate AS g ON gct.gift_certificate_id = g.id where g.id = ?";
 
         try{
             List<Tag> result = jdbcTemplate.query(sql, new ListTagsWithGiftCertificatesExtractor(), id);
