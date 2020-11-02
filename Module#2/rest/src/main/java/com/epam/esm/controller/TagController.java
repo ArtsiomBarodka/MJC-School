@@ -9,21 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Controller
 @RequestMapping("/tags")
+@Validated
 public class TagController {
     @Autowired
     private TagService tagService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Positive Long id)
+    public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
             throws ResourceNotFoundException, ServiceException {
 
         return ResponseEntity.ok(tagService.getTagById(id));
@@ -43,10 +46,10 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable("id") @NotNull @Positive Long id)
+    public ResponseEntity<Object> deleteTag(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException, ServiceException {
 
-        tagService.getTagById(id);
+        tagService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

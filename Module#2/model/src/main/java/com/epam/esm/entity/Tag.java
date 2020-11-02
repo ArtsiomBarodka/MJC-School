@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ import java.util.Objects;
 public class Tag implements Serializable{
     public static final long serialVersionUID = 5476611966156520246L;
 
-    @NotNull
-    @Positive
     private Long id;
 
     @NotNull
