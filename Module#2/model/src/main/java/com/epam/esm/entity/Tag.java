@@ -1,15 +1,14 @@
 package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Tag implements Serializable{
-    public static final long serialVersionUID = 5476611966156520246L;
+public class Tag {
 
     private Long id;
 
@@ -48,14 +47,14 @@ public class Tag implements Serializable{
         this.giftCertificates = giftCertificates;
     }
 
-    public void addGiftCertificate(GiftCertificate giftCertificate){
-        if(giftCertificate != null){
+    public void addGiftCertificate(GiftCertificate giftCertificate) {
+        if (giftCertificate != null) {
             giftCertificates.add(giftCertificate);
         }
     }
 
-    public void deleteGiftCertificate(GiftCertificate giftCertificate){
-        if(giftCertificate != null){
+    public void deleteGiftCertificate(GiftCertificate giftCertificate) {
+        if (giftCertificate != null) {
             giftCertificates.removeIf(g -> g.getId().equals(giftCertificate.getId()));
         }
     }

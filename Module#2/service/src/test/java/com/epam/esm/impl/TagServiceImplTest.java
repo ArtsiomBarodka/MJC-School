@@ -1,8 +1,6 @@
 package com.epam.esm.impl;
 
-import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.repository.RepositoryException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
@@ -14,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -24,15 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 public class TagServiceImplTest {
     @Mock
     private TagDAO tagDAO;
-    @Mock
-    private GiftCertificateDAO giftCertificateDAO;
     @InjectMocks
     TagServiceImpl tagService;
 
@@ -45,7 +39,7 @@ public class TagServiceImplTest {
         when(tagDAO.isAlreadyExistByName(anyString()))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             tagService.create(tagMock);
         });
     }
@@ -59,7 +53,7 @@ public class TagServiceImplTest {
         when(tagDAO.isAlreadyExistByName(anyString()))
                 .thenReturn(true);
 
-        assertThrows(ResourceAlreadyExistException.class, ()->{
+        assertThrows(ResourceAlreadyExistException.class, () -> {
             tagService.create(tagMock);
         });
     }
@@ -89,7 +83,7 @@ public class TagServiceImplTest {
         when(tagDAO.findById(any(Long.TYPE)))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             tagService.delete(id);
         });
     }
@@ -101,7 +95,7 @@ public class TagServiceImplTest {
         when(tagDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             tagService.delete(id);
         });
     }
@@ -113,7 +107,7 @@ public class TagServiceImplTest {
         when(tagDAO.findById(any(Long.TYPE)))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             tagService.getTagById(id);
         });
     }
@@ -125,7 +119,7 @@ public class TagServiceImplTest {
         when(tagDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             tagService.getTagById(id);
         });
     }

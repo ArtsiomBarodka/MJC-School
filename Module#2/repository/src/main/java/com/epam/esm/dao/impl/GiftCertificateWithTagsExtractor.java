@@ -4,6 +4,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -18,8 +19,8 @@ public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<Gift
     public GiftCertificate extractData(ResultSet rs) throws SQLException, DataAccessException {
         GiftCertificate giftCertificate = null;
 
-        while (rs.next()){
-            if(giftCertificate == null){
+        while (rs.next()) {
+            if (giftCertificate == null) {
                 giftCertificate = new GiftCertificate();
                 giftCertificate.setId(rs.getLong("g.id"));
                 giftCertificate.setName(rs.getString("g.name"));
@@ -31,7 +32,7 @@ public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<Gift
             }
 
             long tagId = rs.getLong("t.id");
-            if(tagId > 0){
+            if (tagId > 0) {
                 Tag tag = new Tag();
                 tag.setId(tagId);
                 tag.setName(rs.getString("t.name"));
@@ -42,7 +43,7 @@ public class GiftCertificateWithTagsExtractor implements ResultSetExtractor<Gift
         return giftCertificate;
     }
 
-    private static String convertTimestampToString(Timestamp timestamp){
+    private static String convertTimestampToString(Timestamp timestamp) {
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat(DATE_FORMAT); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);

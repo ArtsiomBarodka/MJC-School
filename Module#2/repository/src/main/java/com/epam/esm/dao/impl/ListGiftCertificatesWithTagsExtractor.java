@@ -17,13 +17,13 @@ public class ListGiftCertificatesWithTagsExtractor implements ResultSetExtractor
 
     @Override
     public List<GiftCertificate> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long, GiftCertificate> map = new HashMap<>();
+        Map<Long, GiftCertificate> map = new LinkedHashMap<>();
         GiftCertificate giftCertificate;
 
-        while (rs.next()){
+        while (rs.next()) {
             long id = rs.getLong("g.id");
             giftCertificate = map.get(id);
-            if(giftCertificate == null){
+            if (giftCertificate == null) {
                 giftCertificate = new GiftCertificate();
                 giftCertificate.setId(id);
                 giftCertificate.setName(rs.getString("g.name"));
@@ -36,7 +36,7 @@ public class ListGiftCertificatesWithTagsExtractor implements ResultSetExtractor
             }
 
             long tagId = rs.getLong("t.id");
-            if(tagId > 0){
+            if (tagId > 0) {
                 Tag tag = new Tag();
                 tag.setId(tagId);
                 tag.setName(rs.getString("t.name"));
@@ -47,7 +47,7 @@ public class ListGiftCertificatesWithTagsExtractor implements ResultSetExtractor
         return new ArrayList<>(map.values());
     }
 
-    private static String convertTimestampToString(Timestamp timestamp){
+    private static String convertTimestampToString(Timestamp timestamp) {
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat(DATE_FORMAT); // Quoted "Z" to indicate UTC, no timezone offset
         df.setTimeZone(tz);

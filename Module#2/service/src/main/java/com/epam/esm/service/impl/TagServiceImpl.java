@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("TagService")
+@Service
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagServiceImpl.class);
 
@@ -32,8 +32,8 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public Long create(Tag tag) throws ResourceAlreadyExistException, ServiceException {
-        try{
-            if (tagDAO.isAlreadyExistByName(tag.getName())){
+        try {
+            if (tagDAO.isAlreadyExistByName(tag.getName())) {
                 LOGGER.warn("Tag with name {} already exist", tag.getName());
                 throw new ResourceAlreadyExistException(String.format("Tag with name %s already exist", tag.getName()));
             }
@@ -51,13 +51,13 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public void delete(Long id) throws ServiceException, ResourceNotFoundException {
-        try{
-            if(!tagDAO.findById(id).isPresent()){
+        try {
+            if (!tagDAO.findById(id).isPresent()) {
                 LOGGER.warn("Tag with id {} is not exist", id);
                 throw new ResourceNotFoundException(String.format("Tag with %d is not exist", id));
             }
             tagDAO.delete(id);
-        } catch (RepositoryException ex){
+        } catch (RepositoryException ex) {
             LOGGER.error("Can`t delete tag in service layer.", ex);
             throw new ServiceException("Can`t tag tag in service layer.", ex, ex.getErrorCode());
         }
@@ -67,10 +67,10 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true)
     public Tag getTagById(Long id) throws ServiceException, ResourceNotFoundException {
-        try{
+        try {
             return tagDAO.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(String.format("Tag with id %d is not exist", id)));
-        } catch (RepositoryException ex){
+        } catch (RepositoryException ex) {
             LOGGER.error("Can`t get tag from service layer.", ex);
             throw new ServiceException("Can`t get tag from service layer.", ex, ex.getErrorCode());
         }

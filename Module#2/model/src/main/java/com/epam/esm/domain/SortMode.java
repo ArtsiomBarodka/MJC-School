@@ -8,9 +8,9 @@ public enum SortMode {
     NAME_ASC,
     NAME_DESC;
 
-    public static SortMode of(String name){
+    public static SortMode of(String name) {
         return Arrays.stream(SortMode.values())
-                .filter(v->v.name().equalsIgnoreCase(name))
+                .filter(v -> v.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(DATE_ASC);
     }

@@ -5,7 +5,7 @@ import com.epam.esm.validation.annotation.EnglishLanguage;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class EnglishLanguageConstraintValidator  implements ConstraintValidator<EnglishLanguage,String> {
+public class EnglishLanguageConstraintValidator implements ConstraintValidator<EnglishLanguage, String> {
 
     private boolean withNumbers;
     private boolean withPunctuations;
@@ -20,13 +20,13 @@ public class EnglishLanguageConstraintValidator  implements ConstraintValidator<
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if(value == null) {
+        if (value == null) {
             return true;
         }
         String validationTemplate = getValidationTemplate();
-        for(int i=0; i < value.length(); i++){
+        for (int i = 0; i < value.length(); i++) {
             char ch = value.charAt(i);
-            if(validationTemplate.indexOf(ch) == -1) {
+            if (validationTemplate.indexOf(ch) == -1) {
                 return false;
             }
         }
@@ -38,15 +38,15 @@ public class EnglishLanguageConstraintValidator  implements ConstraintValidator<
     private static final String NUMBERS = "0123456789";
     private static final String LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private String getValidationTemplate(){
+    private String getValidationTemplate() {
         StringBuilder template = new StringBuilder(LETTERS);
-        if(withNumbers) {
+        if (withNumbers) {
             template.append(NUMBERS);
         }
-        if(withPunctuations) {
+        if (withPunctuations) {
             template.append(PUNCTUATIONS);
         }
-        if(withSpecSymbols) {
+        if (withSpecSymbols) {
             template.append(SPEC_SYMBOLS);
         }
         return template.toString();

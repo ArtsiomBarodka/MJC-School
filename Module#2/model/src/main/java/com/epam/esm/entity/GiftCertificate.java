@@ -1,16 +1,15 @@
 package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class GiftCertificate implements Serializable {
-    public static final long serialVersionUID = 5476611966156520246L;
+public class GiftCertificate{
 
     private Long id;
 
@@ -105,14 +104,14 @@ public class GiftCertificate implements Serializable {
         this.tags = tags;
     }
 
-    public void addTag(Tag tag){
-        if(tag != null){
+    public void addTag(Tag tag) {
+        if (tag != null) {
             tags.add(tag);
         }
     }
 
-    public void deleteTag(Tag tag){
-        if(tag != null){
+    public void deleteTag(Tag tag) {
+        if (tag != null) {
             tags.removeIf(t -> t.getId().equals(tag.getId()));
         }
     }

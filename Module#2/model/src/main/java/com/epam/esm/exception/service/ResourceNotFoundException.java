@@ -4,7 +4,6 @@ import com.epam.esm.exception.ProjectAbstractException;
 
 public class ResourceNotFoundException extends ProjectAbstractException {
     public static final String RESOURCE_NOT_FOUND_ERROR_CODE = "21";
-    public static final long serialVersionUID = -7990117502328917902L;
 
     public ResourceNotFoundException() {
         super(RESOURCE_NOT_FOUND_ERROR_CODE);

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION = "Exception.resourceNotFound";
     private static final String RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION = "Exception.resourceAlreadyExist";
     private static final String SERVICE_MESSAGE_EXCEPTION = "Exception.service";
+    private static final String MESSAGE_EXCEPTION = "Exception.service";
 
     private final MessageSource messageSource;
 
@@ -35,15 +37,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, Locale locale) {
-        String message = messageSource.getMessage(RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION,null, locale);
+        String message = messageSource.getMessage(RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION, null, locale);
         String errorCode = HttpStatus.NOT_FOUND.value() + ex.getErrorCode();
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.NOT_FOUND,  message, errorCode);
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.NOT_FOUND, message, errorCode);
         return buildResponseEntity(apiErrorResponse);
     }
 
     @ExceptionHandler(value = ResourceAlreadyExistException.class)
     protected ResponseEntity<Object> handleResourceAlreadyExistException(ResourceAlreadyExistException ex, Locale locale) {
-        String message = messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION,null, locale);
+        String message = messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION, null, locale);
         String errorCode = HttpStatus.CONFLICT.value() + ex.getErrorCode();
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.CONFLICT, message, errorCode);
         return buildResponseEntity(apiErrorResponse);
@@ -51,11 +53,28 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = ServiceException.class)
     protected ResponseEntity<Object> handleServiceException(ServiceException ex, Locale locale) {
-        String message = messageSource.getMessage(SERVICE_MESSAGE_EXCEPTION,null, locale);
+        String message = messageSource.getMessage(SERVICE_MESSAGE_EXCEPTION, null, locale);
         String errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value() + ex.getErrorCode();
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,  message, errorCode);
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, errorCode);
         return buildResponseEntity(apiErrorResponse);
     }
+
+    @ExceptionHandler(value = Exception.class)
+    protected ResponseEntity<Object> handleALLException(Exception ex, Locale locale) {
+        String message = messageSource.getMessage(MESSAGE_EXCEPTION, null, locale);
+        String errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value() + EXCEPTION_ERROR_CODE;
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, errorCode);
+        return buildResponseEntity(apiErrorResponse);
+    }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest webRequest) {
+        String errorCode = HttpStatus.BAD_REQUEST.value() + EXCEPTION_ERROR_CODE;
+
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errorCode);
+        return buildResponseEntity(apiErrorResponse);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -71,7 +90,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-
     private ResponseEntity<Object> buildResponseEntity(ApiErrorResponse apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
     }
@@ -83,7 +101,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         errorCode.append(fe.getCode().toLowerCase());
 
         try {
-            return messageSource.getMessage(errorCode.toString(), null, LocaleContextHolder.getLocale());
+            return messageSource.getMessage(errorCode.toString(), fe.getArguments(), LocaleContextHolder.getLocale());
         } catch (Exception ex) {
             return fe.getDefaultMessage();
         }

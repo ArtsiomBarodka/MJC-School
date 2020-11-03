@@ -1,7 +1,6 @@
 package com.epam.esm.exception;
 
-public abstract class ProjectAbstractException extends Exception{
-    public static final long serialVersionUID = 4982720311488402040L;
+public abstract class ProjectAbstractException extends Exception {
 
     private final String errorCode;
 

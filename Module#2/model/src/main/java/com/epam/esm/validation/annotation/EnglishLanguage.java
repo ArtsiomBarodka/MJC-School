@@ -9,16 +9,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = EnglishLanguageConstraintValidator.class)
 public @interface EnglishLanguage {
 
     String message() default "Value must have only English characters";
+
     // 0123456789
     boolean withNumbers() default true;
 
@@ -28,7 +28,7 @@ public @interface EnglishLanguage {
     //~#$%^&*-+=_\\|/@`!'\";:><,.?{}
     boolean withSpecSymbols() default true;
 
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 }

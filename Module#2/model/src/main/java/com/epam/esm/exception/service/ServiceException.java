@@ -4,7 +4,6 @@ import com.epam.esm.exception.ProjectAbstractException;
 
 public class ServiceException extends ProjectAbstractException {
     public static final String SERVICE_ERROR_CODE = "20";
-    public static final long serialVersionUID = 5686424534525031993L;
 
     public ServiceException() {
         super(SERVICE_ERROR_CODE);

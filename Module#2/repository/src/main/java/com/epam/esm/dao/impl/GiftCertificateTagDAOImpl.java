@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 
-@Repository("GiftCertificateTagDAO")
+@Repository
 public class GiftCertificateTagDAOImpl implements GiftCertificateTagDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateTagDAOImpl.class);
 
@@ -30,9 +30,9 @@ public class GiftCertificateTagDAOImpl implements GiftCertificateTagDAO {
 
         try {
             namedParameterJdbcTemplate.update(sql, getMapSqlParameterSource(giftCertificateId, tagId));
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t save dependence between gift certificate and tag to dao layer.", ex);
-            throw new RepositoryException("Can`t save dependence between gift certificate and tag to dao layer.",ex);
+            throw new RepositoryException("Can`t save dependence between gift certificate and tag to dao layer.", ex);
         }
     }
 
@@ -43,9 +43,9 @@ public class GiftCertificateTagDAOImpl implements GiftCertificateTagDAO {
 
         try {
             namedParameterJdbcTemplate.update(sql, getMapSqlParameterSource(giftCertificateId, tagId));
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t delete dependence between gift certificate and tag from dao layer.", ex);
-            throw new RepositoryException("Can`t delete dependence between gift certificate and tag from dao layer.",ex);
+            throw new RepositoryException("Can`t delete dependence between gift certificate and tag from dao layer.", ex);
         }
     }
 

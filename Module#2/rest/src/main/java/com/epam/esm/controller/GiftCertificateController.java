@@ -7,41 +7,42 @@ import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
 @RequestMapping("/giftCertificates")
+@Validated
 public class GiftCertificateController {
     @Autowired
     private GiftCertificateService giftCertificateService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @NotNull @Positive Long id)
+    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id)
             throws ResourceNotFoundException, ServiceException {
 
         return ResponseEntity.ok(giftCertificateService.getGiftCertificatesById(id));
     }
 
-    @GetMapping("/tags/{name}")
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagName(@PathVariable("name") @NotEmpty String tagName,
-                                                                        @RequestParam("sort") String sort)
+    @GetMapping("/tags")
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagName(@RequestParam(value = "name") @NotEmpty String tagName,
+                                                                                  @RequestParam(required = false) String sort)
             throws ResourceNotFoundException, ServiceException {
         return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, SortMode.of(sort)));
     }
 
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificates(@RequestParam("query") String query,
-                                                                                  @RequestParam("sort") String sort)
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificates(@RequestParam(required = false) String query,
+                                                                         @RequestParam(required = false) String sort)
             throws ResourceNotFoundException, ServiceException {
-        if(query == null){
+        if (query == null) {
             return ResponseEntity.ok(giftCertificateService.getAllListGiftCertificatesWithTags(SortMode.of(sort)));
         } else {
             return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort)));
@@ -62,7 +63,7 @@ public class GiftCertificateController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @NotNull @Positive Long id,
+    public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
                                                                          UriComponentsBuilder uriComponentsBuilder)
             throws ServiceException, ResourceAlreadyExistException {
@@ -80,10 +81,10 @@ public class GiftCertificateController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @NotNull @Positive Long id)
+    public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @Min(1) Long id)
             throws ServiceException, ResourceNotFoundException {
 
-        giftCertificateService.getGiftCertificatesById(id);
+        giftCertificateService.delete(id);
         return ResponseEntity.noContent().build();
     }
 

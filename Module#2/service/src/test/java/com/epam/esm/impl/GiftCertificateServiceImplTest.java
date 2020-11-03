@@ -1,7 +1,6 @@
 package com.epam.esm.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
-import com.epam.esm.dao.GiftCertificateTagDAO;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.repository.RepositoryException;
@@ -18,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +40,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.getAllListGiftCertificatesSortByNameAsc())
                 .thenReturn(Collections.emptyList());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             giftCertificateService.getAllListGiftCertificatesWithTags(sortMode);
         });
     }
@@ -52,7 +52,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.getAllListGiftCertificatesSortByNameAsc())
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.getAllListGiftCertificatesWithTags(sortMode);
         });
     }
@@ -85,7 +85,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.getListGiftCertificatesByTagNameSortByNameAsc(anyString()))
                 .thenReturn(Collections.emptyList());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, sortMode);
         });
     }
@@ -98,7 +98,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.getListGiftCertificatesByTagNameSortByNameAsc(anyString()))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, sortMode);
         });
     }
@@ -131,7 +131,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(anyString()))
                 .thenReturn(Collections.emptyList());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             giftCertificateService.getListGiftCertificatesWithTagsBySearch(tagName, sortMode);
         });
     }
@@ -144,7 +144,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.getListGiftCertificatesSearchByGiftCertificateNameOrDescriptionSortByNameAsc(anyString()))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.getListGiftCertificatesWithTagsBySearch(tagName, sortMode);
         });
     }
@@ -176,7 +176,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             giftCertificateService.getGiftCertificatesById(id);
         });
     }
@@ -188,7 +188,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.findById(any(Long.TYPE)))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.getGiftCertificatesById(id);
         });
     }
@@ -215,7 +215,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.isAlreadyExistByName(anyString()))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.create(giftCertificateMock);
         });
     }
@@ -229,7 +229,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.isAlreadyExistByName(anyString()))
                 .thenReturn(true);
 
-        assertThrows(ResourceAlreadyExistException.class, ()->{
+        assertThrows(ResourceAlreadyExistException.class, () -> {
             giftCertificateService.create(giftCertificateMock);
         });
     }
@@ -260,7 +260,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.findById(any(Long.TYPE)))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.update(giftCertificateMock, id);
         });
     }
@@ -273,7 +273,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             giftCertificateService.update(giftCertificateMock, id);
         });
     }
@@ -302,7 +302,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.findById(any(Long.TYPE)))
                 .thenThrow(new RepositoryException());
 
-        assertThrows(ServiceException.class, ()->{
+        assertThrows(ServiceException.class, () -> {
             giftCertificateService.delete(id);
         });
     }
@@ -314,7 +314,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, ()->{
+        assertThrows(ResourceNotFoundException.class, () -> {
             giftCertificateService.delete(id);
         });
     }

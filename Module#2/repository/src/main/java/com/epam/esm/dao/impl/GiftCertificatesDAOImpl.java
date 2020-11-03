@@ -10,26 +10,31 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-@Repository("GiftCertificateDAO")
+@Repository
 public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificatesDAOImpl.class);
 
     private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public GiftCertificatesDAOImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
+                .withTableName("certificate")
+                .usingGeneratedKeyColumns("id")
+                .usingColumns("name","description", "price", "duration");
     }
 
     @Override
@@ -42,9 +47,9 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
             return Optional.ofNullable(jdbcTemplate
                     .query(sql, new GiftCertificateWithTagsExtractor(), id));
 
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t get gift certificate from dao layer.", ex);
-            throw new RepositoryException("Can`t get gift certificate from dao layer.",ex);
+            throw new RepositoryException("Can`t get gift certificate from dao layer.", ex);
         }
     }
 
@@ -55,9 +60,9 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
         try {
             int count = jdbcTemplate.queryForObject(sql, new Object[]{giftCertificateName}, Integer.class);
             return count > 0;
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t detect if gift certificate exists at dao level.", ex);
-            throw new RepositoryException("Can`t detect if gift certificate exists at dao level.",ex);
+            throw new RepositoryException("Can`t detect if gift certificate exists at dao level.", ex);
         }
     }
 
@@ -75,31 +80,27 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
         source.addValue("price", giftCertificate.getPrice());
         source.addValue("duration", giftCertificate.getDuration());
 
-        try{
+        try {
             namedParameterJdbcTemplate.update(sql, source);
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t update gift certificate from dao level.", ex);
-            throw new RepositoryException("Can`t update gift certificate from dao level.",ex);
+            throw new RepositoryException("Can`t update gift certificate from dao level.", ex);
         }
     }
 
     @Override
     public Long create(GiftCertificate giftCertificate) throws RepositoryException {
-        String sql = "INSERT INTO certificate (name, description, price, duration) " +
-                "VALUES (:name, :description, :price, :duration)";
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("name", giftCertificate.getName());
+        parameters.put("description", giftCertificate.getDescription());
+        parameters.put("price", giftCertificate.getPrice());
+        parameters.put("duration", giftCertificate.getDuration());
 
-        MapSqlParameterSource source = new MapSqlParameterSource();
-        source.addValue("name", giftCertificate.getName());
-        source.addValue("description", giftCertificate.getDescription());
-        source.addValue("price", giftCertificate.getPrice());
-        source.addValue("duration", giftCertificate.getDuration());
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        try{
-            return (long) namedParameterJdbcTemplate.update(sql, source, keyHolder, new String[]{"id"});
-        } catch (DataAccessException ex){
+        try {
+            return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t create gift certificate from dao level.", ex);
-            throw new RepositoryException("Can`t create gift certificate from dao level.",ex);
+            throw new RepositoryException("Can`t create gift certificate from dao level.", ex);
         }
     }
 
@@ -107,11 +108,11 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     public void delete(Long id) throws RepositoryException {
         String sql = "DELETE FROM certificate WHERE id = ?";
 
-        try{
+        try {
             jdbcTemplate.update(sql, id);
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t delete gift certificate from dao level.", ex);
-            throw new RepositoryException("Can`t delete gift certificate from dao level.",ex);
+            throw new RepositoryException("Can`t delete gift certificate from dao level.", ex);
         }
     }
 
@@ -151,8 +152,8 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(String tagName) throws RepositoryException {
         String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date ASC";
+                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date ASC";
 
         return getListGiftCertificates(sql, tagName);
     }
@@ -160,8 +161,8 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(String tagName) throws RepositoryException {
         String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date DESC";
+                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date DESC";
 
         return getListGiftCertificates(sql, tagName);
     }
@@ -169,8 +170,8 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(String tagName) throws RepositoryException {
         String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name ASC";
+                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name ASC";
 
         return getListGiftCertificates(sql, tagName);
     }
@@ -178,8 +179,8 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameDesc(String tagName) throws RepositoryException {
         String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "INNER JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "INNER JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name DESC";
+                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
+                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name DESC";
 
         return getListGiftCertificates(sql, tagName);
     }
@@ -213,13 +214,13 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
         return getListGiftCertificates(sql, key);
     }
 
-    private List<GiftCertificate> getListGiftCertificates(String sql, String ...parameter) throws RepositoryException {
+    private List<GiftCertificate> getListGiftCertificates(String sql, String... parameter) throws RepositoryException {
         try {
             List<GiftCertificate> result = jdbcTemplate.query(sql, new ListGiftCertificatesWithTagsExtractor(), parameter);
             return Optional.ofNullable(result).orElse(Collections.emptyList());
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t get gift certificates list from dao level.", ex);
-            throw new RepositoryException("Can`t get gift certificates list from dao level.",ex);
+            throw new RepositoryException("Can`t get gift certificates list from dao level.", ex);
         }
     }
 }

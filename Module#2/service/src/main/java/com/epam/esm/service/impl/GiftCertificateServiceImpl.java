@@ -5,9 +5,9 @@ import com.epam.esm.dao.GiftCertificateTagDAO;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.repository.RepositoryException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.repository.RepositoryException;
 import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-@Service("GiftCertificateService")
+@Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateServiceImpl.class);
 
@@ -63,7 +63,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     return Collections.emptyList();
             }
 
-            if(result.isEmpty()){
+            if (result.isEmpty()) {
                 LOGGER.warn("List of all gift certificates with tags  not found");
                 throw new ResourceNotFoundException("List of all gift certificates with tags  not found");
             }
@@ -103,7 +103,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     return Collections.emptyList();
             }
 
-            if(result.isEmpty()){
+            if (result.isEmpty()) {
                 LOGGER.warn("List of gift certificates with tag name {} not found", tagName);
                 throw new ResourceNotFoundException(String.format("List of gift certificates with tag name %s not found", tagName));
             }
@@ -143,7 +143,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     result = Collections.emptyList();
             }
 
-            if(result.isEmpty()){
+            if (result.isEmpty()) {
                 LOGGER.warn("List of gift certificates with query {} not found", key);
                 throw new ResourceNotFoundException(String.format("List of gift certificates with query %s not found", key));
             }
@@ -172,8 +172,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public Long create(GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException {
-        try{
-            if(giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())){
+        try {
+            if (giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())) {
                 LOGGER.warn("Gift certificate with name {} already exist", giftCertificate.getName());
                 throw new ResourceAlreadyExistException(String.format("Gift certificate with name %s already exist", giftCertificate.getName()));
             }
@@ -220,7 +220,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
             return giftCertificateDAO.findById(id)
-                    .orElseThrow(()->new ServiceException("Can`t find gift certificate after update in service layer."));
+                    .orElseThrow(() -> new ServiceException("Can`t find gift certificate after update in service layer."));
         } catch (RepositoryException ex) {
             LOGGER.error("Can`t update gift certificate in service layer.", ex);
             throw new ServiceException("Can`t update gift certificate in service layer.", ex, ex.getErrorCode());
@@ -231,7 +231,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public void delete(Long id) throws ServiceException, ResourceNotFoundException {
         try {
-            if(!giftCertificateDAO.findById(id).isPresent()){
+            if (!giftCertificateDAO.findById(id).isPresent()) {
                 LOGGER.warn("Gift certificate with {} is not exist", id);
                 throw new ResourceNotFoundException(String.format("Gift certificate with %d is not exist", id));
             }

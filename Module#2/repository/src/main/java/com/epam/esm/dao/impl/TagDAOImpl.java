@@ -8,29 +8,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.*;
 
-@Repository("TagDAO")
+@Repository
 public class TagDAOImpl implements TagDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagDAOImpl.class);
 
     private JdbcTemplate jdbcTemplate;
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public TagDAOImpl(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource)
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("tag")
                 .usingGeneratedKeyColumns("id");
     }
@@ -41,11 +35,11 @@ public class TagDAOImpl implements TagDAO {
                 "LEFT JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
                 "LEFT JOIN certificate AS g ON gct.gift_certificate_id = g.id where t.id = ?";
 
-        try{
+        try {
             return Optional.ofNullable(jdbcTemplate.query(sql, new TagWithGiftCertificatesExtractor(), id));
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t get tag from dao layer.", ex);
-            throw new RepositoryException("Can`t get tag from dao layer.",ex);
+            throw new RepositoryException("Can`t get tag from dao layer.", ex);
         }
     }
 
@@ -56,9 +50,9 @@ public class TagDAOImpl implements TagDAO {
         try {
             int count = jdbcTemplate.queryForObject(sql, new Object[]{tagName}, Integer.class);
             return count > 0;
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t detect if tag exists at dao layer.", ex);
-            throw new RepositoryException("Can`t detect if tag exists at dao layer.",ex);
+            throw new RepositoryException("Can`t detect if tag exists at dao layer.", ex);
         }
     }
 
@@ -68,12 +62,12 @@ public class TagDAOImpl implements TagDAO {
                 "INNER JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
                 "INNER JOIN certificate AS g ON gct.gift_certificate_id = g.id where g.id = ?";
 
-        try{
+        try {
             List<Tag> result = jdbcTemplate.query(sql, new ListTagsWithGiftCertificatesExtractor(), id);
             return Optional.ofNullable(result).orElse(Collections.emptyList());
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t get tags list from dao layer.", ex);
-            throw new RepositoryException("Can`t get tags list from dao layer.",ex);
+            throw new RepositoryException("Can`t get tags list from dao layer.", ex);
         }
     }
 
@@ -84,9 +78,9 @@ public class TagDAOImpl implements TagDAO {
 
         try {
             return jdbcInsert.executeAndReturnKey(parameters).longValue();
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t create tag from dao layer.", ex);
-            throw new RepositoryException("Can`t create tag from dao layer.",ex);
+            throw new RepositoryException("Can`t create tag from dao layer.", ex);
         }
     }
 
@@ -94,11 +88,11 @@ public class TagDAOImpl implements TagDAO {
     public void delete(Long id) throws RepositoryException {
         String sql = "DELETE FROM tag WHERE id = ?";
 
-        try{
+        try {
             jdbcTemplate.update(sql, id);
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             LOGGER.error("Can`t delete tag from dao layer.", ex);
-            throw new RepositoryException("Can`t delete tag from dao layer.",ex);
+            throw new RepositoryException("Can`t delete tag from dao layer.", ex);
         }
     }
 }
