@@ -16,6 +16,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The type Tag controller.
+ */
 @Controller
 @RequestMapping("/tags")
 @Validated
@@ -23,6 +26,14 @@ public class TagController {
     @Autowired
     private TagService tagService;
 
+    /**
+     * Gets tag by id.
+     *
+     * @param id the id
+     * @return the tag by id
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
             throws ResourceNotFoundException, ServiceException {
@@ -30,6 +41,15 @@ public class TagController {
         return ResponseEntity.ok(tagService.getTagById(id));
     }
 
+    /**
+     * Create tag response entity.
+     *
+     * @param tag                  the tag
+     * @param uriComponentsBuilder the uri components builder
+     * @return the response entity
+     * @throws ServiceException              the service exception
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     */
     @PostMapping
     public ResponseEntity<Object> createTag(@RequestBody @Valid Tag tag,
                                             UriComponentsBuilder uriComponentsBuilder)
@@ -43,6 +63,14 @@ public class TagController {
                 .build();
     }
 
+    /**
+     * Delete tag response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTag(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException, ServiceException {

@@ -1,13 +1,17 @@
 package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
+import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+/**
+ * The type Tag.
+ */
+@Data
 public class Tag {
 
     private Long id;
@@ -19,67 +23,33 @@ public class Tag {
 
     private List<GiftCertificate> giftCertificates;
 
+    /**
+     * Instantiates a new Tag.
+     */
     public Tag() {
         giftCertificates = new ArrayList<>();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<GiftCertificate> getGiftCertificates() {
-        return giftCertificates;
-    }
-
-    public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
-        this.giftCertificates = giftCertificates;
-    }
-
+    /**
+     * Add gift certificate.
+     *
+     * @param giftCertificate the gift certificate
+     */
     public void addGiftCertificate(GiftCertificate giftCertificate) {
         if (giftCertificate != null) {
             giftCertificates.add(giftCertificate);
         }
     }
 
+    /**
+     * Delete gift certificate.
+     *
+     * @param giftCertificate the gift certificate
+     */
     public void deleteGiftCertificate(GiftCertificate giftCertificate) {
         if (giftCertificate != null) {
             giftCertificates.removeIf(g -> g.getId().equals(giftCertificate.getId()));
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Tag)) return false;
-        Tag tag = (Tag) o;
-        return Objects.equals(getId(), tag.getId()) &&
-                Objects.equals(getName(), tag.getName()) &&
-                Objects.equals(getGiftCertificates(), tag.getGiftCertificates());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getGiftCertificates());
-    }
-
-    @Override
-    public String toString() {
-        return "Tag{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", giftCertificates=" + giftCertificates +
-                '}';
-    }
 }

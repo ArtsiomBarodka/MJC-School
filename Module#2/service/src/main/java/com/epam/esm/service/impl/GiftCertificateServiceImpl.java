@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 
+/**
+ * The type Gift certificate service.
+ */
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateServiceImpl.class);
@@ -29,6 +32,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private GiftCertificateTagDAO giftCertificateTagDAO;
 
+    /**
+     * Instantiates a new Gift certificate service.
+     *
+     * @param giftCertificateDAO    the gift certificate dao
+     * @param giftCertificateTagDAO the gift certificate tag dao
+     */
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, GiftCertificateTagDAO giftCertificateTagDAO) {
         this.giftCertificateDAO = giftCertificateDAO;

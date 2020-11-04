@@ -23,13 +23,24 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * The type Tag service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 public class TagServiceImplTest {
     @Mock
     private TagDAO tagDAO;
+    /**
+     * The Tag service.
+     */
     @InjectMocks
     TagServiceImpl tagService;
 
+    /**
+     * Create test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void createTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         Tag tagMock = mock(Tag.class);
@@ -44,6 +55,11 @@ public class TagServiceImplTest {
         });
     }
 
+    /**
+     * Create test tag already exist with name.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void createTest_TAG_ALREADY_EXIST_WITH_NAME() throws RepositoryException {
         Tag tagMock = mock(Tag.class);
@@ -58,6 +74,13 @@ public class TagServiceImplTest {
         });
     }
 
+    /**
+     * Create test should create tag.
+     *
+     * @throws RepositoryException           the repository exception
+     * @throws ServiceException              the service exception
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     */
     @Test
     void createTest_SHOULD_CREATE_TAG() throws RepositoryException, ServiceException, ResourceAlreadyExistException {
         Long expected = 1L;
@@ -76,6 +99,11 @@ public class TagServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Delete test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void deleteTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         Long id = 1L;
@@ -88,6 +116,11 @@ public class TagServiceImplTest {
         });
     }
 
+    /**
+     * Delete test tag is not exist with id.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void deleteTest_TAG_IS_NOT_EXIST_WITH_ID() throws RepositoryException {
         Long id = 1L;
@@ -100,6 +133,11 @@ public class TagServiceImplTest {
         });
     }
 
+    /**
+     * Gets tag by id test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getTagByIdTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         Long id = 1L;
@@ -112,6 +150,11 @@ public class TagServiceImplTest {
         });
     }
 
+    /**
+     * Gets tag by id test resource in not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getTagByIdTest_RESOURCE_IN_NOT_EXIST() throws RepositoryException {
         Long id = 1L;
@@ -124,6 +167,13 @@ public class TagServiceImplTest {
         });
     }
 
+    /**
+     * Gets tag by id test should return tag.
+     *
+     * @throws RepositoryException       the repository exception
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @Test
     void getTagByIdTest_SHOULD_RETURN_TAG() throws RepositoryException, ResourceNotFoundException, ServiceException {
         Long id = 1L;

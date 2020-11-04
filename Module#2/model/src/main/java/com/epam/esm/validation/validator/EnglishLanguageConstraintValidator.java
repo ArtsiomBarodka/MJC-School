@@ -5,6 +5,9 @@ import com.epam.esm.validation.annotation.EnglishLanguage;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * The type English language constraint validator.
+ */
 public class EnglishLanguageConstraintValidator implements ConstraintValidator<EnglishLanguage, String> {
 
     private boolean withNumbers;

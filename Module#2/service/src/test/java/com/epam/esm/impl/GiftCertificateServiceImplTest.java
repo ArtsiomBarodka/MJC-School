@@ -25,6 +25,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * The type Gift certificate service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class GiftCertificateServiceImplTest {
@@ -33,6 +36,11 @@ public class GiftCertificateServiceImplTest {
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
 
+    /**
+     * Gets all list gift certificates with tags test resource in not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getAllListGiftCertificatesWithTagsTest_RESOURCE_IN_NOT_EXIST() throws RepositoryException {
         SortMode sortMode = SortMode.NAME_ASC;
@@ -45,6 +53,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets all list gift certificates with tags test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getAllListGiftCertificatesWithTagsTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         SortMode sortMode = SortMode.NAME_ASC;
@@ -57,6 +70,14 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets all list gift certificates with tags test should return list.
+     *
+     * @param sortMode the sort mode
+     * @throws RepositoryException       the repository exception
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @ParameterizedTest
     @EnumSource(value = SortMode.class)
     void getAllListGiftCertificatesWithTagsTest_SHOULD_RETURN_LIST(SortMode sortMode) throws RepositoryException, ResourceNotFoundException, ServiceException {
@@ -77,6 +98,11 @@ public class GiftCertificateServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Gets list gift certificates with tags by tag name test resource in not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getListGiftCertificatesWithTagsByTagNameTest_RESOURCE_IN_NOT_EXIST() throws RepositoryException {
         String tagName = "tagName";
@@ -90,6 +116,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets list gift certificates with tags by tag name test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getListGiftCertificatesWithTagsByTagNameTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         String tagName = "tagName";
@@ -103,6 +134,14 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets list gift certificates with tags by tag name test should return list.
+     *
+     * @param sortMode the sort mode
+     * @throws RepositoryException       the repository exception
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @ParameterizedTest
     @EnumSource(value = SortMode.class)
     void getListGiftCertificatesWithTagsByTagNameTest_SHOULD_RETURN_LIST(SortMode sortMode) throws RepositoryException, ResourceNotFoundException, ServiceException {
@@ -123,6 +162,11 @@ public class GiftCertificateServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Gets list gift certificates with tags by search test resource in not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getListGiftCertificatesWithTagsBySearchTest_RESOURCE_IN_NOT_EXIST() throws RepositoryException {
         String tagName = "tagName";
@@ -136,6 +180,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets list gift certificates with tags by search test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getListGiftCertificatesWithTagsBySearchTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         String tagName = "tagName";
@@ -149,6 +198,14 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets list gift certificates with tags by search test should return list.
+     *
+     * @param sortMode the sort mode
+     * @throws RepositoryException       the repository exception
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @ParameterizedTest
     @EnumSource(value = SortMode.class)
     void getListGiftCertificatesWithTagsBySearchTest_SHOULD_RETURN_LIST(SortMode sortMode) throws RepositoryException, ResourceNotFoundException, ServiceException {
@@ -169,6 +226,11 @@ public class GiftCertificateServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Gets gift certificates by id test resource in not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getGiftCertificatesByIdTest_RESOURCE_IN_NOT_EXIST() throws RepositoryException {
         Long id = 1L;
@@ -181,6 +243,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets gift certificates by id test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void getGiftCertificatesByIdTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         Long id = 1L;
@@ -193,6 +260,13 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Gets gift certificates by id test should return gift certificate.
+     *
+     * @throws RepositoryException       the repository exception
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @Test
     void getGiftCertificatesByIdTest_SHOULD_RETURN_GIFT_CERTIFICATE() throws RepositoryException, ResourceNotFoundException, ServiceException {
         Long id = 1L;
@@ -206,6 +280,11 @@ public class GiftCertificateServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Create test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void createTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
@@ -220,6 +299,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Create test gift certificate already exist with name.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void createTest_GIFT_CERTIFICATE_ALREADY_EXIST_WITH_NAME() throws RepositoryException {
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
@@ -234,6 +318,13 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Create test should create gift certificate.
+     *
+     * @throws RepositoryException           the repository exception
+     * @throws ServiceException              the service exception
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     */
     @Test
     void createTest_SHOULD_CREATE_GIFT_CERTIFICATE() throws RepositoryException, ServiceException, ResourceAlreadyExistException {
         Long expected = 1L;
@@ -252,6 +343,11 @@ public class GiftCertificateServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Update test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void updateTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         Long id = 1L;
@@ -265,6 +361,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Update test gift certificate is not exist with id.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void updateTest_GIFT_CERTIFICATE_IS_NOT_EXIST_WITH_ID() throws RepositoryException {
         Long id = 1L;
@@ -278,6 +379,13 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Update test should update gift certificate.
+     *
+     * @throws RepositoryException       the repository exception
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws ServiceException          the service exception
+     */
     @Test
     void updateTest_SHOULD_UPDATE_GIFT_CERTIFICATE() throws RepositoryException, ResourceNotFoundException, ServiceException {
         Long id = 1L;
@@ -295,6 +403,11 @@ public class GiftCertificateServiceImplTest {
         assertNotNull(actual);
     }
 
+    /**
+     * Delete test repository layer throw exception.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void deleteTest_REPOSITORY_LAYER_THROW_EXCEPTION() throws RepositoryException {
         Long id = 1L;
@@ -307,6 +420,11 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
+    /**
+     * Delete test gift certificate is not exist with id.
+     *
+     * @throws RepositoryException the repository exception
+     */
     @Test
     void deleteTest_GIFT_CERTIFICATE_IS_NOT_EXIST_WITH_ID() throws RepositoryException {
         Long id = 1L;

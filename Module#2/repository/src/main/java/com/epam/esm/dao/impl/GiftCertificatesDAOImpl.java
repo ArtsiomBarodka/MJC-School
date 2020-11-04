@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The type Gift certificates dao.
+ */
 @Repository
 public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificatesDAOImpl.class);
@@ -27,6 +30,11 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
+    /**
+     * Instantiates a new Gift certificates dao.
+     *
+     * @param dataSource the data source
+     */
     @Autowired
     public GiftCertificatesDAOImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);

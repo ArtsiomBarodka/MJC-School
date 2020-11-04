@@ -12,12 +12,20 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 
+/**
+ * The type Gift certificate tag dao.
+ */
 @Repository
 public class GiftCertificateTagDAOImpl implements GiftCertificateTagDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateTagDAOImpl.class);
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    /**
+     * Instantiates a new Gift certificate tag dao.
+     *
+     * @param dataSource the data source
+     */
     @Autowired
     public GiftCertificateTagDAOImpl(DataSource dataSource) {
         namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);

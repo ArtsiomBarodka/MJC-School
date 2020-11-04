@@ -12,6 +12,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+/**
+ * The type Tag with gift certificates extractor.
+ */
 public class TagWithGiftCertificatesExtractor implements ResultSetExtractor<Tag> {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 

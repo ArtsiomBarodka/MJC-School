@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * The type Tag service.
+ */
 @Service
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagServiceImpl.class);
@@ -23,6 +26,12 @@ public class TagServiceImpl implements TagService {
 
     private final GiftCertificateTagDAO giftCertificateTagDAO;
 
+    /**
+     * Instantiates a new Tag service.
+     *
+     * @param tagDAO                the tag dao
+     * @param giftCertificateTagDAO the gift certificate tag dao
+     */
     @Autowired
     public TagServiceImpl(TagDAO tagDAO, GiftCertificateTagDAO giftCertificateTagDAO) {
         this.tagDAO = tagDAO;

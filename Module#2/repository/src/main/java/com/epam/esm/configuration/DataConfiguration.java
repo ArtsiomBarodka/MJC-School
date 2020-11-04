@@ -12,6 +12,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 
+/**
+ * The type Data configuration.
+ */
 @Configuration
 @ComponentScan("com.epam.esm")
 @PropertySource("classpath:database.properties")
@@ -31,11 +34,21 @@ public class DataConfiguration {
     @Value("${connection.pool.maximumPoolSize}")
     private int maximumPoolSize;
 
+    /**
+     * Property sources placeholder configurer property sources placeholder configurer.
+     *
+     * @return the property sources placeholder configurer
+     */
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
+    /**
+     * Test data source data source.
+     *
+     * @return the data source
+     */
     @Bean("testDataSource")
     public DataSource testDataSource() {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
@@ -47,6 +60,11 @@ public class DataConfiguration {
                 .build();
     }
 
+    /**
+     * Data source data source.
+     *
+     * @return the data source
+     */
     @Bean("dataSource")
     public DataSource dataSource() {
         HikariDataSource hikariDataSource = new HikariDataSource();

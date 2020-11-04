@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.*;
 
+/**
+ * The type Tag dao.
+ */
 @Repository
 public class TagDAOImpl implements TagDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagDAOImpl.class);
@@ -21,6 +24,11 @@ public class TagDAOImpl implements TagDAO {
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
+    /**
+     * Instantiates a new Tag dao.
+     *
+     * @param dataSource the data source
+     */
     @Autowired
     public TagDAOImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);

@@ -12,6 +12,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * The type List gift certificates with tags extractor.
+ */
 public class ListGiftCertificatesWithTagsExtractor implements ResultSetExtractor<List<GiftCertificate>> {
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 
