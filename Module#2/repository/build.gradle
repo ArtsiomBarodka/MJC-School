@@ -7,6 +7,4 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.22'
     runtimeOnly 'com.h2database:h2:1.4.200'
     testImplementation 'org.assertj:assertj-core:3.18.0'
-
-
 }

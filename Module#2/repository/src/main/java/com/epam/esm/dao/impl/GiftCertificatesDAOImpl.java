@@ -39,9 +39,9 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public Optional<GiftCertificate> findById(Long id) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id where g.id = ? ";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id where certificate.id = ? ";
 
         try {
             return Optional.ofNullable(jdbcTemplate
@@ -69,9 +69,9 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public void update(GiftCertificate giftCertificate) throws RepositoryException {
-        String sql = "UPDATE certificate  AS g " +
-                "SET g.name = :name, g.description = :description, g.price = :price, g.duration = :duration " +
-                "WHERE g.id = :id";
+        String sql = "UPDATE certificate " +
+                "SET certificate.name = :name, certificate.description = :description, certificate.price = :price, certificate.duration = :duration " +
+                "WHERE certificate.id = :id";
 
         MapSqlParameterSource source = new MapSqlParameterSource();
         source.addValue("id", giftCertificate.getId());
@@ -118,69 +118,72 @@ public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
 
     @Override
     public List<GiftCertificate> getAllListGiftCertificatesSortByDateAsc() throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.create_date ASC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id ORDER BY certificate.create_date ASC";
 
         return getListGiftCertificates(sql);
     }
 
     @Override
     public List<GiftCertificate> getAllListGiftCertificatesSortByDateDesc() throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.create_date DESC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id ORDER BY certificate.create_date DESC";
+
         return getListGiftCertificates(sql);
     }
 
     @Override
     public List<GiftCertificate> getAllListGiftCertificatesSortByNameAsc() throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.name ASC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id ORDER BY certificate.name ASC";
+
         return getListGiftCertificates(sql);
     }
 
     @Override
     public List<GiftCertificate> getAllListGiftCertificatesSortByNameDesc() throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id ORDER BY g.name DESC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id ORDER BY certificate.name DESC";
+
         return getListGiftCertificates(sql);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateAsc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date ASC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id where tag.name = ? ORDER BY certificate.create_date ASC";
 
         return getListGiftCertificates(sql, tagName);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByDateDesc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.create_date DESC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id where tag.name = ? ORDER BY certificate.create_date DESC";
 
         return getListGiftCertificates(sql, tagName);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameAsc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name ASC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id " +
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id where tag.name = ? ORDER BY certificate.name ASC";
 
         return getListGiftCertificates(sql, tagName);
     }
 
     @Override
     public List<GiftCertificate> getListGiftCertificatesByTagNameSortByNameDesc(String tagName) throws RepositoryException {
-        String sql = "SELECT g.*, t.* FROM certificate AS g " +
-                "LEFT JOIN gift_certificate_tag AS gct ON g.id = gct.gift_certificate_id " +
-                "LEFT JOIN tag AS t ON gct.tag_id = t.id where t.name = ? ORDER BY g.name DESC";
+        String sql = "SELECT certificate.*, tag.* FROM certificate " +
+                "LEFT JOIN gift_certificate_tag ON certificate.id = gift_certificate_tag.gift_certificate_id "+
+                "LEFT JOIN tag ON gift_certificate_tag.tag_id = tag.id where tag.name = ? ORDER BY certificate.name DESC";
 
         return getListGiftCertificates(sql, tagName);
     }

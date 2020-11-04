@@ -1,7 +1,6 @@
 package com.epam.esm.configuration;
 
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -38,7 +37,6 @@ public class DataConfiguration {
     }
 
     @Bean("testDataSource")
-    @Qualifier("testDataSource")
     public DataSource testDataSource() {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         return builder

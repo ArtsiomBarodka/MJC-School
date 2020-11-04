@@ -31,9 +31,9 @@ public class TagDAOImpl implements TagDAO {
 
     @Override
     public Optional<Tag> findById(Long id) throws RepositoryException {
-        String sql = "SELECT t.*, g.* FROM tag AS t " +
-                "LEFT JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
-                "LEFT JOIN certificate AS g ON gct.gift_certificate_id = g.id where t.id = ?";
+        String sql = "SELECT tag.*, certificate.* FROM tag " +
+                "LEFT JOIN gift_certificate_tag ON tag.id = gift_certificate_tag.tag_id " +
+                "LEFT JOIN certificate ON gift_certificate_tag.gift_certificate_id = certificate.id where tag.id = ?";
 
         try {
             return Optional.ofNullable(jdbcTemplate.query(sql, new TagWithGiftCertificatesExtractor(), id));
@@ -58,9 +58,9 @@ public class TagDAOImpl implements TagDAO {
 
     @Override
     public List<Tag> getListTagsByGiftCertificateId(Long id) throws RepositoryException {
-        String sql = "SELECT t.*, g.* FROM tag AS t " +
-                "INNER JOIN gift_certificate_tag AS gct ON t.id = gct.tag_id " +
-                "INNER JOIN certificate AS g ON gct.gift_certificate_id = g.id where g.id = ?";
+        String sql = "SELECT tag.*, certificate.* FROM tag " +
+                "INNER JOIN gift_certificate_tag ON tag.id = gift_certificate_tag.tag_id " +
+                "INNER JOIN certificate ON gift_certificate_tag.gift_certificate_id = certificate.id where certificate.id = ?";
 
         try {
             List<Tag> result = jdbcTemplate.query(sql, new ListTagsWithGiftCertificatesExtractor(), id);

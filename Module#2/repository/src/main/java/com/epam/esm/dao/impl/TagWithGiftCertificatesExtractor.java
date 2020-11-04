@@ -22,20 +22,20 @@ public class TagWithGiftCertificatesExtractor implements ResultSetExtractor<Tag>
         while (rs.next()) {
             if (tag == null) {
                 tag = new Tag();
-                tag.setId(rs.getLong("t.id"));
-                tag.setName(rs.getString("t.name"));
+                tag.setId(rs.getLong("tag.id"));
+                tag.setName(rs.getString("tag.name"));
             }
 
-            long giftCertificateId = rs.getLong("g.id");
+            long giftCertificateId = rs.getLong("certificate.id");
             if (giftCertificateId > 0) {
                 GiftCertificate giftCertificate = new GiftCertificate();
                 giftCertificate.setId(giftCertificateId);
-                giftCertificate.setName(rs.getString("g.name"));
-                giftCertificate.setDescription(rs.getString("g.description"));
-                giftCertificate.setPrice(rs.getDouble("g.price"));
-                giftCertificate.setCreateDate(convertTimestampToString(rs.getTimestamp("g.create_date")));
-                giftCertificate.setLastUpdateDate(convertTimestampToString(rs.getTimestamp("g.last_update_date")));
-                giftCertificate.setDuration(rs.getInt("g.duration"));
+                giftCertificate.setName(rs.getString("certificate.name"));
+                giftCertificate.setDescription(rs.getString("certificate.description"));
+                giftCertificate.setPrice(rs.getDouble("certificate.price"));
+                giftCertificate.setCreateDate(convertTimestampToString(rs.getTimestamp("certificate.create_date")));
+                giftCertificate.setLastUpdateDate(convertTimestampToString(rs.getTimestamp("certificate.last_update_date")));
+                giftCertificate.setDuration(rs.getInt("certificate.duration"));
                 tag.addGiftCertificate(giftCertificate);
             }
         }
