@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 public class GiftCertificateTagDAOImpl implements GiftCertificateTagDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateTagDAOImpl.class);
 
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     /**
      * Instantiates a new Gift certificate tag dao.

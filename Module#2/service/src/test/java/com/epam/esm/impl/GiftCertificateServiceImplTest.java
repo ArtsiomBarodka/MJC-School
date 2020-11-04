@@ -326,7 +326,7 @@ public class GiftCertificateServiceImplTest {
      * @throws ResourceAlreadyExistException the resource already exist exception
      */
     @Test
-    void createTest_SHOULD_CREATE_GIFT_CERTIFICATE() throws RepositoryException, ServiceException, ResourceAlreadyExistException {
+    void createTest_SHOULD_CREATE_GIFT_CERTIFICATE() throws RepositoryException, ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
         Long expected = 1L;
 
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);

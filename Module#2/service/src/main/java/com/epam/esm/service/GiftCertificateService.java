@@ -68,7 +68,7 @@ public interface GiftCertificateService {
      * @throws ResourceAlreadyExistException the resource already exist exception
      */
     @NonNull
-    Long create(@NonNull GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException;
+    Long create(@NonNull GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException;
 
     /**
      * Update gift certificate.

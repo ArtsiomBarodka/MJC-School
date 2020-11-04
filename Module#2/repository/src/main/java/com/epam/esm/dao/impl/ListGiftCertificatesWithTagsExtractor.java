@@ -2,7 +2,6 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.ResultSet;
@@ -19,7 +18,7 @@ public class ListGiftCertificatesWithTagsExtractor implements ResultSetExtractor
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm'Z'";
 
     @Override
-    public List<GiftCertificate> extractData(ResultSet rs) throws SQLException, DataAccessException {
+    public List<GiftCertificate> extractData(ResultSet rs) throws SQLException {
         Map<Long, GiftCertificate> map = new LinkedHashMap<>();
         GiftCertificate giftCertificate;
 

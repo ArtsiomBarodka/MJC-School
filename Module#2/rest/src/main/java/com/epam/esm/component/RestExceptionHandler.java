@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -139,7 +140,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         StringBuilder errorCode = new StringBuilder("error.");
         errorCode.append(fe.getObjectName()).append(".");
         errorCode.append(fe.getField()).append(".");
-        errorCode.append(fe.getCode().toLowerCase());
+        errorCode.append(Objects.requireNonNull(fe.getCode()).toLowerCase());
 
         try {
             return messageSource.getMessage(errorCode.toString(), fe.getArguments(), LocaleContextHolder.getLocale());

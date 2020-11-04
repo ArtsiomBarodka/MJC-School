@@ -26,9 +26,9 @@ import java.util.Optional;
 public class GiftCertificatesDAOImpl implements GiftCertificateDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificatesDAOImpl.class);
 
-    private JdbcTemplate jdbcTemplate;
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     /**
      * Instantiates a new Gift certificates dao.

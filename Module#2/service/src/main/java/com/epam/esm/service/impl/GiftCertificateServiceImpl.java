@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.GiftCertificateTagDAO;
+import com.epam.esm.dao.TagDAO;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -28,9 +29,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateServiceImpl.class);
 
 
-    private GiftCertificateDAO giftCertificateDAO;
+    private final GiftCertificateDAO giftCertificateDAO;
 
-    private GiftCertificateTagDAO giftCertificateTagDAO;
+    private final GiftCertificateTagDAO giftCertificateTagDAO;
+
+    private final TagDAO tagDAO;
 
     /**
      * Instantiates a new Gift certificate service.
@@ -39,9 +42,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @param giftCertificateTagDAO the gift certificate tag dao
      */
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, GiftCertificateTagDAO giftCertificateTagDAO) {
+    public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO,
+                                      GiftCertificateTagDAO giftCertificateTagDAO,
+                                      TagDAO tagDAO) {
         this.giftCertificateDAO = giftCertificateDAO;
         this.giftCertificateTagDAO = giftCertificateTagDAO;
+        this.tagDAO = tagDAO;
     }
 
     @Override
@@ -179,8 +185,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
-    public Long create(GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException {
+    @Transactional(rollbackFor = Exception.class)
+    public Long create(GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
         try {
             if (giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())) {
                 LOGGER.warn("Gift certificate with name {} already exist", giftCertificate.getName());
@@ -188,6 +194,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             }
             Long id = giftCertificateDAO.create(giftCertificate);
             for (Tag t : giftCertificate.getTags()) {
+                if (!tagDAO.findById(t.getId()).isPresent()) {
+                    throw new ResourceNotFoundException(String.format("Tag with id %d is not exist", id));
+                }
                 giftCertificateTagDAO.saveGiftCertificateTag(id, t.getId());
             }
             return id;
@@ -198,7 +207,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public GiftCertificate update(GiftCertificate giftCertificate, Long id)
             throws ServiceException, ResourceNotFoundException {
 
@@ -216,6 +225,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             //add new tags to database if not exists in db and updated gift certificate has new
             for (Tag tag : newTags) {
                 if (!repositoryTags.contains(tag)) {
+                    if (!tagDAO.findById(tag.getId()).isPresent()) {
+                        throw new ResourceNotFoundException(String.format("Tag with id %d is not exist", id));
+                    }
                     giftCertificateTagDAO.saveGiftCertificateTag(id, tag.getId());
                 }
             }
@@ -237,7 +249,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws ServiceException, ResourceNotFoundException {
         try {
             if (!giftCertificateDAO.findById(id).isPresent()) {

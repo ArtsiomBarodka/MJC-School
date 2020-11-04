@@ -39,7 +39,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Long create(Tag tag) throws ResourceAlreadyExistException, ServiceException {
         try {
             if (tagDAO.isAlreadyExistByName(tag.getName())) {
@@ -58,7 +58,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) throws ServiceException, ResourceNotFoundException {
         try {
             if (!tagDAO.findById(id).isPresent()) {

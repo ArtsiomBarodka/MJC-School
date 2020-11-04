@@ -21,8 +21,8 @@ import java.util.*;
 public class TagDAOImpl implements TagDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagDAOImpl.class);
 
-    private JdbcTemplate jdbcTemplate;
-    private SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     /**
      * Instantiates a new Tag dao.

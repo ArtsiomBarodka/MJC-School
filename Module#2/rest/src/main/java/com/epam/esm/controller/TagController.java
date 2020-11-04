@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
  * The type Tag controller.
  */
 @Controller
-@RequestMapping("/tags")
+@RequestMapping("api/v1/tags")
 @Validated
 public class TagController {
     @Autowired
@@ -57,7 +57,7 @@ public class TagController {
 
         return ResponseEntity.created(
                 uriComponentsBuilder
-                        .path("/tags/{id}")
+                        .path("/api/v1/tags/{id}")
                         .buildAndExpand(tagService.create(tag))
                         .toUri())
                 .build();

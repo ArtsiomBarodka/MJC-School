@@ -21,7 +21,7 @@ import java.util.List;
  * The type Gift certificate controller.
  */
 @RestController
-@RequestMapping("/giftCertificates")
+@RequestMapping("api/v1/giftCertificates")
 @Validated
 public class GiftCertificateController {
     @Autowired
@@ -90,11 +90,11 @@ public class GiftCertificateController {
     @PostMapping
     public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate,
                                                         UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException {
+            throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
 
         return ResponseEntity.created(
                 uriComponentsBuilder
-                        .path("/giftCertificates/{id}")
+                        .path("/api/v1/giftCertificates/{id}")
                         .buildAndExpand(giftCertificateService.create(giftCertificate))
                         .toUri())
                 .build();
@@ -114,14 +114,14 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
                                                                          UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException {
+            throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
 
         try {
             return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
-                            .path("/giftCertificates/{id}")
+                            .path("/api/v1/giftCertificates/{id}")
                             .buildAndExpand(giftCertificateService.create(giftCertificate))
                             .toUri())
                     .build();
