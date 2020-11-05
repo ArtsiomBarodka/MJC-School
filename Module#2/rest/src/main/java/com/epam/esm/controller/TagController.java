@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -49,11 +50,12 @@ public class TagController {
      * @return the response entity
      * @throws ServiceException              the service exception
      * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
      */
     @PostMapping
     public ResponseEntity<Object> createTag(@RequestBody @Valid Tag tag,
                                             UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException {
+            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
 
         return ResponseEntity.created(
                 uriComponentsBuilder

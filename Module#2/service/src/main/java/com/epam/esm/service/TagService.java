@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -19,7 +20,7 @@ public interface TagService {
      * @throws ServiceException              the service exception
      */
     @NonNull
-    Long create(@NonNull Tag tag) throws ResourceAlreadyExistException, ServiceException;
+    Long create(@NonNull Tag tag) throws ResourceAlreadyExistException, ServiceException, BadParametersException;
 
     /**
      * Delete.

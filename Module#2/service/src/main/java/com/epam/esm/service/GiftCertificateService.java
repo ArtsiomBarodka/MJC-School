@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -68,7 +69,7 @@ public interface GiftCertificateService {
      * @throws ResourceAlreadyExistException the resource already exist exception
      */
     @NonNull
-    Long create(@NonNull GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException;
+    Long create(@NonNull GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException, BadParametersException;
 
     /**
      * Update gift certificate.
@@ -80,7 +81,7 @@ public interface GiftCertificateService {
      * @throws ResourceNotFoundException the resource not found exception
      */
     @NonNull
-    GiftCertificate update(@NonNull GiftCertificate giftCertificate, @NonNull Long id) throws ServiceException, ResourceNotFoundException;
+    GiftCertificate update(@NonNull GiftCertificate giftCertificate, @NonNull Long id) throws ServiceException, ResourceNotFoundException, BadParametersException;
 
     /**
      * Delete.

@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -86,11 +87,12 @@ public class GiftCertificateController {
      * @return the response entity
      * @throws ServiceException              the service exception
      * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
      */
     @PostMapping
     public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate,
                                                         UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
+            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
 
         return ResponseEntity.created(
                 uriComponentsBuilder
@@ -109,12 +111,13 @@ public class GiftCertificateController {
      * @return the response entity
      * @throws ServiceException              the service exception
      * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
      */
     @PutMapping("/{id}")
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
                                                                          UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
+            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
 
         try {
             return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));

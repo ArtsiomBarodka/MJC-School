@@ -1,9 +1,12 @@
 package com.epam.esm.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
+import com.epam.esm.dao.TagDAO;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.repository.RepositoryException;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -33,6 +36,8 @@ import static org.mockito.Mockito.*;
 public class GiftCertificateServiceImplTest {
     @Mock
     private GiftCertificateDAO giftCertificateDAO;
+    @Mock
+    private TagDAO tagDAO;
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
 
@@ -319,14 +324,44 @@ public class GiftCertificateServiceImplTest {
     }
 
     /**
+     * Create test current tag is not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
+    @Test
+    void createTest_CURRENT_TAG_IS_NOT_EXIST() throws RepositoryException {
+        GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
+        Tag tagMock = mock(Tag.class);
+
+        when(giftCertificateMock.getName()).thenReturn("");
+        when(giftCertificateMock.getTags()).thenReturn(List.of(tagMock));
+        when(tagMock.getId()).thenReturn(1L);
+
+        when(giftCertificateDAO.isAlreadyExistByName(anyString()))
+                .thenReturn(false);
+
+        when(giftCertificateDAO.create(any(GiftCertificate.class)))
+                .thenReturn(1L);
+
+        when(tagDAO.findById(any(Long.TYPE)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(BadParametersException.class, () -> {
+            giftCertificateService.create(giftCertificateMock);
+        });
+    }
+
+    /**
      * Create test should create gift certificate.
      *
      * @throws RepositoryException           the repository exception
      * @throws ServiceException              the service exception
      * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws ResourceNotFoundException     the resource not found exception
+     * @throws BadParametersException        the bad parameters exception
      */
     @Test
-    void createTest_SHOULD_CREATE_GIFT_CERTIFICATE() throws RepositoryException, ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
+    void createTest_SHOULD_CREATE_GIFT_CERTIFICATE() throws RepositoryException, ServiceException, ResourceAlreadyExistException, ResourceNotFoundException, BadParametersException {
         Long expected = 1L;
 
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
@@ -385,9 +420,10 @@ public class GiftCertificateServiceImplTest {
      * @throws RepositoryException       the repository exception
      * @throws ResourceNotFoundException the resource not found exception
      * @throws ServiceException          the service exception
+     * @throws BadParametersException    the bad parameters exception
      */
     @Test
-    void updateTest_SHOULD_UPDATE_GIFT_CERTIFICATE() throws RepositoryException, ResourceNotFoundException, ServiceException {
+    void updateTest_SHOULD_UPDATE_GIFT_CERTIFICATE() throws RepositoryException, ResourceNotFoundException, ServiceException, BadParametersException {
         Long id = 1L;
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
 

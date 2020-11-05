@@ -1,5 +1,6 @@
 package com.epam.esm.component;
 
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -29,6 +30,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String EXCEPTION_ERROR_CODE = "00";
     private static final String RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION = "Exception.resourceNotFound";
     private static final String RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION = "Exception.resourceAlreadyExist";
+    private static final String BAD_PARAMETERS_MESSAGE_EXCEPTION = "Exception.badParameters";
     private static final String SERVICE_MESSAGE_EXCEPTION = "Exception.service";
     private static final String MESSAGE_EXCEPTION = "Exception.service";
 
@@ -71,6 +73,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String message = messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION, null, locale);
         String errorCode = HttpStatus.CONFLICT.value() + ex.getErrorCode();
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.CONFLICT, message, errorCode);
+        return buildResponseEntity(apiErrorResponse);
+    }
+
+    /**
+     * Handle bad parameters exception response entity.
+     *
+     * @param ex     the ex
+     * @param locale the locale
+     * @return the response entity
+     */
+    @ExceptionHandler(value = BadParametersException.class)
+    protected ResponseEntity<Object> handleBadParametersException(BadParametersException ex, Locale locale) {
+        String message = messageSource.getMessage(BAD_PARAMETERS_MESSAGE_EXCEPTION, null, locale);
+        String errorCode = HttpStatus.BAD_REQUEST.value() + ex.getErrorCode();
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, message, errorCode);
         return buildResponseEntity(apiErrorResponse);
     }
 

@@ -7,6 +7,7 @@ import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.repository.RepositoryException;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -186,17 +187,27 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long create(GiftCertificate giftCertificate) throws ServiceException, ResourceAlreadyExistException, ResourceNotFoundException {
+    public Long create(GiftCertificate giftCertificate)
+            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
         try {
+            //check if the gift certificate name already has in repository (must be unique)
             if (giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())) {
                 LOGGER.warn("Gift certificate with name {} already exist", giftCertificate.getName());
                 throw new ResourceAlreadyExistException(String.format("Gift certificate with name %s already exist", giftCertificate.getName()));
             }
+
+            //save gift certificate to repository
             Long id = giftCertificateDAO.create(giftCertificate);
+
+            //save relationship to repository
             for (Tag t : giftCertificate.getTags()) {
+
+                //check if the current tag is exist in repository
                 if (!tagDAO.findById(t.getId()).isPresent()) {
-                    throw new ResourceNotFoundException(String.format("Tag with id %d is not exist", id));
+                    LOGGER.warn("Tag with id {} is not exist", t.getId());
+                    throw new BadParametersException(String.format("Tag with id %d is not exist", t.getId()));
                 }
+
                 giftCertificateTagDAO.saveGiftCertificateTag(id, t.getId());
             }
             return id;
@@ -209,36 +220,39 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public GiftCertificate update(GiftCertificate giftCertificate, Long id)
-            throws ServiceException, ResourceNotFoundException {
+            throws ServiceException, ResourceNotFoundException, BadParametersException {
 
         try {
+            //check if the gift certificate exist in repository
             GiftCertificate repositoryGiftCertificate = giftCertificateDAO.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(String.format("Gift certificate with id %d is not exist", id)));
 
-            //update gift certificates fields without tags
+            //update gift certificates without tags
             giftCertificate.setId(id);
             giftCertificateDAO.update(giftCertificate);
 
             List<Tag> repositoryTags = repositoryGiftCertificate.getTags();
             List<Tag> newTags = giftCertificate.getTags();
 
-            //add new tags to database if not exists in db and updated gift certificate has new
+            //add new tags to database if not exists in db and exists in updated gift certificate
             for (Tag tag : newTags) {
                 if (!repositoryTags.contains(tag)) {
+
+                    //check if the current tag is exist in repository
                     if (!tagDAO.findById(tag.getId()).isPresent()) {
-                        throw new ResourceNotFoundException(String.format("Tag with id %d is not exist", id));
+                        LOGGER.warn("Tag with id {} is not exist", tag.getId());
+                        throw new BadParametersException(String.format("Tag with id %d is not exist", tag.getId()));
                     }
                     giftCertificateTagDAO.saveGiftCertificateTag(id, tag.getId());
                 }
             }
 
-            //delete tags from database if exists in db and updated gift certificate hasn`t
+            //delete tags from database if exists in db and not exists in updated gift certificate
             for (Tag repositoryTag : repositoryTags) {
                 if (!newTags.contains(repositoryTag)) {
                     giftCertificateTagDAO.deleteGiftCertificateTag(id, repositoryTag.getId());
                 }
             }
-
 
             return giftCertificateDAO.findById(id)
                     .orElseThrow(() -> new ServiceException("Can`t find gift certificate after update in service layer."));

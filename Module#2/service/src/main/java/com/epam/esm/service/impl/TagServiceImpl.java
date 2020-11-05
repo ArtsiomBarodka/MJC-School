@@ -1,10 +1,12 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.GiftCertificateTagDAO;
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.repository.RepositoryException;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -23,7 +25,7 @@ public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagServiceImpl.class);
 
     private final TagDAO tagDAO;
-
+    private final GiftCertificateDAO giftCertificateDAO;
     private final GiftCertificateTagDAO giftCertificateTagDAO;
 
     /**
@@ -33,23 +35,39 @@ public class TagServiceImpl implements TagService {
      * @param giftCertificateTagDAO the gift certificate tag dao
      */
     @Autowired
-    public TagServiceImpl(TagDAO tagDAO, GiftCertificateTagDAO giftCertificateTagDAO) {
+    public TagServiceImpl(TagDAO tagDAO,
+                          GiftCertificateTagDAO giftCertificateTagDAO,
+                          GiftCertificateDAO giftCertificateDAO) {
         this.tagDAO = tagDAO;
         this.giftCertificateTagDAO = giftCertificateTagDAO;
+        this.giftCertificateDAO = giftCertificateDAO;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long create(Tag tag) throws ResourceAlreadyExistException, ServiceException {
+    public Long create(Tag tag) throws ResourceAlreadyExistException, ServiceException, BadParametersException {
         try {
+            //check if the tag name already has in repository (must be unique)
             if (tagDAO.isAlreadyExistByName(tag.getName())) {
                 LOGGER.warn("Tag with name {} already exist", tag.getName());
                 throw new ResourceAlreadyExistException(String.format("Tag with name %s already exist", tag.getName()));
             }
+
+            //save tag to repository
             Long id = tagDAO.create(tag);
+
+            //save relationship to repository
             for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
+
+                //check if the current gift certificate is exist in repository
+                if (!giftCertificateDAO.findById(giftCertificate.getId()).isPresent()) {
+                    LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
+                    throw new BadParametersException(String.format("Gift certificate with id %d is not exist", giftCertificate.getId()));
+                }
+
                 giftCertificateTagDAO.saveGiftCertificateTag(giftCertificate.getId(), id);
             }
+
             return id;
         } catch (RepositoryException ex) {
             LOGGER.error("Can`t create tag in service layer.", ex);

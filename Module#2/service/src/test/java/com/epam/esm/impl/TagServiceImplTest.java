@@ -1,8 +1,11 @@
 package com.epam.esm.impl;
 
+import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.repository.RepositoryException;
+import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
@@ -14,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +34,8 @@ import static org.mockito.Mockito.when;
 public class TagServiceImplTest {
     @Mock
     private TagDAO tagDAO;
+    @Mock
+    private GiftCertificateDAO giftCertificateDAO;
     /**
      * The Tag service.
      */
@@ -75,14 +81,43 @@ public class TagServiceImplTest {
     }
 
     /**
+     * Create test current gift certificate is not exist.
+     *
+     * @throws RepositoryException the repository exception
+     */
+    @Test
+    void createTest_CURRENT_GIFT_CERTIFICATE_IS_NOT_EXIST() throws RepositoryException {
+        Tag tagMock = mock(Tag.class);
+        GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
+
+        when(tagMock.getName()).thenReturn("");
+        when(tagMock.getGiftCertificates()).thenReturn(List.of(giftCertificateMock));
+        when(giftCertificateMock.getId()).thenReturn(1L);
+
+        when(tagDAO.isAlreadyExistByName(anyString()))
+                .thenReturn(false);
+
+        when(tagDAO.create(any(Tag.class)))
+                .thenReturn(1L);
+
+        when(giftCertificateDAO.findById(any(Long.TYPE)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(BadParametersException.class, () -> {
+            tagService.create(tagMock);
+        });
+    }
+
+    /**
      * Create test should create tag.
      *
      * @throws RepositoryException           the repository exception
      * @throws ServiceException              the service exception
      * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
      */
     @Test
-    void createTest_SHOULD_CREATE_TAG() throws RepositoryException, ServiceException, ResourceAlreadyExistException {
+    void createTest_SHOULD_CREATE_TAG() throws RepositoryException, ServiceException, ResourceAlreadyExistException, BadParametersException {
         Long expected = 1L;
 
         Tag tagMock = mock(Tag.class);
