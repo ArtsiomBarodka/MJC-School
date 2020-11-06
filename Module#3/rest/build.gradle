@@ -1,14 +1,12 @@
-plugins {
-    id 'java'
-}
-
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation project(':model')
+    implementation project(':service')
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+}
+
+bootJar {
+    enabled = true
 }

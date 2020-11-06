@@ -1,14 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'org.springframework.boot' version "2.3.5.RELEASE"
+    id 'io.spring.dependency-management' version "1.0.10.RELEASE"
 }
 
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
+allprojects{
+    group 'com.epam.esm'
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+
+    ext{
+        lombokVersion = "1.18.16"
+        beanValidationVersion = "2.0.1.Final"
+    }
+
+    dependencies {
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    }
+
+    test {
+        useTestNG()
+        useJUnitPlatform()
+    }
 }
+
+bootJar {
+    enabled = false
+}
+
+
