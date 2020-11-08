@@ -11,7 +11,6 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
  * The type Mvc configuration.
  */
 @Configuration
-@ComponentScan("com.epam.esm")
 public class MVCConfiguration {
 
     /**

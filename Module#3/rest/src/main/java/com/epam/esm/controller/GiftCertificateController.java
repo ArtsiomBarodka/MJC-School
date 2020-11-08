@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.domain.PatchGiftCertificate;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.service.BadParametersException;
@@ -8,7 +9,6 @@ import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -130,6 +130,16 @@ public class GiftCertificateController {
                             .toUri())
                     .build();
         }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updatePartOfGiftCertificate(@PathVariable("id") @Min(1) Long id,
+                                                              @RequestBody @Valid PatchGiftCertificate patchGiftCertificate)
+            throws ResourceNotFoundException, ServiceException, BadParametersException {
+
+        GiftCertificate existingGiftCertificates = giftCertificateService.getGiftCertificatesById(id);
+        patchGiftCertificate.mergeToEntity(existingGiftCertificates);
+        return ResponseEntity.ok(giftCertificateService.update(existingGiftCertificates, id));
     }
 
     /**
