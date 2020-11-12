@@ -1,11 +1,14 @@
 package com.epam.esm.domain;
 
+
 import java.util.Arrays;
 
 /**
  * The enum Sort mode.
  */
 public enum SortMode {
+    ID_ASC,
+    ID_DESC,
     /**
      * Date asc sort mode.
      */
@@ -33,6 +36,6 @@ public enum SortMode {
         return Arrays.stream(SortMode.values())
                 .filter(v -> v.name().equalsIgnoreCase(name))
                 .findFirst()
-                .orElse(DATE_ASC);
+                .orElse(ID_ASC);
     }
 }

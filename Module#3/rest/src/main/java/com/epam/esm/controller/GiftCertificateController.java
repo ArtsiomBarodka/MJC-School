@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.domain.Pageable;
 import com.epam.esm.domain.PatchGiftCertificate;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
@@ -16,12 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/**
- * The type Gift certificate controller.
- */
 @RestController
 @RequestMapping("api/v1/giftCertificates")
 @Validated
@@ -29,71 +27,35 @@ public class GiftCertificateController {
     @Autowired
     private GiftCertificateService giftCertificateService;
 
-    /**
-     * Gets gift certificate.
-     *
-     * @param id the id
-     * @return the gift certificate
-     * @throws ResourceNotFoundException the resource not found exception
-     * @throws ServiceException          the service exception
-     */
     @GetMapping("/{id}")
-    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id)
-            throws ResourceNotFoundException, ServiceException {
-
+    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id) throws ResourceNotFoundException {
         return ResponseEntity.ok(giftCertificateService.getGiftCertificatesById(id));
     }
 
-    /**
-     * Gets list gift certificates by tag name.
-     *
-     * @param tagName the tag name
-     * @param sort    the sort
-     * @return the list gift certificates by tag name
-     * @throws ResourceNotFoundException the resource not found exception
-     * @throws ServiceException          the service exception
-     */
+
     @GetMapping("/tags")
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagName(@RequestParam(value = "name") @NotEmpty String tagName,
-                                                                                  @RequestParam(required = false) String sort)
-            throws ResourceNotFoundException, ServiceException {
-        return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagName(tagName, SortMode.of(sort)));
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") @NotNull List<String> tagNames,
+                                                                                   @RequestParam(required = false) String sort,
+                                                                                   @RequestParam(required = false) @Min(0) Integer page,
+                                                                                   @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
+        Pageable pageable = new Pageable(page, size);
+        return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagNames(tagNames, pageable, SortMode.of(sort)));
     }
 
-    /**
-     * Gets list gift certificates.
-     *
-     * @param query the query
-     * @param sort  the sort
-     * @return the list gift certificates
-     * @throws ResourceNotFoundException the resource not found exception
-     * @throws ServiceException          the service exception
-     */
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificates(@RequestParam(required = false) String query,
-                                                                         @RequestParam(required = false) String sort)
-            throws ResourceNotFoundException, ServiceException {
-        if (query == null) {
-            return ResponseEntity.ok(giftCertificateService.getAllListGiftCertificatesWithTags(SortMode.of(sort)));
-        } else {
-            return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsBySearch(query, SortMode.of(sort)));
-        }
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificates(@RequestParam(required = false) String sort,
+                                                                         @RequestParam(required = false) @Min(0) Integer page,
+                                                                         @RequestParam(required = false) @Min(1) Integer size)
+            throws ResourceNotFoundException {
+        Pageable pageable = new Pageable(page, size);
+        return ResponseEntity.ok(giftCertificateService.getAllListGiftCertificatesWithTags(pageable, SortMode.of(sort)));
     }
 
-    /**
-     * Create gift certificate response entity.
-     *
-     * @param giftCertificate      the gift certificate
-     * @param uriComponentsBuilder the uri components builder
-     * @return the response entity
-     * @throws ServiceException              the service exception
-     * @throws ResourceAlreadyExistException the resource already exist exception
-     * @throws BadParametersException        the bad parameters exception
-     */
+
     @PostMapping
     public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate,
                                                         UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
+            throws ResourceAlreadyExistException, BadParametersException {
 
         return ResponseEntity.created(
                 uriComponentsBuilder
@@ -103,22 +65,11 @@ public class GiftCertificateController {
                 .build();
     }
 
-    /**
-     * Update or create gift certificate response entity.
-     *
-     * @param id                   the id
-     * @param giftCertificate      the gift certificate
-     * @param uriComponentsBuilder the uri components builder
-     * @return the response entity
-     * @throws ServiceException              the service exception
-     * @throws ResourceAlreadyExistException the resource already exist exception
-     * @throws BadParametersException        the bad parameters exception
-     */
     @PutMapping("/{id}")
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
                                                                          UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
+            throws ResourceAlreadyExistException, BadParametersException {
 
         try {
             return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
@@ -142,17 +93,9 @@ public class GiftCertificateController {
         return ResponseEntity.ok(giftCertificateService.update(existingGiftCertificates, id));
     }
 
-    /**
-     * Delete gift certificate response entity.
-     *
-     * @param id the id
-     * @return the response entity
-     * @throws ServiceException          the service exception
-     * @throws ResourceNotFoundException the resource not found exception
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @Min(1) Long id)
-            throws ServiceException, ResourceNotFoundException {
+            throws ResourceNotFoundException {
 
         giftCertificateService.delete(id);
         return ResponseEntity.noContent().build();

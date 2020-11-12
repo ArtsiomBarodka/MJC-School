@@ -1,5 +1,8 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.PatchTag;
+import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
@@ -7,7 +10,6 @@ import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -17,10 +19,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
-/**
- * The type Tag controller.
- */
 @Controller
 @RequestMapping("api/v1/tags")
 @Validated
@@ -28,35 +28,36 @@ public class TagController {
     @Autowired
     private TagService tagService;
 
-    /**
-     * Gets tag by id.
-     *
-     * @param id the id
-     * @return the tag by id
-     * @throws ResourceNotFoundException the resource not found exception
-     * @throws ServiceException          the service exception
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
-            throws ResourceNotFoundException, ServiceException {
+            throws ResourceNotFoundException {
 
         return ResponseEntity.ok(tagService.getTagById(id));
     }
 
-    /**
-     * Create tag response entity.
-     *
-     * @param tag                  the tag
-     * @param uriComponentsBuilder the uri components builder
-     * @return the response entity
-     * @throws ServiceException              the service exception
-     * @throws ResourceAlreadyExistException the resource already exist exception
-     * @throws BadParametersException        the bad parameters exception
-     */
+    @GetMapping
+    public ResponseEntity<List<Tag>> getListTags(@RequestParam(required = false) String sort,
+                                                 @RequestParam(required = false) @Min(0) Integer page,
+                                                 @RequestParam(required = false) @Min(1) Integer size)
+            throws ResourceNotFoundException {
+        Pageable pageable = new Pageable(page, size);
+        return ResponseEntity.ok(tagService.getListAllTagsWithGiftCertificates(pageable, SortMode.of(sort)));
+    }
+
+    @GetMapping("/giftCertificates")
+    public ResponseEntity<List<Tag>> getListTagsByGiftCertificatesById(@RequestParam @NotNull @Min(1) Long id,
+                                                                       @RequestParam(required = false) String sort,
+                                                                       @RequestParam(required = false) @Min(0) Integer page,
+                                                                       @RequestParam(required = false) @Min(1) Integer size)
+            throws ResourceNotFoundException {
+        Pageable pageable = new Pageable(page, size);
+        return ResponseEntity.ok(tagService.getListTagsWithGiftCertificatesByGiftCertificateId(id, pageable, SortMode.of(sort)));
+    }
+
     @PostMapping
     public ResponseEntity<Object> createTag(@RequestBody @Valid Tag tag,
                                             UriComponentsBuilder uriComponentsBuilder)
-            throws ServiceException, ResourceAlreadyExistException, BadParametersException {
+            throws ResourceAlreadyExistException, BadParametersException {
 
         return ResponseEntity.created(
                 uriComponentsBuilder
@@ -66,17 +67,38 @@ public class TagController {
                 .build();
     }
 
-    /**
-     * Delete tag response entity.
-     *
-     * @param id the id
-     * @return the response entity
-     * @throws ResourceNotFoundException the resource not found exception
-     * @throws ServiceException          the service exception
-     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Tag> updateOrCreateTag(@PathVariable("id") @Min(1) Long id,
+                                                 @RequestBody @Valid Tag tag,
+                                                 UriComponentsBuilder uriComponentsBuilder)
+            throws ResourceAlreadyExistException, BadParametersException {
+
+        try {
+            return ResponseEntity.ok(tagService.update(tag, id));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.created(
+                    uriComponentsBuilder
+                            .path("/api/v1/tags/{id}")
+                            .buildAndExpand(tagService.create(tag))
+                            .toUri())
+                    .build();
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updatePartOfTag(@PathVariable("id") @Min(1) Long id,
+                                                  @RequestBody @Valid PatchTag patchTag)
+            throws ResourceNotFoundException, ServiceException, BadParametersException {
+
+        Tag existingTag = tagService.getTagById(id);
+        patchTag.mergeToEntity(existingTag);
+        return ResponseEntity.ok(tagService.update(existingTag, id));
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTag(@PathVariable @NotNull @Min(1) Long id)
-            throws ResourceNotFoundException, ServiceException {
+            throws ResourceNotFoundException {
 
         tagService.delete(id);
         return ResponseEntity.noContent().build();
