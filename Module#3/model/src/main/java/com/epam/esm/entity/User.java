@@ -10,14 +10,17 @@ import java.util.List;
 
 @Entity
 @Data
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     @Size(min = 3, max = 20)
     @EnglishLanguage(withSpecSymbols = false, withPunctuations = false)
     private String name;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Order> orders;
 }

@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.service.BadParametersException;
@@ -13,10 +13,10 @@ import java.util.List;
 public interface GiftCertificateService {
 
     @NonNull
-    List<GiftCertificate> getAllListGiftCertificatesWithTags(@NonNull Pageable pageable, @NonNull SortMode sortMode) throws ResourceNotFoundException;
+    List<GiftCertificate> getAllListGiftCertificatesWithTags(@NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
 
     @NonNull
-    List<GiftCertificate> getListGiftCertificatesWithTagsByTagNames(@NonNull List<String> tagName, @NonNull Pageable pageable, @NonNull SortMode sortMode) throws ResourceNotFoundException;
+    List<GiftCertificate> getListGiftCertificatesWithTagsByTagNames(@NonNull List<String> tagName, @NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
 
     @NonNull
     GiftCertificate getGiftCertificatesById(@NonNull Long id) throws ResourceNotFoundException;

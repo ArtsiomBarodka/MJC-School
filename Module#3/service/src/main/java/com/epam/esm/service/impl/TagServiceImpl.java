@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -46,10 +46,10 @@ public class TagServiceImpl implements TagService {
 
         for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
             //check if the current gift certificate is exist in repository
-            savedTag.addGiftCertificates(giftCertificateDAO.findById(giftCertificate.getId()).orElseThrow(()->{
-                LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
-                return new BadParametersException(String.format("Gift certificate with id %d is not exist", giftCertificate.getId()));
-            }));
+//            savedTag.addGiftCertificates(giftCertificateDAO.findById(giftCertificate.getId()).orElseThrow(()->{
+//                LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
+//                return new BadParametersException(String.format("Gift certificate with id %d is not exist", giftCertificate.getId()));
+//            }));
         }
 
         return savedTag.getId();
@@ -101,23 +101,23 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getListAllTagsWithGiftCertificates(Pageable pageable, SortMode sortMode) throws ResourceNotFoundException {
+    public List<Tag> getListAllTagsWithGiftCertificates(Page page, SortMode sortMode) throws ResourceNotFoundException {
         List<Tag> result;
         switch (sortMode) {
             case ID_ASC:
-                result = tagDAO.listAllTagsSortByIdAsc(pageable);
+                result = tagDAO.listAllTagsSortByIdAsc(page);
                 break;
 
             case ID_DESC:
-                result = tagDAO.listAllTagsSortByIdDesc(pageable);
+                result = tagDAO.listAllTagsSortByIdDesc(page);
                 break;
 
             case NAME_ASC:
-                result = tagDAO.listAllTagsSortByNameAsc(pageable);
+                result = tagDAO.listAllTagsSortByNameAsc(page);
                 break;
 
             case NAME_DESC:
-                result = tagDAO.listAllTagsSortByNameDesc(pageable);
+                result = tagDAO.listAllTagsSortByNameDesc(page);
                 break;
 
             default:
@@ -133,23 +133,23 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(Long id, Pageable pageable, SortMode sortMode) throws ResourceNotFoundException {
+    public List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(Long id, Page page, SortMode sortMode) throws ResourceNotFoundException {
         List<Tag> result;
         switch (sortMode) {
             case ID_ASC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByIdAsc(id, pageable);
+                result = tagDAO.listTagsByGiftCertificateIdSortByIdAsc(id, page);
                 break;
 
             case ID_DESC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByIdDesc(id, pageable);
+                result = tagDAO.listTagsByGiftCertificateIdSortByIdDesc(id, page);
                 break;
 
             case NAME_ASC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByNameAsc(id, pageable);
+                result = tagDAO.listTagsByGiftCertificateIdSortByNameAsc(id, page);
                 break;
 
             case NAME_DESC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByNameDesc(id, pageable);
+                result = tagDAO.listTagsByGiftCertificateIdSortByNameDesc(id, page);
                 break;
 
             default:

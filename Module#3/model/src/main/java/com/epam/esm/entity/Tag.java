@@ -29,7 +29,7 @@ public class Tag {
     private String name;
 
     @JsonIgnoreProperties("tags")
-    @ManyToMany(mappedBy = "tags", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<GiftCertificate> giftCertificates;
 
 

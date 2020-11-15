@@ -3,24 +3,24 @@ package com.epam.esm.domain;
 import lombok.Data;
 
 @Data
-public class Pageable {
+public class Page {
     private static final Integer SIZE_DEFAULT = 20;
     private static final Integer PAGE_DEFAULT = 0;
 
     private Integer page;
     private Integer size;
 
-    public Pageable(Integer page, Integer size) {
+    public Page(Integer page, Integer size) {
         setPageOrDefault(page);
         setSizeOrDefault(size);
     }
 
-    public Pageable(Integer page) {
+    public Page(Integer page) {
         setPageOrDefault(page);
         this.size = SIZE_DEFAULT;
     }
 
-    public Pageable() {
+    public Page() {
         this.page = PAGE_DEFAULT;
         this.size = SIZE_DEFAULT;
     }

@@ -1,6 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.domain.PatchTag;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.Tag;
@@ -40,7 +40,7 @@ public class TagController {
                                                  @RequestParam(required = false) @Min(0) Integer page,
                                                  @RequestParam(required = false) @Min(1) Integer size)
             throws ResourceNotFoundException {
-        Pageable pageable = new Pageable(page, size);
+        Page pageable = new Page(page, size);
         return ResponseEntity.ok(tagService.getListAllTagsWithGiftCertificates(pageable, SortMode.of(sort)));
     }
 
@@ -50,7 +50,7 @@ public class TagController {
                                                                        @RequestParam(required = false) @Min(0) Integer page,
                                                                        @RequestParam(required = false) @Min(1) Integer size)
             throws ResourceNotFoundException {
-        Pageable pageable = new Pageable(page, size);
+        Page pageable = new Page(page, size);
         return ResponseEntity.ok(tagService.getListTagsWithGiftCertificatesByGiftCertificateId(id, pageable, SortMode.of(sort)));
     }
 

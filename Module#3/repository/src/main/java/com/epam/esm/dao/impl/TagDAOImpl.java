@@ -1,8 +1,7 @@
-package com.epam.esm.impl;
+package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.domain.Pageable;
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.domain.Page;
 import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Repository;
 
@@ -66,51 +65,51 @@ public class TagDAOImpl implements TagDAO {
     }
 
     @Override
-    public List<Tag> listAllTagsSortByIdAsc(Pageable pageable) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_ID_ASC, pageable, null);
+    public List<Tag> listAllTagsSortByIdAsc(Page page) {
+        return getListTags(ALL_TAGS_QUERY_SORT_BY_ID_ASC, page, null);
     }
 
     @Override
-    public List<Tag> listAllTagsSortByIdDesc(Pageable pageable) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_ID_DESC, pageable, null);
+    public List<Tag> listAllTagsSortByIdDesc(Page page) {
+        return getListTags(ALL_TAGS_QUERY_SORT_BY_ID_DESC, page, null);
     }
 
     @Override
-    public List<Tag> listAllTagsSortByNameAsc(Pageable pageable) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_NAME_ASC, pageable, null);
+    public List<Tag> listAllTagsSortByNameAsc(Page page) {
+        return getListTags(ALL_TAGS_QUERY_SORT_BY_NAME_ASC, page, null);
     }
 
     @Override
-    public List<Tag> listAllTagsSortByNameDesc(Pageable pageable) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_NAME_DESC, pageable, null);
+    public List<Tag> listAllTagsSortByNameDesc(Page page) {
+        return getListTags(ALL_TAGS_QUERY_SORT_BY_NAME_DESC, page, null);
     }
 
     @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByIdAsc(Long giftCertificateId, Pageable pageable) {
+    public List<Tag> listTagsByGiftCertificateIdSortByIdAsc(Long giftCertificateId, Page page) {
         Map<String, Object> params = new HashMap<>();
         params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_ASC, pageable, params);
+        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_ASC, page, params);
     }
 
     @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByIdDesc(Long giftCertificateId, Pageable pageable) {
+    public List<Tag> listTagsByGiftCertificateIdSortByIdDesc(Long giftCertificateId, Page page) {
         Map<String, Object> params = new HashMap<>();
         params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_DESC, pageable, params);
+        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_DESC, page, params);
     }
 
     @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByNameAsc(Long giftCertificateId, Pageable pageable) {
+    public List<Tag> listTagsByGiftCertificateIdSortByNameAsc(Long giftCertificateId, Page page) {
         Map<String, Object> params = new HashMap<>();
         params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_ASC, pageable, params);
+        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_ASC, page, params);
     }
 
     @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByNameDesc(Long giftCertificateId, Pageable pageable) {
+    public List<Tag> listTagsByGiftCertificateIdSortByNameDesc(Long giftCertificateId, Page page) {
         Map<String, Object> params = new HashMap<>();
         params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_DESC, pageable, params);
+        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_DESC, page, params);
     }
 
     public Long allTagsCount() {
@@ -124,10 +123,10 @@ public class TagDAOImpl implements TagDAO {
         return (Long) query.getSingleResult();
     }
 
-    private List<Tag> getListTags(String sql, Pageable pageable, Map<String, Object> params) {
+    private List<Tag> getListTags(String sql, Page page, Map<String, Object> params) {
         TypedQuery<Tag> query = entityManager.createQuery(sql, Tag.class);
-        query.setFirstResult(pageable.getOffset());
-        query.setMaxResults(pageable.getSize());
+        query.setFirstResult(page.getOffset());
+        query.setMaxResults(page.getSize());
         if (params != null) {
             params.forEach(query::setParameter);
         }

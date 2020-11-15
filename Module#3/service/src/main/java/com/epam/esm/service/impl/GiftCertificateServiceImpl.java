@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -14,11 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,31 +33,31 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private TagDAO tagDAO;
 
     @Override
-    public List<GiftCertificate> getAllListGiftCertificatesWithTags(Pageable pageable, SortMode sortMode) throws ResourceNotFoundException {
+    public List<GiftCertificate> getAllListGiftCertificatesWithTags(Page page, SortMode sortMode) throws ResourceNotFoundException {
         List<GiftCertificate> result;
         switch (sortMode) {
             case ID_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByIdAsc(pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesSortByIdAsc(page);
                 break;
 
             case ID_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByIdDesc(pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesSortByIdDesc(page);
                 break;
 
             case DATE_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByDateAsc(pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesSortByDateAsc(page);
                 break;
 
             case DATE_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByDateDesc(pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesSortByDateDesc(page);
                 break;
 
             case NAME_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByNameAsc(pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesSortByNameAsc(page);
                 break;
 
             case NAME_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByNameDesc(pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesSortByNameDesc(page);
                 break;
 
             default:
@@ -77,33 +74,33 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GiftCertificate> getListGiftCertificatesWithTagsByTagNames(List<String> tagName, Pageable pageable, SortMode sortMode)
+    public List<GiftCertificate> getListGiftCertificatesWithTagsByTagNames(List<String> tagName, Page page, SortMode sortMode)
             throws ResourceNotFoundException {
 
         List<GiftCertificate> result;
         switch (sortMode) {
             case ID_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByIdAsc(tagName, pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByIdAsc(tagName, page);
                 break;
 
             case ID_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByIdDesc(tagName, pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByIdDesc(tagName, page);
                 break;
 
             case DATE_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByDateAsc(tagName, pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByDateAsc(tagName, page);
                 break;
 
             case DATE_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByDateDesc(tagName, pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByDateDesc(tagName, page);
                 break;
 
             case NAME_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByNameAsc(tagName, pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByNameAsc(tagName, page);
                 break;
 
             case NAME_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByNameDesc(tagName, pageable);
+                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByNameDesc(tagName, page);
                 break;
 
             default:

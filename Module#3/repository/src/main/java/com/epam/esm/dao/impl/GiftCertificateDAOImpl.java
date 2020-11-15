@@ -1,7 +1,7 @@
-package com.epam.esm.impl;
+package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.stereotype.Repository;
 
@@ -39,6 +39,13 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
+    public GiftCertificate update(GiftCertificate giftCertificate) {
+         entityManager.merge(giftCertificate);
+         entityManager.flush();
+         return giftCertificate;
+    }
+
+    @Override
     public void delete(Long id) {
         GiftCertificate giftCertificate = entityManager.find(GiftCertificate.class, id);
         entityManager.remove(giftCertificate);
@@ -57,87 +64,87 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByIdAsc(Pageable pageable) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_ID_ASC, pageable, null);
+    public List<GiftCertificate> listAllGiftCertificatesSortByIdAsc(Page page) {
+        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_ID_ASC, page, null);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByIdDesc(Pageable pageable) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_ID_DESC, pageable, null);
+    public List<GiftCertificate> listAllGiftCertificatesSortByIdDesc(Page page) {
+        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_ID_DESC, page, null);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByNameAsc(Pageable pageable) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_NAME_ASC, pageable, null);
+    public List<GiftCertificate> listAllGiftCertificatesSortByNameAsc(Page page) {
+        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_NAME_ASC, page, null);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByNameDesc(Pageable pageable) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_NAME_DESC, pageable, null);
+    public List<GiftCertificate> listAllGiftCertificatesSortByNameDesc(Page page) {
+        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_NAME_DESC, page, null);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByDateAsc(Pageable pageable) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_DATE_ASC, pageable, null);
+    public List<GiftCertificate> listAllGiftCertificatesSortByDateAsc(Page page) {
+        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_DATE_ASC, page, null);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByDateDesc(Pageable pageable) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_DATE_DESC, pageable, null);
+    public List<GiftCertificate> listAllGiftCertificatesSortByDateDesc(Page page) {
+        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_DATE_DESC, page, null);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdAsc(List<String> tagNames, Pageable pageable) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdAsc(List<String> tagNames, Page page) {
         String select = "SELECT c";
         String orderBy = "ORDER BY c.id ASC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), pageable, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdDesc(List<String> tagNames, Pageable pageable) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdDesc(List<String> tagNames, Page page) {
         String select = "SELECT c";
         String orderBy = "ORDER BY c.id DESC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), pageable, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameAsc(List<String> tagNames, Pageable pageable) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameAsc(List<String> tagNames, Page page) {
         String select = "SELECT c";
         String orderBy = "ORDER BY c.name ASC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), pageable, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameDesc(List<String> tagNames, Pageable pageable) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameDesc(List<String> tagNames, Page page) {
         String select = "SELECT c";
         String orderBy = "ORDER BY c.name DESC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), pageable, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateAsc(List<String> tagNames, Pageable pageable) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateAsc(List<String> tagNames, Page page) {
         String select = "SELECT c";
         String orderBy = "ORDER BY c.createDate ASC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), pageable, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateDesc(List<String> tagNames, Pageable pageable) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateDesc(List<String> tagNames, Page page) {
         String select = "SELECT c";
         String orderBy = "ORDER BY c.createDate DESC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), pageable, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
     }
 
     @Override
@@ -156,10 +163,10 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         return (Long) query.getSingleResult();
     }
 
-    private List<GiftCertificate> getListGiftCertificates(String sql, Pageable pageable, Map<String, Object> params) {
+    private List<GiftCertificate> getListGiftCertificates(String sql, Page page, Map<String, Object> params) {
         Query query = entityManager.createQuery(sql);
-        query.setFirstResult(pageable.getOffset());
-        query.setMaxResults(pageable.getSize());
+        query.setFirstResult(page.getOffset());
+        query.setMaxResults(page.getSize());
         if (params != null) {
             params.forEach(query::setParameter);
         }

@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
@@ -23,8 +23,8 @@ public interface TagService {
     Tag update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
 
     @NonNull
-    List<Tag> getListAllTagsWithGiftCertificates(@NonNull Pageable pageable, @NonNull SortMode sortMode) throws ResourceNotFoundException;
+    List<Tag> getListAllTagsWithGiftCertificates(@NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
 
     @NonNull
-    List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(@NonNull Long id, @NonNull Pageable pageable, @NonNull SortMode sortMode) throws ResourceNotFoundException;
+    List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(@NonNull Long id, @NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
 }

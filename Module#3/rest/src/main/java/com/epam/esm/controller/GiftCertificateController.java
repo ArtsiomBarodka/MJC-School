@@ -1,6 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.domain.Pageable;
+import com.epam.esm.domain.Page;
 import com.epam.esm.domain.PatchGiftCertificate;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
@@ -38,7 +38,7 @@ public class GiftCertificateController {
                                                                                    @RequestParam(required = false) String sort,
                                                                                    @RequestParam(required = false) @Min(0) Integer page,
                                                                                    @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
-        Pageable pageable = new Pageable(page, size);
+        Page pageable = new Page(page, size);
         return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagNames(tagNames, pageable, SortMode.of(sort)));
     }
 
@@ -47,7 +47,7 @@ public class GiftCertificateController {
                                                                          @RequestParam(required = false) @Min(0) Integer page,
                                                                          @RequestParam(required = false) @Min(1) Integer size)
             throws ResourceNotFoundException {
-        Pageable pageable = new Pageable(page, size);
+        Page pageable = new Page(page, size);
         return ResponseEntity.ok(giftCertificateService.getAllListGiftCertificatesWithTags(pageable, SortMode.of(sort)));
     }
 
