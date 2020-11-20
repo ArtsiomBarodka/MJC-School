@@ -2,6 +2,8 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.domain.Page;
+import com.epam.esm.domain.SortMode;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.HashMap;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -65,51 +70,44 @@ public class TagDAOImpl implements TagDAO {
     }
 
     @Override
-    public List<Tag> listAllTagsSortByIdAsc(Page page) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_ID_ASC, page, null);
+    public List<Tag> listAllTags(Page page, SortMode sortMode) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
+        Root<Tag> tag = criteriaQuery.from(Tag.class);
+
+        criteriaQuery.select(tag);
+
+        String[] s = sortMode.name().split("_");
+        criteriaQuery.orderBy(s[1].equalsIgnoreCase("asc") ?
+                criteriaBuilder.asc(tag.get(s[0].toLowerCase())) :
+                criteriaBuilder.desc(tag.get(s[0].toLowerCase())));
+
+        TypedQuery<Tag> query = entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(page.getOffset());
+        query.setMaxResults(page.getSize());
+        return query.getResultList();
     }
 
-    @Override
-    public List<Tag> listAllTagsSortByIdDesc(Page page) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_ID_DESC, page, null);
-    }
 
     @Override
-    public List<Tag> listAllTagsSortByNameAsc(Page page) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_NAME_ASC, page, null);
-    }
+    public List<Tag> listTagsByGiftCertificateId(Long giftCertificateId, Page page, SortMode sortMode) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
+        Root<Tag> tag = criteriaQuery.from(Tag.class);
+        Join<Tag, GiftCertificate> giftCertificate = tag.join("giftCertificates");
 
-    @Override
-    public List<Tag> listAllTagsSortByNameDesc(Page page) {
-        return getListTags(ALL_TAGS_QUERY_SORT_BY_NAME_DESC, page, null);
-    }
+        criteriaQuery.select(tag).where(criteriaBuilder.equal(giftCertificate.get("id"), giftCertificateId));
 
-    @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByIdAsc(Long giftCertificateId, Page page) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_ASC, page, params);
-    }
+        String[] s = sortMode.name().split("_");
+        criteriaQuery.orderBy(s[1].equalsIgnoreCase("asc") ?
+                criteriaBuilder.asc(tag.get(s[0].toLowerCase())) :
+                criteriaBuilder.desc(tag.get(s[0].toLowerCase())));
 
-    @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByIdDesc(Long giftCertificateId, Page page) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_DESC, page, params);
-    }
+        TypedQuery<Tag> query = entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(page.getOffset());
+        query.setMaxResults(page.getSize());
+        return query.getResultList();
 
-    @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByNameAsc(Long giftCertificateId, Page page) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_ASC, page, params);
-    }
-
-    @Override
-    public List<Tag> listTagsByGiftCertificateIdSortByNameDesc(Long giftCertificateId, Page page) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("cid", giftCertificateId);
-        return getListTags(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_DESC, page, params);
     }
 
     public Long allTagsCount() {

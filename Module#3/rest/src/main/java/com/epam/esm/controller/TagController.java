@@ -1,13 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.domain.Page;
-import com.epam.esm.domain.PatchTag;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
+import com.epam.esm.patch.PatchTag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,10 +71,10 @@ public class TagController {
     public ResponseEntity<Tag> updateOrCreateTag(@PathVariable("id") @Min(1) Long id,
                                                  @RequestBody @Valid Tag tag,
                                                  UriComponentsBuilder uriComponentsBuilder)
-            throws ResourceAlreadyExistException, BadParametersException {
+            throws ResourceAlreadyExistException, BadParametersException, ServiceException {
 
         try {
-            return ResponseEntity.ok(tagService.update(tag, id));
+            return ResponseEntity.ok(tagService.updateAndReturn(tag, id));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -92,7 +92,7 @@ public class TagController {
 
         Tag existingTag = tagService.getTagById(id);
         patchTag.mergeToEntity(existingTag);
-        return ResponseEntity.ok(tagService.update(existingTag, id));
+        return ResponseEntity.ok(tagService.updateAndReturn(existingTag, id));
     }
 
 

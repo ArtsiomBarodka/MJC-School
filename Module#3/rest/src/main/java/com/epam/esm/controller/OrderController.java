@@ -3,6 +3,8 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.Order;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
+import com.epam.esm.patch.PatchOrder;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +30,7 @@ public class OrderController {
     public ResponseEntity<Order> getOrderById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        return ResponseEntity.ok(orderService.getOrderBuId(id));
+        return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @GetMapping("/user")
@@ -55,10 +57,10 @@ public class OrderController {
     public ResponseEntity<Order> updateOrCreateOrder(@PathVariable("id") @Min(1) Long id,
                                                      @RequestBody @Valid Order order,
                                                      UriComponentsBuilder uriComponentsBuilder)
-            throws BadParametersException {
+            throws BadParametersException, ServiceException {
 
         try {
-            return ResponseEntity.ok(orderService.update(order, id));
+            return ResponseEntity.ok(orderService.updateAndReturn(order, id));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -69,8 +71,18 @@ public class OrderController {
         }
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updatePartOfOrder(@PathVariable("id") @Min(1) Long id,
+                                                    @RequestBody @Valid PatchOrder patchOrder)
+            throws ResourceNotFoundException, ServiceException, BadParametersException {
+
+        Order existingOrder = orderService.getOrderById(id);
+        patchOrder.mergeToEntity(existingOrder);
+        return ResponseEntity.ok(orderService.updateAndReturn(existingOrder, id));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable @NotNull @Min(1) Long id)
+    public ResponseEntity<Object> deleteOrder(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
         orderService.delete(id);

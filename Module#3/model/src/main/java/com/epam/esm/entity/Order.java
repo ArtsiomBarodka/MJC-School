@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Order {
     @Column(name = "create_date", insertable = false, updatable = false)
     private Date createdDate;
 
-    @Transient
+    @Column(name = "price")
     private Double sumPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,8 +35,7 @@ public class Order {
     @NotNull
     private List<GiftCertificate> giftCertificates;
 
-    public void setGiftCertificates(List<GiftCertificate> giftCertificates){
-        this.giftCertificates = giftCertificates;
-        giftCertificates.forEach(g -> sumPrice+=g.getPrice());
+    public Order() {
+        giftCertificates = new ArrayList<>();
     }
 }

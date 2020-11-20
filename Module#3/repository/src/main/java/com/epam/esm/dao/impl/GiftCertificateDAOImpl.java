@@ -2,25 +2,21 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.domain.Page;
+import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.*;
 
 @Repository
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     private static final String FIND_CERTIFICATE_BY_NAME = "SELECT count (c.id) FROM GiftCertificate c WHERE c.name = :cname";
-
-    private static final String ALL_CERTIFICATES_QUERY_SORT_BY_ID_ASC = "SELECT c FROM GiftCertificate c ORDER BY c.id ASC";
-    private static final String ALL_CERTIFICATES_QUERY_SORT_BY_ID_DESC = "SELECT c FROM GiftCertificate c ORDER BY c.id DESC";
-    private static final String ALL_CERTIFICATES_QUERY_SORT_BY_NAME_ASC = "SELECT c FROM GiftCertificate c ORDER BY c.name ASC";
-    private static final String ALL_CERTIFICATES_QUERY_SORT_BY_NAME_DESC = "SELECT c FROM GiftCertificate c ORDER BY c.name DESC";
-    private static final String ALL_CERTIFICATES_QUERY_SORT_BY_DATE_ASC = "SELECT c FROM GiftCertificate c ORDER BY c.createDate ASC";
-    private static final String ALL_CERTIFICATES_QUERY_SORT_BY_DATE_DESC = "SELECT c FROM GiftCertificate c ORDER BY c.createDate DESC";
 
     private static final String ALL_CERTIFICATES_COUNT = "SELECT count (c.id) FROM GiftCertificate c";
 
@@ -36,13 +32,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     public GiftCertificate save(GiftCertificate giftCertificate) {
         entityManager.persist(giftCertificate);
         return giftCertificate;
-    }
-
-    @Override
-    public GiftCertificate update(GiftCertificate giftCertificate) {
-         entityManager.merge(giftCertificate);
-         entityManager.flush();
-         return giftCertificate;
     }
 
     @Override
@@ -64,33 +53,22 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByIdAsc(Page page) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_ID_ASC, page, null);
-    }
+    public List<GiftCertificate> listAllGiftCertificates(Page page, SortMode sortMode) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> giftCertificate = criteriaQuery.from(GiftCertificate.class);
 
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByIdDesc(Page page) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_ID_DESC, page, null);
-    }
+        criteriaQuery.select(giftCertificate);
 
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByNameAsc(Page page) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_NAME_ASC, page, null);
-    }
+        String[] s = sortMode.name().split("_");
+        criteriaQuery.orderBy(s[1].equalsIgnoreCase("asc") ?
+                criteriaBuilder.asc(giftCertificate.get(s[0].toLowerCase())) :
+                criteriaBuilder.desc(giftCertificate.get(s[0].toLowerCase())));
 
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByNameDesc(Page page) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_NAME_DESC, page, null);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByDateAsc(Page page) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_DATE_ASC, page, null);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesSortByDateDesc(Page page) {
-        return getListGiftCertificates(ALL_CERTIFICATES_QUERY_SORT_BY_DATE_DESC, page, null);
+        TypedQuery<GiftCertificate> query = entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(page.getOffset());
+        query.setMaxResults(page.getSize());
+        return query.getResultList();
     }
 
     @Override
@@ -184,10 +162,44 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                     .append(" MEMBER OF c.tags AND "));
             result.append(where.substring(0, where.lastIndexOf("AND")));
         }
+
         if (orderBy != null) {
             result.append(orderBy);
         }
         return result.toString();
     }
+
+    public List<GiftCertificate> criteriaListByNames(Page page, SortMode sortMode, List<String> tagNames) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> giftCertificate = query.from(GiftCertificate.class);
+//        Join<GiftCertificate, Tag> tag = giftCertificate.join("tags");
+
+        Subquery<Tag> subquery = query.subquery(Tag.class);
+        Root<Tag> from = subquery.from(Tag.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        tagNames.forEach((name) -> {
+            predicates.add(criteriaBuilder.equal(from.get("name"), name));
+        });
+        Predicate[] predicates1 = new Predicate[predicates.size()];
+
+        predicates.toArray(predicates1);
+        subquery.select(from).where(criteriaBuilder.or(predicates1));
+
+        query.select(giftCertificate).where(criteriaBuilder.exists(subquery));
+
+//        query.select(giftCertificate).where(criteriaBuilder.in(tag).value(subquery));
+
+        String[] s = sortMode.name().split("_");
+
+        query.orderBy(s[1].equalsIgnoreCase("asc") ? criteriaBuilder.asc(giftCertificate.get(s[0].toLowerCase())) : criteriaBuilder.desc(giftCertificate.get(s[0].toLowerCase())));
+
+        TypedQuery<GiftCertificate> query1 = entityManager.createQuery(query);
+        query1.setFirstResult(page.getOffset());
+        query1.setMaxResults(page.getSize());
+        return query1.getResultList();
+    }
+
 
 }

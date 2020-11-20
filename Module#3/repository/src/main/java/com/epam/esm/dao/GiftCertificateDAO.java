@@ -1,6 +1,7 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.domain.Page;
+import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.lang.NonNull;
 
@@ -17,9 +18,6 @@ public interface GiftCertificateDAO {
     @NonNull
     GiftCertificate save(@NonNull GiftCertificate giftCertificate);
 
-    @NonNull
-    GiftCertificate update(@NonNull GiftCertificate giftCertificate);
-
     void delete(@NonNull Long id);
 
     boolean isExistById(@NonNull Long id);
@@ -27,22 +25,7 @@ public interface GiftCertificateDAO {
     boolean isExistByName(@NonNull String name);
 
     @NonNull
-    List<GiftCertificate> listAllGiftCertificatesSortByIdAsc(@NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesSortByIdDesc(@NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesSortByNameAsc(@NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesSortByNameDesc(@NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesSortByDateAsc(@NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesSortByDateDesc(@NonNull Page page);
+    List<GiftCertificate> listAllGiftCertificates(@NonNull Page page, SortMode sortMode);
 
     @NonNull
     List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdAsc(@NonNull List<String> tagNames, @NonNull Page page);
@@ -65,6 +48,8 @@ public interface GiftCertificateDAO {
     Long allGiftCertificatesCount();
 
     Long allGiftCertificatesByTagNamesCount(List<String> tagNames);
+
+    List<GiftCertificate> criteriaListByNames(Page page, SortMode sortMode, List<String> tagNames);
 }
 
 

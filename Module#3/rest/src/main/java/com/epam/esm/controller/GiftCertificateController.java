@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.domain.Page;
-import com.epam.esm.domain.PatchGiftCertificate;
+import com.epam.esm.patch.PatchGiftCertificate;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.service.BadParametersException;
@@ -26,6 +26,19 @@ import java.util.List;
 public class GiftCertificateController {
     @Autowired
     private GiftCertificateService giftCertificateService;
+
+
+
+    @GetMapping("/tags/criteria")
+    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagNamesByCriteria(@RequestParam(value = "name") @NotNull List<String> tagNames,
+                                                                                   @RequestParam(required = false) String sort,
+                                                                                   @RequestParam(required = false) @Min(0) Integer page,
+                                                                                   @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
+        Page pageable = new Page(page, size);
+        return ResponseEntity.ok(giftCertificateService.criteriaListByNames( pageable, SortMode.of(sort),tagNames));
+    }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id) throws ResourceNotFoundException {
@@ -69,10 +82,10 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
                                                                          UriComponentsBuilder uriComponentsBuilder)
-            throws ResourceAlreadyExistException, BadParametersException {
+            throws ResourceAlreadyExistException, BadParametersException, ServiceException {
 
         try {
-            return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
+            return ResponseEntity.ok(giftCertificateService.updateAndReturn(giftCertificate, id));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -90,7 +103,7 @@ public class GiftCertificateController {
 
         GiftCertificate existingGiftCertificates = giftCertificateService.getGiftCertificatesById(id);
         patchGiftCertificate.mergeToEntity(existingGiftCertificates);
-        return ResponseEntity.ok(giftCertificateService.update(existingGiftCertificates, id));
+        return ResponseEntity.ok(giftCertificateService.updateAndReturn(existingGiftCertificates, id));
     }
 
     @DeleteMapping("/{id}")

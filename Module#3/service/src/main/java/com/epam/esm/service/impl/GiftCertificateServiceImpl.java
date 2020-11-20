@@ -9,6 +9,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,35 +35,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> getAllListGiftCertificatesWithTags(Page page, SortMode sortMode) throws ResourceNotFoundException {
-        List<GiftCertificate> result;
-        switch (sortMode) {
-            case ID_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByIdAsc(page);
-                break;
-
-            case ID_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByIdDesc(page);
-                break;
-
-            case DATE_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByDateAsc(page);
-                break;
-
-            case DATE_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByDateDesc(page);
-                break;
-
-            case NAME_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByNameAsc(page);
-                break;
-
-            case NAME_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesSortByNameDesc(page);
-                break;
-
-            default:
-                return Collections.emptyList();
-        }
+        List<GiftCertificate> result = giftCertificateDAO.listAllGiftCertificates(page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of gift certificates are not found");
@@ -147,7 +120,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public GiftCertificate update(GiftCertificate giftCertificate, Long id)
+    public void update(GiftCertificate giftCertificate, Long id)
             throws ResourceNotFoundException, BadParametersException {
         //check if the gift certificate is exist in repository
         GiftCertificate repositoryGiftCertificate = giftCertificateDAO.findById(id)
@@ -173,8 +146,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         repositoryGiftCertificate.setPrice(giftCertificate.getPrice());
         repositoryGiftCertificate.setName(giftCertificate.getName());
         repositoryGiftCertificate.setTags(giftCertificate.getTags());
+    }
 
-        return repositoryGiftCertificate;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public GiftCertificate updateAndReturn(GiftCertificate giftCertificate, Long id) throws ResourceNotFoundException, BadParametersException, ServiceException {
+        update(giftCertificate, id);
+        return giftCertificateDAO.findById(id)
+                .orElseThrow(() -> new ServiceException("Can`t find updated gift certificate by id after update"));
     }
 
     @Override
@@ -187,5 +166,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         giftCertificateDAO.delete(id);
 
+    }
+
+    @Override
+    public List<GiftCertificate> criteriaListByNames(Page page, SortMode sortMode, List<String> tagNames) {
+        return giftCertificateDAO.criteriaListByNames(page, sortMode, tagNames);
     }
 }

@@ -7,10 +7,12 @@ import com.epam.esm.entity.User;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,17 +31,23 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserById(Long id) throws ResourceNotFoundException {
-        return userDAO.findById(id).orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d is not exist", id)));
+        return userDAO.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d is not exist", id)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> listAllUsers(Pageable pageable) {
-        return (List<User>) userDAO.findAll(pageable);
+    public List<User> listAllUsers(Pageable pageable) throws ResourceNotFoundException {
+        Page<User> users = userDAO.findAll(pageable);
+        if(!users.hasContent()){
+            LOGGER.warn("List of users are not found");
+            throw new ResourceNotFoundException("List of users are not found");
+        }
+        return users.getContent();
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Long create(User user) throws ResourceAlreadyExistException, BadParametersException {
         if (userDAO.existsByName(user.getName())) {
             LOGGER.warn("User with name {} already exist", user.getName());
@@ -57,8 +65,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public User update(User user, Long id) throws ResourceNotFoundException, BadParametersException {
+    @Transactional(rollbackFor = Exception.class)
+    public void update(User user, Long id) throws ResourceNotFoundException, BadParametersException {
         User repositoryUser = userDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d is not exist", id)));
 
@@ -67,8 +75,8 @@ public class UserServiceImpl implements UserService {
             throw new BadParametersException(String.format("User with name %s is already exist", user.getName()));
         }
 
-        for (Order order : user.getOrders()){
-            if(!orderDAO.existsById(order.getId())){
+        for (Order order : user.getOrders()) {
+            if (!orderDAO.existsById(order.getId())) {
                 LOGGER.warn("Order with id {} is not exist", order.getId());
                 throw new BadParametersException(String.format("Order with id %d is already exist", order.getId()));
             }
@@ -76,7 +84,15 @@ public class UserServiceImpl implements UserService {
 
         repositoryUser.setName(user.getName());
         repositoryUser.setOrders(user.getOrders());
+    }
 
-        return repositoryUser;
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public User updateAndReturn(User user, Long id)
+            throws ResourceNotFoundException, BadParametersException, ServiceException {
+
+        update(user, id);
+        return userDAO.findById(id)
+                .orElseThrow(() -> new ServiceException("Can`t find updated user by id after update"));
     }
 }

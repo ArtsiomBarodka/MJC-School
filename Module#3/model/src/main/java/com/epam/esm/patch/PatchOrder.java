@@ -1,4 +1,4 @@
-package com.epam.esm.domain;
+package com.epam.esm.patch;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;

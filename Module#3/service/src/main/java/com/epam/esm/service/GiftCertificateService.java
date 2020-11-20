@@ -6,6 +6,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -25,7 +26,12 @@ public interface GiftCertificateService {
     Long create(@NonNull GiftCertificate giftCertificate) throws ResourceAlreadyExistException, BadParametersException;
 
     @NonNull
-    GiftCertificate update(@NonNull GiftCertificate giftCertificate, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+    void update(@NonNull GiftCertificate giftCertificate, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+
+    @NonNull
+    GiftCertificate updateAndReturn(@NonNull GiftCertificate giftCertificate, @NonNull Long id) throws ResourceNotFoundException, BadParametersException, ServiceException;
 
     void delete(@NonNull Long id) throws ResourceNotFoundException;
+
+    List<GiftCertificate> criteriaListByNames(@NonNull Page page, @NonNull SortMode sortMode, @NonNull List<String> tagNames);
 }

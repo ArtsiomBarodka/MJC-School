@@ -1,6 +1,7 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.domain.Page;
+import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.Tag;
 import org.springframework.lang.NonNull;
 
@@ -24,32 +25,11 @@ public interface TagDAO {
     boolean isExistByName(@NonNull String name);
 
     @NonNull
-    List<Tag> listAllTagsSortByIdAsc(@NonNull Page page);
+    List<Tag> listAllTags(@NonNull Page page, @NonNull SortMode sortMode);
 
     @NonNull
-    List<Tag> listAllTagsSortByIdDesc(@NonNull Page page);
-
-    @NonNull
-    List<Tag> listAllTagsSortByNameAsc(@NonNull Page page);
-
-    @NonNull
-    List<Tag> listAllTagsSortByNameDesc(@NonNull Page page);
-
-    @NonNull
-    List<Tag> listTagsByGiftCertificateIdSortByIdAsc(@NonNull Long giftCertificateId,
-                                                     @NonNull Page page);
-
-    @NonNull
-    List<Tag> listTagsByGiftCertificateIdSortByIdDesc(@NonNull Long giftCertificateId,
-                                                      @NonNull Page page);
-
-    @NonNull
-    List<Tag> listTagsByGiftCertificateIdSortByNameAsc(@NonNull Long giftCertificateId,
-                                                       @NonNull Page page);
-
-    @NonNull
-    List<Tag> listTagsByGiftCertificateIdSortByNameDesc(@NonNull Long giftCertificateId,
-                                                        @NonNull Page page);
+    List<Tag> listTagsByGiftCertificateId(@NonNull Long giftCertificateId,
+                                          @NonNull Page page, SortMode sortMode);
 
     Long allTagsCount();
 

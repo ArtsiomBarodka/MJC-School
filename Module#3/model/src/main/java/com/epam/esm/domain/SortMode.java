@@ -2,6 +2,8 @@ package com.epam.esm.domain;
 
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The enum Sort mode.

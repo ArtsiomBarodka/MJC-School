@@ -1,4 +1,4 @@
-package com.epam.esm.domain;
+package com.epam.esm.patch;
 
 @FunctionalInterface
 public interface PatchOperation<F> {

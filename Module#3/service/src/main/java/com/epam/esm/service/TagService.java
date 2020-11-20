@@ -6,6 +6,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -19,8 +20,10 @@ public interface TagService {
     @NonNull
     Tag getTagById(@NonNull Long id) throws ResourceNotFoundException;
 
+    void update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+
     @NonNull
-    Tag update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+    Tag updateAndReturn(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException, ServiceException;
 
     @NonNull
     List<Tag> getListAllTagsWithGiftCertificates(@NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;

@@ -9,6 +9,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
+import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.TagService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,16 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Tag update(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException {
+    @Transactional(rollbackFor = Exception.class)
+    public Tag updateAndReturn(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException, ServiceException {
+        update(tag, id);
+        return tagDAO.findById(id)
+                .orElseThrow(() -> new ServiceException("Can`t find updated tag by id after update"));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void update(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException {
         //check if the tag name is exist in repository
         Tag repositoryTag = tagDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Tag with id %d is not exist", id)));
@@ -96,33 +106,12 @@ public class TagServiceImpl implements TagService {
         //update fields of gift certificate and save it in repository
         repositoryTag.setName(tag.getName());
         repositoryTag.setGiftCertificates(tag.getGiftCertificates());
-
-        return repositoryTag;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Tag> getListAllTagsWithGiftCertificates(Page page, SortMode sortMode) throws ResourceNotFoundException {
-        List<Tag> result;
-        switch (sortMode) {
-            case ID_ASC:
-                result = tagDAO.listAllTagsSortByIdAsc(page);
-                break;
-
-            case ID_DESC:
-                result = tagDAO.listAllTagsSortByIdDesc(page);
-                break;
-
-            case NAME_ASC:
-                result = tagDAO.listAllTagsSortByNameAsc(page);
-                break;
-
-            case NAME_DESC:
-                result = tagDAO.listAllTagsSortByNameDesc(page);
-                break;
-
-            default:
-                return Collections.emptyList();
-        }
+        List<Tag> result = tagDAO.listAllTags(page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of tags are not found");
@@ -133,28 +122,9 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(Long id, Page page, SortMode sortMode) throws ResourceNotFoundException {
-        List<Tag> result;
-        switch (sortMode) {
-            case ID_ASC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByIdAsc(id, page);
-                break;
-
-            case ID_DESC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByIdDesc(id, page);
-                break;
-
-            case NAME_ASC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByNameAsc(id, page);
-                break;
-
-            case NAME_DESC:
-                result = tagDAO.listTagsByGiftCertificateIdSortByNameDesc(id, page);
-                break;
-
-            default:
-                return Collections.emptyList();
-        }
+        List<Tag> result = tagDAO.listTagsByGiftCertificateId(id, page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of tags are not found");
