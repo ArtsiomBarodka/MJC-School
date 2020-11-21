@@ -21,20 +21,8 @@ import java.util.Optional;
 
 @Repository
 public class TagDAOImpl implements TagDAO {
-    private static final String ALL_TAGS_QUERY_SORT_BY_ID_ASC = "SELECT t FROM Tag t ORDER BY t.id ASC";
-    private static final String ALL_TAGS_QUERY_SORT_BY_ID_DESC = "SELECT t FROM Tag t ORDER BY t.id DESC";
-    private static final String ALL_TAGS_QUERY_SORT_BY_NAME_ASC = "SELECT t FROM Tag t ORDER BY t.name ASC";
-    private static final String ALL_TAGS_QUERY_SORT_BY_NAME_DESC = "SELECT t FROM Tag t ORDER BY t.name DESC";
-
     private static final String ALL_TAGS_COUNT = "SELECT count (t.id) FROM Tag t";
-
-    private static final String ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_ASC = "SELECT t FROM Tag t JOIN t.giftCertificates c WHERE c.id = :cid ORDER BY t.id ASC";
-    private static final String ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_ID_DESC = "SELECT t FROM Tag t JOIN t.giftCertificates c WHERE c.id = :cid ORDER BY t.id DESC";
-    private static final String ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_ASC = "SELECT t FROM Tag t JOIN t.giftCertificates c WHERE c.id = :cid ORDER BY t.name ASC";
-    private static final String ALL_TAGS_BY_GIFT_CERTIFICATE_ID_QUERY_SORT_BY_NAME_DESC = "SELECT t FROM Tag t JOIN t.giftCertificates c WHERE c.id = :cid ORDER BY t.name DESC";
-
     private static final String ALL_TAGS_BY_GIFT_CERTIFICATE_ID_COUNT = "SELECT count (t.id) FROM Tag t JOIN t.giftCertificates c WHERE c.id = :cid";
-
     private static final String FIND_TAG_BY_NAME = "SELECT count (t.id) FROM Tag t WHERE t.name = :tname";
 
     @PersistenceContext
@@ -77,10 +65,10 @@ public class TagDAOImpl implements TagDAO {
 
         criteriaQuery.select(tag);
 
-        String[] s = sortMode.name().split("_");
-        criteriaQuery.orderBy(s[1].equalsIgnoreCase("asc") ?
-                criteriaBuilder.asc(tag.get(s[0].toLowerCase())) :
-                criteriaBuilder.desc(tag.get(s[0].toLowerCase())));
+        SortMode.Entry split = SortMode.split(sortMode);
+        criteriaQuery.orderBy(split.getDestination().equalsIgnoreCase("asc") ?
+                criteriaBuilder.asc(tag.get(split.getField())) :
+                criteriaBuilder.desc(tag.get(split.getField())));
 
         TypedQuery<Tag> query = entityManager.createQuery(criteriaQuery);
         query.setFirstResult(page.getOffset());
@@ -98,10 +86,10 @@ public class TagDAOImpl implements TagDAO {
 
         criteriaQuery.select(tag).where(criteriaBuilder.equal(giftCertificate.get("id"), giftCertificateId));
 
-        String[] s = sortMode.name().split("_");
-        criteriaQuery.orderBy(s[1].equalsIgnoreCase("asc") ?
-                criteriaBuilder.asc(tag.get(s[0].toLowerCase())) :
-                criteriaBuilder.desc(tag.get(s[0].toLowerCase())));
+        SortMode.Entry split = SortMode.split(sortMode);
+        criteriaQuery.orderBy(split.getDestination().equalsIgnoreCase("asc") ?
+                criteriaBuilder.asc(tag.get(split.getField())) :
+                criteriaBuilder.desc(tag.get(split.getField())));
 
         TypedQuery<Tag> query = entityManager.createQuery(criteriaQuery);
         query.setFirstResult(page.getOffset());

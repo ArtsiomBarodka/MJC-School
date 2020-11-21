@@ -4,15 +4,19 @@ import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
@@ -60,10 +64,10 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
         criteriaQuery.select(giftCertificate);
 
-        String[] s = sortMode.name().split("_");
-        criteriaQuery.orderBy(s[1].equalsIgnoreCase("asc") ?
-                criteriaBuilder.asc(giftCertificate.get(s[0].toLowerCase())) :
-                criteriaBuilder.desc(giftCertificate.get(s[0].toLowerCase())));
+        SortMode.Entry split = SortMode.split(sortMode);
+        criteriaQuery.orderBy(split.getDestination().equalsIgnoreCase("asc") ?
+                criteriaBuilder.asc(giftCertificate.get(split.getField())) :
+                criteriaBuilder.desc(giftCertificate.get(split.getField())));
 
         TypedQuery<GiftCertificate> query = entityManager.createQuery(criteriaQuery);
         query.setFirstResult(page.getOffset());
@@ -72,57 +76,11 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdAsc(List<String> tagNames, Page page) {
+    public List<GiftCertificate> listAllGiftCertificatesByTagNames(List<String> tagNames, Page page, SortMode sortMode) {
         String select = "SELECT c";
-        String orderBy = "ORDER BY c.id ASC";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdDesc(List<String> tagNames, Page page) {
-        String select = "SELECT c";
-        String orderBy = "ORDER BY c.id DESC";
-        Map<String, Object> params = new HashMap<>();
-        tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameAsc(List<String> tagNames, Page page) {
-        String select = "SELECT c";
-        String orderBy = "ORDER BY c.name ASC";
-        Map<String, Object> params = new HashMap<>();
-        tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameDesc(List<String> tagNames, Page page) {
-        String select = "SELECT c";
-        String orderBy = "ORDER BY c.name DESC";
-        Map<String, Object> params = new HashMap<>();
-        tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateAsc(List<String> tagNames, Page page) {
-        String select = "SELECT c";
-        String orderBy = "ORDER BY c.createDate ASC";
-        Map<String, Object> params = new HashMap<>();
-        tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
-    }
-
-    @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateDesc(List<String> tagNames, Page page) {
-        String select = "SELECT c";
-        String orderBy = "ORDER BY c.createDate DESC";
-        Map<String, Object> params = new HashMap<>();
-        tagNames.forEach(name -> params.put(name, name));
-        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, orderBy), page, params);
+        return getListGiftCertificates(buildSqlForAllGiftCertificatesByTagNames(select, params, sortMode), page, params);
     }
 
     @Override
@@ -151,7 +109,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         return query.getResultList();
     }
 
-    private String buildSqlForAllGiftCertificatesByTagNames(String select, Map<String, Object> tagNames, String orderBy) {
+    private String buildSqlForAllGiftCertificatesByTagNames(String select, Map<String, Object> tagNames, SortMode sortMode) {
         StringBuilder result = new StringBuilder(select);
         result.append(" FROM GiftCertificate c ");
         if (!tagNames.isEmpty()) {
@@ -162,44 +120,14 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                     .append(" MEMBER OF c.tags AND "));
             result.append(where.substring(0, where.lastIndexOf("AND")));
         }
-
-        if (orderBy != null) {
-            result.append(orderBy);
+        if (sortMode != null) {
+            SortMode.Entry split = SortMode.split(sortMode);
+            result.append(" ORDER BY ")
+                    .append(split.getField())
+                    .append(" ")
+                    .append(split.getDestination());
         }
+
         return result.toString();
     }
-
-    public List<GiftCertificate> criteriaListByNames(Page page, SortMode sortMode, List<String> tagNames) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> query = criteriaBuilder.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> giftCertificate = query.from(GiftCertificate.class);
-//        Join<GiftCertificate, Tag> tag = giftCertificate.join("tags");
-
-        Subquery<Tag> subquery = query.subquery(Tag.class);
-        Root<Tag> from = subquery.from(Tag.class);
-
-        List<Predicate> predicates = new ArrayList<>();
-        tagNames.forEach((name) -> {
-            predicates.add(criteriaBuilder.equal(from.get("name"), name));
-        });
-        Predicate[] predicates1 = new Predicate[predicates.size()];
-
-        predicates.toArray(predicates1);
-        subquery.select(from).where(criteriaBuilder.or(predicates1));
-
-        query.select(giftCertificate).where(criteriaBuilder.exists(subquery));
-
-//        query.select(giftCertificate).where(criteriaBuilder.in(tag).value(subquery));
-
-        String[] s = sortMode.name().split("_");
-
-        query.orderBy(s[1].equalsIgnoreCase("asc") ? criteriaBuilder.asc(giftCertificate.get(s[0].toLowerCase())) : criteriaBuilder.desc(giftCertificate.get(s[0].toLowerCase())));
-
-        TypedQuery<GiftCertificate> query1 = entityManager.createQuery(query);
-        query1.setFirstResult(page.getOffset());
-        query1.setMaxResults(page.getSize());
-        return query1.getResultList();
-    }
-
-
 }

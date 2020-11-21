@@ -32,6 +32,4 @@ public interface GiftCertificateService {
     GiftCertificate updateAndReturn(@NonNull GiftCertificate giftCertificate, @NonNull Long id) throws ResourceNotFoundException, BadParametersException, ServiceException;
 
     void delete(@NonNull Long id) throws ResourceNotFoundException;
-
-    List<GiftCertificate> criteriaListByNames(@NonNull Page page, @NonNull SortMode sortMode, @NonNull List<String> tagNames);
 }

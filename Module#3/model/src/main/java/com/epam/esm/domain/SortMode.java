@@ -1,6 +1,8 @@
 package com.epam.esm.domain;
 
 
+import org.springframework.lang.NonNull;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,8 @@ public enum SortMode {
      */
     NAME_DESC;
 
+    private static final String DELIMITER = "_";
+
     /**
      * Of sort mode.
      *
@@ -39,5 +43,28 @@ public enum SortMode {
                 .filter(v -> v.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(ID_ASC);
+    }
+
+    public static Entry split(@NonNull SortMode sortMode){
+        String[] result = sortMode.name().split(DELIMITER);
+        return new Entry(result[1],result[0]);
+    }
+
+    public static class Entry{
+        private final String destination;
+        private final String field;
+
+         Entry(String destination, String field){
+            this.destination = destination.toLowerCase();
+            this.field = field.toLowerCase();
+        }
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public String getField() {
+            return field;
+        }
     }
 }

@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -34,6 +34,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private TagDAO tagDAO;
 
     @Override
+    @Transactional(readOnly = true)
     public List<GiftCertificate> getAllListGiftCertificatesWithTags(Page page, SortMode sortMode) throws ResourceNotFoundException {
         List<GiftCertificate> result = giftCertificateDAO.listAllGiftCertificates(page, sortMode);
 
@@ -50,35 +51,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificate> getListGiftCertificatesWithTagsByTagNames(List<String> tagName, Page page, SortMode sortMode)
             throws ResourceNotFoundException {
 
-        List<GiftCertificate> result;
-        switch (sortMode) {
-            case ID_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByIdAsc(tagName, page);
-                break;
-
-            case ID_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByIdDesc(tagName, page);
-                break;
-
-            case DATE_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByDateAsc(tagName, page);
-                break;
-
-            case DATE_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByDateDesc(tagName, page);
-                break;
-
-            case NAME_ASC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByNameAsc(tagName, page);
-                break;
-
-            case NAME_DESC:
-                result = giftCertificateDAO.listAllGiftCertificatesByTagNamesSortByNameDesc(tagName, page);
-                break;
-
-            default:
-                return Collections.emptyList();
-        }
+        List<GiftCertificate> result = giftCertificateDAO.listAllGiftCertificatesByTagNames(tagName, page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of gift certificates with tag names {} not found", tagName);
@@ -89,7 +62,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public GiftCertificate getGiftCertificatesById(Long id) throws ResourceNotFoundException {
         return giftCertificateDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Gift certificate with id %d is not exist", id)));
@@ -119,7 +92,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void update(GiftCertificate giftCertificate, Long id)
             throws ResourceNotFoundException, BadParametersException {
         //check if the gift certificate is exist in repository
@@ -149,9 +122,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public GiftCertificate updateAndReturn(GiftCertificate giftCertificate, Long id) throws ResourceNotFoundException, BadParametersException, ServiceException {
         update(giftCertificate, id);
+//        return getGiftCertificatesById(id);
         return giftCertificateDAO.findById(id)
                 .orElseThrow(() -> new ServiceException("Can`t find updated gift certificate by id after update"));
     }
@@ -166,10 +140,5 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         giftCertificateDAO.delete(id);
 
-    }
-
-    @Override
-    public List<GiftCertificate> criteriaListByNames(Page page, SortMode sortMode, List<String> tagNames) {
-        return giftCertificateDAO.criteriaListByNames(page, sortMode, tagNames);
     }
 }

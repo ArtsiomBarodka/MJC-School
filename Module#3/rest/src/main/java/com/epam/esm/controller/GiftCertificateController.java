@@ -1,13 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.domain.Page;
-import com.epam.esm.patch.PatchGiftCertificate;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
 import com.epam.esm.exception.service.ServiceException;
+import com.epam.esm.patch.PatchGiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +26,6 @@ import java.util.List;
 public class GiftCertificateController {
     @Autowired
     private GiftCertificateService giftCertificateService;
-
-
-
-    @GetMapping("/tags/criteria")
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagNamesByCriteria(@RequestParam(value = "name") @NotNull List<String> tagNames,
-                                                                                   @RequestParam(required = false) String sort,
-                                                                                   @RequestParam(required = false) @Min(0) Integer page,
-                                                                                   @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
-        Page pageable = new Page(page, size);
-        return ResponseEntity.ok(giftCertificateService.criteriaListByNames( pageable, SortMode.of(sort),tagNames));
-    }
-
-
 
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id) throws ResourceNotFoundException {

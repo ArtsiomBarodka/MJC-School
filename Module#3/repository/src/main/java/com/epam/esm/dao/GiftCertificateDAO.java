@@ -28,28 +28,11 @@ public interface GiftCertificateDAO {
     List<GiftCertificate> listAllGiftCertificates(@NonNull Page page, SortMode sortMode);
 
     @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdAsc(@NonNull List<String> tagNames, @NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByIdDesc(@NonNull List<String> tagNames, @NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameAsc(@NonNull List<String> tagNames, @NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByNameDesc(@NonNull List<String> tagNames, @NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateAsc(@NonNull List<String> tagNames, @NonNull Page page);
-
-    @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNamesSortByDateDesc(@NonNull List<String> tagNames, @NonNull Page page);
+    List<GiftCertificate> listAllGiftCertificatesByTagNames(@NonNull List<String> tagNames, @NonNull Page page, @NonNull SortMode sortMode);
 
     Long allGiftCertificatesCount();
 
     Long allGiftCertificatesByTagNamesCount(List<String> tagNames);
-
-    List<GiftCertificate> criteriaListByNames(Page page, SortMode sortMode, List<String> tagNames);
 }
 
 
