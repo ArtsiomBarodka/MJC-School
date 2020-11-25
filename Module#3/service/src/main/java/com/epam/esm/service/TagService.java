@@ -18,6 +18,9 @@ public interface TagService {
     void delete(@NonNull Long id) throws ResourceNotFoundException;
 
     @NonNull
+    Tag getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(@NonNull Long userId) throws ResourceNotFoundException;
+
+    @NonNull
     Tag getTagById(@NonNull Long id) throws ResourceNotFoundException;
 
     void update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;

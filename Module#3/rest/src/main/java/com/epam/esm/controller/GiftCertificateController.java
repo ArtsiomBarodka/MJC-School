@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.component.assembler.GiftCertificateAssembler;
 import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
@@ -10,6 +11,7 @@ import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchGiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,31 +26,44 @@ import java.util.List;
 @RequestMapping("api/v1/giftCertificates")
 @Validated
 public class GiftCertificateController {
+
+    private final GiftCertificateService giftCertificateService;
+    private final GiftCertificateAssembler assembler;
+
     @Autowired
-    private GiftCertificateService giftCertificateService;
+    public GiftCertificateController(GiftCertificateService giftCertificateService, GiftCertificateAssembler assembler) {
+        this.giftCertificateService = giftCertificateService;
+        this.assembler = assembler;
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id) throws ResourceNotFoundException {
-        return ResponseEntity.ok(giftCertificateService.getGiftCertificatesById(id));
+    public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id)
+            throws ResourceNotFoundException {
+
+        GiftCertificate giftCertificate = giftCertificateService.getGiftCertificatesById(id);
+        return ResponseEntity.ok(assembler.toModel(giftCertificate));
     }
 
 
     @GetMapping("/tags")
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") @NotNull List<String> tagNames,
-                                                                                   @RequestParam(required = false) String sort,
-                                                                                   @RequestParam(required = false) @Min(0) Integer page,
-                                                                                   @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
+    public ResponseEntity<CollectionModel<GiftCertificate>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") @NotNull List<String> tagNames,
+                                                                                              @RequestParam(required = false) String sort,
+                                                                                              @RequestParam(required = false) @Min(0) Integer page,
+                                                                                              @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
         Page pageable = new Page(page, size);
-        return ResponseEntity.ok(giftCertificateService.getListGiftCertificatesWithTagsByTagNames(tagNames, pageable, SortMode.of(sort)));
+        List<GiftCertificate> giftCertificates = giftCertificateService.getListGiftCertificatesWithTagsByTagNames(tagNames, pageable, SortMode.of(sort));
+        return ResponseEntity.ok(assembler.toCollectionModel(giftCertificates));
     }
 
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> getListGiftCertificates(@RequestParam(required = false) String sort,
-                                                                         @RequestParam(required = false) @Min(0) Integer page,
-                                                                         @RequestParam(required = false) @Min(1) Integer size)
+    public ResponseEntity<CollectionModel<GiftCertificate>> getListGiftCertificates(@RequestParam(required = false) String sort,
+                                                                                    @RequestParam(required = false) @Min(0) Integer page,
+                                                                                    @RequestParam(required = false) @Min(1) Integer size)
             throws ResourceNotFoundException {
+
         Page pageable = new Page(page, size);
-        return ResponseEntity.ok(giftCertificateService.getAllListGiftCertificatesWithTags(pageable, SortMode.of(sort)));
+        List<GiftCertificate> giftCertificates = giftCertificateService.getAllListGiftCertificatesWithTags(pageable, SortMode.of(sort));
+        return ResponseEntity.ok(assembler.toCollectionModel(giftCertificates));
     }
 
 
@@ -72,7 +87,8 @@ public class GiftCertificateController {
             throws ResourceAlreadyExistException, BadParametersException, ServiceException {
 
         try {
-            return ResponseEntity.ok(giftCertificateService.updateAndReturn(giftCertificate, id));
+            GiftCertificate updatedGftCertificate = giftCertificateService.updateAndReturn(giftCertificate, id);
+            return ResponseEntity.ok(assembler.toModel(updatedGftCertificate));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -90,7 +106,8 @@ public class GiftCertificateController {
 
         GiftCertificate existingGiftCertificates = giftCertificateService.getGiftCertificatesById(id);
         patchGiftCertificate.mergeToEntity(existingGiftCertificates);
-        return ResponseEntity.ok(giftCertificateService.updateAndReturn(existingGiftCertificates, id));
+        GiftCertificate updatedGftCertificate = giftCertificateService.updateAndReturn(existingGiftCertificates, id);
+        return ResponseEntity.ok(assembler.toModel(updatedGftCertificate));
     }
 
     @DeleteMapping("/{id}")

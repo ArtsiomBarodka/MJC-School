@@ -3,6 +3,7 @@ package com.epam.esm.entity;
 import com.epam.esm.validation.annotation.EnglishLanguage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "tag")
-public class Tag {
+public class Tag extends RepresentationModel<Tag> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

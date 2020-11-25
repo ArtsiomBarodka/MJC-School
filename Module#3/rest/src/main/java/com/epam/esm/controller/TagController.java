@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.component.assembler.TagAssembler;
 import com.epam.esm.domain.Page;
 import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.Tag;
@@ -10,6 +11,7 @@ import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchTag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -25,33 +27,52 @@ import java.util.List;
 @RequestMapping("api/v1/tags")
 @Validated
 public class TagController {
+    private final TagService tagService;
+    private final TagAssembler assembler;
+
     @Autowired
-    private TagService tagService;
+    public TagController(TagService tagService, TagAssembler assembler) {
+        this.tagService = tagService;
+        this.assembler = assembler;
+    }
+
+    @GetMapping("/top/user")
+    public ResponseEntity<Tag> geTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(@RequestParam("id") @NotNull @Min(1) Long userId)
+            throws ResourceNotFoundException {
+
+        Tag tag = tagService.getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(userId);
+        return ResponseEntity.ok(assembler.toModel(tag));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        return ResponseEntity.ok(tagService.getTagById(id));
+        Tag tag = tagService.getTagById(id);
+        return ResponseEntity.ok(assembler.toModel(tag));
     }
 
     @GetMapping
-    public ResponseEntity<List<Tag>> getListTags(@RequestParam(required = false) String sort,
-                                                 @RequestParam(required = false) @Min(0) Integer page,
-                                                 @RequestParam(required = false) @Min(1) Integer size)
+    public ResponseEntity<CollectionModel<Tag>> getListTags(@RequestParam(required = false) String sort,
+                                                            @RequestParam(required = false) @Min(0) Integer page,
+                                                            @RequestParam(required = false) @Min(1) Integer size)
             throws ResourceNotFoundException {
+
         Page pageable = new Page(page, size);
-        return ResponseEntity.ok(tagService.getListAllTagsWithGiftCertificates(pageable, SortMode.of(sort)));
+        List<Tag> tags = tagService.getListAllTagsWithGiftCertificates(pageable, SortMode.of(sort));
+        return ResponseEntity.ok(assembler.toCollectionModel(tags));
     }
 
     @GetMapping("/giftCertificates")
-    public ResponseEntity<List<Tag>> getListTagsByGiftCertificatesById(@RequestParam @NotNull @Min(1) Long id,
-                                                                       @RequestParam(required = false) String sort,
-                                                                       @RequestParam(required = false) @Min(0) Integer page,
-                                                                       @RequestParam(required = false) @Min(1) Integer size)
+    public ResponseEntity<CollectionModel<Tag>> getListTagsByGiftCertificatesById(@RequestParam @NotNull @Min(1) Long id,
+                                                                                  @RequestParam(required = false) String sort,
+                                                                                  @RequestParam(required = false) @Min(0) Integer page,
+                                                                                  @RequestParam(required = false) @Min(1) Integer size)
             throws ResourceNotFoundException {
+
         Page pageable = new Page(page, size);
-        return ResponseEntity.ok(tagService.getListTagsWithGiftCertificatesByGiftCertificateId(id, pageable, SortMode.of(sort)));
+        List<Tag> tags = tagService.getListTagsWithGiftCertificatesByGiftCertificateId(id, pageable, SortMode.of(sort));
+        return ResponseEntity.ok(assembler.toCollectionModel(tags));
     }
 
     @PostMapping
@@ -74,7 +95,8 @@ public class TagController {
             throws ResourceAlreadyExistException, BadParametersException, ServiceException {
 
         try {
-            return ResponseEntity.ok(tagService.updateAndReturn(tag, id));
+            Tag updatedTag = tagService.updateAndReturn(tag, id);
+            return ResponseEntity.ok(assembler.toModel(updatedTag));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -92,7 +114,8 @@ public class TagController {
 
         Tag existingTag = tagService.getTagById(id);
         patchTag.mergeToEntity(existingTag);
-        return ResponseEntity.ok(tagService.updateAndReturn(existingTag, id));
+        Tag updatedTag = tagService.updateAndReturn(existingTag, id);
+        return ResponseEntity.ok(assembler.toModel(updatedTag));
     }
 
 

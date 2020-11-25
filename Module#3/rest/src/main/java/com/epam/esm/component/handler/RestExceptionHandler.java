@@ -1,4 +1,4 @@
-package com.epam.esm.component;
+package com.epam.esm.component.handler;
 
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;

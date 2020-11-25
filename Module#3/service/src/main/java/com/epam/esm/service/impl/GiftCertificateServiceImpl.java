@@ -62,7 +62,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(readOnly = true)
     public GiftCertificate getGiftCertificatesById(Long id) throws ResourceNotFoundException {
         return giftCertificateDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Gift certificate with id %d is not exist", id)));
@@ -122,10 +122,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public GiftCertificate updateAndReturn(GiftCertificate giftCertificate, Long id) throws ResourceNotFoundException, BadParametersException, ServiceException {
         update(giftCertificate, id);
-//        return getGiftCertificatesById(id);
         return giftCertificateDAO.findById(id)
                 .orElseThrow(() -> new ServiceException("Can`t find updated gift certificate by id after update"));
     }
@@ -139,6 +138,5 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new ResourceNotFoundException(String.format("Gift certificate with %d is not exist", id));
         }
         giftCertificateDAO.delete(id);
-
     }
 }

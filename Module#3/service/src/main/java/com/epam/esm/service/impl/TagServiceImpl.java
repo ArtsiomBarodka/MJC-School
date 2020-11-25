@@ -15,9 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -45,6 +45,7 @@ public class TagServiceImpl implements TagService {
 
         Tag savedTag = tagDAO.save(tag);
 
+
         for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
             //check if the current gift certificate is exist in repository
 //            savedTag.addGiftCertificates(giftCertificateDAO.findById(giftCertificate.getId()).orElseThrow(()->{
@@ -54,6 +55,13 @@ public class TagServiceImpl implements TagService {
         }
 
         return savedTag.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Tag getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(Long userId) throws ResourceNotFoundException {
+        return tagDAO.findTheMostWidelyUsedOfUserWithTheHighestCostOfAllOrders(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Tag with users id %d is not exist", userId)));
     }
 
     @Override
@@ -82,7 +90,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void update(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException {
         //check if the tag name is exist in repository
         Tag repositoryTag = tagDAO.findById(id)

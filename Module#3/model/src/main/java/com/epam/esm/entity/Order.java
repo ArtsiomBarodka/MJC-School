@@ -1,6 +1,8 @@
 package com.epam.esm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -10,12 +12,11 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "order")
-public class Order {
+@Table(name = "user_order")
+public class Order extends RepresentationModel<Order> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @Temporal(value = TemporalType.TIMESTAMP)
     @Column(name = "create_date", insertable = false, updatable = false)
@@ -24,7 +25,9 @@ public class Order {
     @Column(name = "price")
     private Double sumPrice;
 
+    @JsonIgnoreProperties("orders")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_user_id")
     @NotNull
     private User user;
 

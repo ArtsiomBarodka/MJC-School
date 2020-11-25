@@ -15,9 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,13 +36,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> listAllUsers(Pageable pageable) throws ResourceNotFoundException {
+    public Page<User> listAllUsers(Pageable pageable) throws ResourceNotFoundException {
         Page<User> users = userDAO.findAll(pageable);
-        if(!users.hasContent()){
+        if (!users.hasContent()) {
             LOGGER.warn("List of users are not found");
             throw new ResourceNotFoundException("List of users are not found");
         }
-        return users.getContent();
+        return users;
     }
 
     @Override
@@ -65,7 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public void update(User user, Long id) throws ResourceNotFoundException, BadParametersException {
         User repositoryUser = userDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %d is not exist", id)));
@@ -75,15 +74,7 @@ public class UserServiceImpl implements UserService {
             throw new BadParametersException(String.format("User with name %s is already exist", user.getName()));
         }
 
-        for (Order order : user.getOrders()) {
-            if (!orderDAO.existsById(order.getId())) {
-                LOGGER.warn("Order with id {} is not exist", order.getId());
-                throw new BadParametersException(String.format("Order with id %d is already exist", order.getId()));
-            }
-        }
-
         repositoryUser.setName(user.getName());
-        repositoryUser.setOrders(user.getOrders());
     }
 
     @Override

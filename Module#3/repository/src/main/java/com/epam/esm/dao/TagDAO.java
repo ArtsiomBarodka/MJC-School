@@ -16,6 +16,9 @@ public interface TagDAO {
     Optional<Tag> findById(@NonNull Long id);
 
     @NonNull
+    Optional<Tag> findTheMostWidelyUsedOfUserWithTheHighestCostOfAllOrders(@NonNull Long userId);
+
+    @NonNull
     Tag save(@NonNull Tag tag);
 
     void delete(@NonNull Long id);

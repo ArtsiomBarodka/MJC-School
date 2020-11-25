@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.component.assembler.OrderAssembler;
 import com.epam.esm.entity.Order;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
@@ -7,7 +8,10 @@ import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchOrder;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,28 +20,38 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/orders")
 @Validated
 public class OrderController {
+    private final OrderService orderService;
+    private final OrderAssembler assembler;
 
     @Autowired
-    private OrderService orderService;
+    public OrderController(OrderService orderService, OrderAssembler assembler) {
+        this.orderService = orderService;
+        this.assembler = assembler;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        return ResponseEntity.ok(orderService.getOrderById(id));
+        Order order = orderService.getOrderById(id);
+        return ResponseEntity.ok(assembler.toModel(order));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<Order>> getListOrdersByUserId(@RequestParam(value = "id") @NotNull @Min(1) Long id,
-                                                             @RequestParam(required = false) Pageable pageable) throws ResourceNotFoundException {
+    public ResponseEntity<PagedModel<Order>> getListOrdersByUserId(@RequestParam(value = "id") @NotNull @Min(1) Long id,
+                                                                   Pageable pageable,
+                                                                   PagedResourcesAssembler<Order> pagedResourcesAssembler)
+            throws ResourceNotFoundException {
 
-        return ResponseEntity.ok(orderService.listOrdersByUserId(id, pageable));
+        Page<Order> orders = orderService.listOrdersByUserId(id, pageable);
+        PagedModel<Order> pagedModel = pagedResourcesAssembler.toModel(orders, assembler);
+        pagedModel.add(assembler.getLinksToCollectionModel(orders.getContent()));
+        return ResponseEntity.ok(pagedModel);
     }
 
     @PostMapping
@@ -60,7 +74,8 @@ public class OrderController {
             throws BadParametersException, ServiceException {
 
         try {
-            return ResponseEntity.ok(orderService.updateAndReturn(order, id));
+            Order updatedOrder = orderService.updateAndReturn(order, id);
+            return ResponseEntity.ok(assembler.toModel(updatedOrder));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -78,7 +93,8 @@ public class OrderController {
 
         Order existingOrder = orderService.getOrderById(id);
         patchOrder.mergeToEntity(existingOrder);
-        return ResponseEntity.ok(orderService.updateAndReturn(existingOrder, id));
+        Order updatedOrder = orderService.updateAndReturn(existingOrder, id);
+        return ResponseEntity.ok(assembler.toModel(updatedOrder));
     }
 
     @DeleteMapping("/{id}")

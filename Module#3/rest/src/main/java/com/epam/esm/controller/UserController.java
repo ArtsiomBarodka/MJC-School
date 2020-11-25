@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.component.assembler.UserAssembler;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
@@ -8,7 +9,10 @@ import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchUser;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,27 +21,37 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/users")
 @Validated
 public class UserController {
+    private final UserService userService;
+    private final UserAssembler assembler;
+
     @Autowired
-    private UserService userService;
+    public UserController(UserService userService, UserAssembler assembler) {
+        this.userService = userService;
+        this.assembler = assembler;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        return ResponseEntity.ok(userService.getUserById(id));
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(assembler.toModel(user));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(Pageable pageable)
+    public ResponseEntity<PagedModel<User>> getAllUsers(Pageable pageable,
+                                                        PagedResourcesAssembler<User> pagedResourcesAssembler)
             throws ResourceNotFoundException {
 
-        return ResponseEntity.ok(userService.listAllUsers(pageable));
+        Page<User> users = userService.listAllUsers(pageable);
+        PagedModel<User> pagedModel = pagedResourcesAssembler.toModel(users, assembler);
+        pagedModel.add(assembler.getLinksToCollectionModel(users.getContent()));
+        return ResponseEntity.ok(pagedModel);
     }
 
     @PostMapping
@@ -60,7 +74,8 @@ public class UserController {
             throws BadParametersException, ServiceException, ResourceAlreadyExistException {
 
         try {
-            return ResponseEntity.ok(userService.updateAndReturn(user, id));
+            User updatedUser = userService.updateAndReturn(user, id);
+            return ResponseEntity.ok(assembler.toModel(updatedUser));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
                     uriComponentsBuilder
@@ -78,7 +93,8 @@ public class UserController {
 
         User existingUser = userService.getUserById(id);
         patchUser.mergeToEntity(existingUser);
-        return ResponseEntity.ok(userService.updateAndReturn(existingUser, id));
+        User updatedUser = userService.updateAndReturn(existingUser, id);
+        return ResponseEntity.ok(assembler.toModel(updatedUser));
     }
 
 }

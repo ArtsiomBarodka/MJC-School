@@ -4,8 +4,6 @@ package com.epam.esm.domain;
 import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The enum Sort mode.
@@ -54,7 +52,7 @@ public enum SortMode {
         private final String destination;
         private final String field;
 
-         Entry(String destination, String field){
+        Entry(String destination, String field) {
             this.destination = destination.toLowerCase();
             this.field = field.toLowerCase();
         }

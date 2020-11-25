@@ -13,12 +13,11 @@ import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -114,9 +113,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> listOrdersByUserId(Long userId, Pageable pageable) throws ResourceNotFoundException {
-        List<Order> orders = orderDAO.getOrdersByUserId(userId, pageable);
-        if (orders == null) {
+    public Page<Order> listOrdersByUserId(Long userId, Pageable pageable) throws ResourceNotFoundException {
+        Page<Order> orders = orderDAO.getOrdersByUserId(userId, pageable);
+        if (!orders.hasContent()) {
             LOGGER.warn("List of orders are not found");
             throw new ResourceNotFoundException("List of orders are not found");
         }

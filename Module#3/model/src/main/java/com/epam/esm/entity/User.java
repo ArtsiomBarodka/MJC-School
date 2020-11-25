@@ -1,7 +1,9 @@
 package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +14,7 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "user")
-public class User {
+public class User extends RepresentationModel<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,10 +24,11 @@ public class User {
     @EnglishLanguage(withSpecSymbols = false, withPunctuations = false)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private List<Order> orders;
 
-    public User(){
+    public User() {
         orders = new ArrayList<>();
     }
 }

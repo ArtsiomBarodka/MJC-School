@@ -1,10 +1,9 @@
 package com.epam.esm.entity;
 
 import com.epam.esm.validation.annotation.EnglishLanguage;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,7 +19,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "certificate")
-public class GiftCertificate {
+public class GiftCertificate extends RepresentationModel<GiftCertificate> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
