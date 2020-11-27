@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,10 +115,5 @@ public class UserAssembler extends RepresentationModelAssemblerSupport<User, Use
                     return tag;
                 })
                 .collect(Collectors.toList());
-    }
-
-    private Link getSelfLink() {
-        String self = ServletUriComponentsBuilder.fromCurrentRequest().build().toString();
-        return Link.of(self);
     }
 }

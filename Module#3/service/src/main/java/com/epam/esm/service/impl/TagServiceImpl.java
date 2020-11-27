@@ -9,7 +9,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.TagService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,23 +42,24 @@ public class TagServiceImpl implements TagService {
             throw new ResourceAlreadyExistException(String.format("Tag with name %s already exist", tag.getName()));
         }
 
+        //save in repository
         Tag savedTag = tagDAO.save(tag);
 
 
-        for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
-            //check if the current gift certificate is exist in repository
+//        for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
+//            //check if the current gift certificate exists in repository and if true add relation
 //            savedTag.addGiftCertificates(giftCertificateDAO.findById(giftCertificate.getId()).orElseThrow(()->{
 //                LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
 //                return new BadParametersException(String.format("Gift certificate with id %d is not exist", giftCertificate.getId()));
 //            }));
-        }
+//        }
 
         return savedTag.getId();
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Tag getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(Long userId) throws ResourceNotFoundException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Tag getTheMostWidelyUsedTagOfUserFromTheHighestCostOfAllOrders(Long userId) throws ResourceNotFoundException {
         return tagDAO.findTheMostWidelyUsedOfUserWithTheHighestCostOfAllOrders(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Tag with users id %d is not exist", userId)));
     }
@@ -75,30 +75,22 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Tag getTagById(Long id) throws ResourceNotFoundException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Tag getById(Long id) throws ResourceNotFoundException {
         return tagDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Tag with id %d is not exist", id)));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Tag updateAndReturn(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException, ServiceException {
-        update(tag, id);
-        return tagDAO.findById(id)
-                .orElseThrow(() -> new ServiceException("Can`t find updated tag by id after update"));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void update(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException {
+    public Tag update(Tag tag, Long id) throws ResourceNotFoundException, BadParametersException {
         //check if the tag name is exist in repository
         Tag repositoryTag = tagDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Tag with id %d is not exist", id)));
 
         //check if the updated name unique
         if (tagDAO.isExistByName(tag.getName()) &&
-                !repositoryTag.getName().equals(tag.getName())) {
+                !repositoryTag.getName().equalsIgnoreCase(tag.getName())) {
             LOGGER.warn("Tag with name {} is already exist", tag.getName());
             throw new BadParametersException(String.format("Tag with name %s is already exist", tag.getName()));
         }
@@ -114,11 +106,13 @@ public class TagServiceImpl implements TagService {
         //update fields of gift certificate and save it in repository
         repositoryTag.setName(tag.getName());
         repositoryTag.setGiftCertificates(tag.getGiftCertificates());
+
+        return repositoryTag;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Tag> getListAllTagsWithGiftCertificates(Page page, SortMode sortMode) throws ResourceNotFoundException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Tag> getAll(Page page, SortMode sortMode) throws ResourceNotFoundException {
         List<Tag> result = tagDAO.listAllTags(page, sortMode);
 
         if (result.isEmpty()) {
@@ -130,8 +124,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(Long id, Page page, SortMode sortMode) throws ResourceNotFoundException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public List<Tag> getListByGiftCertificateId(Long id, Page page, SortMode sortMode) throws ResourceNotFoundException {
         List<Tag> result = tagDAO.listTagsByGiftCertificateId(id, page, sortMode);
 
         if (result.isEmpty()) {

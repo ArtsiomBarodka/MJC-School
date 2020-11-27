@@ -5,7 +5,6 @@ import com.epam.esm.entity.User;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchUser;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        User user = userService.getUserById(id);
+        User user = userService.getById(id);
         return ResponseEntity.ok(assembler.toModel(user));
     }
 
@@ -48,7 +47,7 @@ public class UserController {
                                                         PagedResourcesAssembler<User> pagedResourcesAssembler)
             throws ResourceNotFoundException {
 
-        Page<User> users = userService.listAllUsers(pageable);
+        Page<User> users = userService.getAll(pageable);
         PagedModel<User> pagedModel = pagedResourcesAssembler.toModel(users, assembler);
         pagedModel.add(assembler.getLinksToCollectionModel(users.getContent()));
         return ResponseEntity.ok(pagedModel);
@@ -71,10 +70,10 @@ public class UserController {
     public ResponseEntity<User> updateOrCreateUser(@PathVariable("id") @Min(1) Long id,
                                                    @RequestBody @Valid User user,
                                                    UriComponentsBuilder uriComponentsBuilder)
-            throws BadParametersException, ServiceException, ResourceAlreadyExistException {
+            throws BadParametersException, ResourceAlreadyExistException {
 
         try {
-            User updatedUser = userService.updateAndReturn(user, id);
+            User updatedUser = userService.update(user, id);
             return ResponseEntity.ok(assembler.toModel(updatedUser));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
@@ -89,11 +88,11 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePartOfUser(@PathVariable("id") @Min(1) Long id,
                                                    @RequestBody @Valid PatchUser patchUser)
-            throws ResourceNotFoundException, ServiceException, BadParametersException {
+            throws ResourceNotFoundException, BadParametersException {
 
-        User existingUser = userService.getUserById(id);
+        User existingUser = userService.getById(id);
         patchUser.mergeToEntity(existingUser);
-        User updatedUser = userService.updateAndReturn(existingUser, id);
+        User updatedUser = userService.update(existingUser, id);
         return ResponseEntity.ok(assembler.toModel(updatedUser));
     }
 

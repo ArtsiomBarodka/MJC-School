@@ -7,7 +7,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.service.OrderService;
 import lombok.NonNull;
 import org.slf4j.Logger;
@@ -18,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -39,9 +40,17 @@ public class OrderServiceImpl implements OrderService {
             throw new BadParametersException(String.format("User with id %d is not exist", order.getUser().getId()));
         }
 
-        //check if list of gift certificates exist and count sum of all certificates price
+        List<GiftCertificate> certificates = order.getGiftCertificates();
+
+        //check if list of gift certificates exists and isn`t empty
+        if (certificates == null || certificates.isEmpty()) {
+            LOGGER.warn("Order must contains at least 1 gift certificate");
+            throw new BadParametersException("Order must contains at least 1 gift certificate");
+        }
+
+        //check if list of gift certificates exists and count sum of all certificates price
         double sumPrice = 0;
-        for (GiftCertificate giftCertificate : order.getGiftCertificates()) {
+        for (GiftCertificate giftCertificate : certificates) {
             sumPrice += giftCertificateDAO.findById(giftCertificate.getId())
                     .orElseThrow(() -> {
                         LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
@@ -56,8 +65,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Order getOrderById(Long id) throws ResourceNotFoundException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Order getById(Long id) throws ResourceNotFoundException {
         return orderDAO.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Order with id %d is not exist", id)));
     }
@@ -73,47 +82,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void update(Order order, Long id) throws ResourceNotFoundException, BadParametersException {
-        //check if current order exists in repository
-        Order repositoryOrder = orderDAO.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Order with id %d is not exist", id)));
-
-        //check if current user exists in repository
-        if (!userDAO.existsById(order.getUser().getId())) {
-            LOGGER.warn("User with id {} is not exist", order.getUser().getId());
-            throw new BadParametersException(String.format("User with id %d is not exist", order.getUser().getId()));
-        }
-
-        //check if list of gift certificates exist and count sum of all certificates price
-        double sumPrice = 0;
-        for (GiftCertificate giftCertificate : order.getGiftCertificates()) {
-            sumPrice += giftCertificateDAO.findById(giftCertificate.getId())
-                    .orElseThrow(() -> {
-                        LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
-                        return new BadParametersException(String.format("Gift certificate with id %d is not exist", giftCertificate.getId()));
-                    })
-                    .getPrice();
-        }
-
-        //update order
-        repositoryOrder.setSumPrice(sumPrice);
-        repositoryOrder.setUser(order.getUser());
-        repositoryOrder.setGiftCertificates(order.getGiftCertificates());
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Order updateAndReturn(Order order, Long id)
-            throws ResourceNotFoundException, BadParametersException, ServiceException {
-        update(order, id);
-        return orderDAO.findById(id)
-                .orElseThrow(() -> new ServiceException("Can`t find updated order by id after update"));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Order> listOrdersByUserId(Long userId, Pageable pageable) throws ResourceNotFoundException {
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public Page<Order> getListByUserId(Long userId, Pageable pageable) throws ResourceNotFoundException {
         Page<Order> orders = orderDAO.getOrdersByUserId(userId, pageable);
         if (!orders.hasContent()) {
             LOGGER.warn("List of orders are not found");

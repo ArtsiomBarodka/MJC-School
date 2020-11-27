@@ -14,7 +14,6 @@ public class PatchTag implements PatchOperation<Tag> {
     @EnglishLanguage(withPunctuations = false)
     private String name;
 
-
     private List<GiftCertificate> giftCertificates;
 
     @Override

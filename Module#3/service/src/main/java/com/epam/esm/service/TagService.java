@@ -6,7 +6,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -18,19 +17,17 @@ public interface TagService {
     void delete(@NonNull Long id) throws ResourceNotFoundException;
 
     @NonNull
-    Tag getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(@NonNull Long userId) throws ResourceNotFoundException;
+    Tag getTheMostWidelyUsedTagOfUserFromTheHighestCostOfAllOrders(@NonNull Long userId) throws ResourceNotFoundException;
 
     @NonNull
-    Tag getTagById(@NonNull Long id) throws ResourceNotFoundException;
-
-    void update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+    Tag getById(@NonNull Long id) throws ResourceNotFoundException;
 
     @NonNull
-    Tag updateAndReturn(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException, ServiceException;
+    Tag update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
 
     @NonNull
-    List<Tag> getListAllTagsWithGiftCertificates(@NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
+    List<Tag> getAll(@NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
 
     @NonNull
-    List<Tag> getListTagsWithGiftCertificatesByGiftCertificateId(@NonNull Long id, @NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
+    List<Tag> getListByGiftCertificateId(@NonNull Long id, @NonNull Page page, @NonNull SortMode sortMode) throws ResourceNotFoundException;
 }

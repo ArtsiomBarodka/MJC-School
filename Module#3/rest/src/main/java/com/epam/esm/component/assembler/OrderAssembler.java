@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,9 +27,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, Order> {
     private static final String GET_ORDERS_BY_USER_ID = "user";
 
-    private static final String CREATE_LINK_RELATION = "createUser";
-    private static final String UPDATE_LINK_RELATION = "updateUser";
-    private static final String DELETE_LINK_RELATION = "deleteUser";
+    private static final String CREATE_LINK_RELATION = "createOrder";
+    private static final String DELETE_LINK_RELATION = "deleteOrder";
     private static final String GET_ORDERS_BY_USER_ID_LINK_RELATION = "getOrdersByUserId";
 
     public OrderAssembler() {
@@ -41,10 +39,8 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
     @Override
     public Order toModel(Order entity) {
         Link selfLink = linkTo(methodOn(OrderController.class).getOrderById(entity.getId())).withSelfRel();
-        Link updateLink = linkTo(OrderController.class).slash(entity.getId()).withRel(UPDATE_LINK_RELATION);
         Link deleteLink = linkTo(methodOn(OrderController.class).getOrderById(entity.getId())).withRel(DELETE_LINK_RELATION);
         entity.add(selfLink);
-        entity.add(updateLink);
         entity.add(deleteLink);
         entity.setUser(toUserModel(entity.getUser()));
         entity.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
@@ -116,10 +112,5 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
                     return tag;
                 })
                 .collect(Collectors.toList());
-    }
-
-    private Link getSelfLink() {
-        String self = ServletUriComponentsBuilder.fromCurrentRequest().build().toString();
-        return Link.of(self);
     }
 }

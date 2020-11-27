@@ -7,7 +7,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchGiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        GiftCertificate giftCertificate = giftCertificateService.getGiftCertificatesById(id);
+        GiftCertificate giftCertificate = giftCertificateService.getById(id);
         return ResponseEntity.ok(assembler.toModel(giftCertificate));
     }
 
@@ -51,7 +50,7 @@ public class GiftCertificateController {
                                                                                               @RequestParam(required = false) @Min(0) Integer page,
                                                                                               @RequestParam(required = false) @Min(1) Integer size) throws ResourceNotFoundException {
         Page pageable = new Page(page, size);
-        List<GiftCertificate> giftCertificates = giftCertificateService.getListGiftCertificatesWithTagsByTagNames(tagNames, pageable, SortMode.of(sort));
+        List<GiftCertificate> giftCertificates = giftCertificateService.getListByTagNames(tagNames, pageable, SortMode.of(sort));
         return ResponseEntity.ok(assembler.toCollectionModel(giftCertificates));
     }
 
@@ -62,7 +61,7 @@ public class GiftCertificateController {
             throws ResourceNotFoundException {
 
         Page pageable = new Page(page, size);
-        List<GiftCertificate> giftCertificates = giftCertificateService.getAllListGiftCertificatesWithTags(pageable, SortMode.of(sort));
+        List<GiftCertificate> giftCertificates = giftCertificateService.getAll(pageable, SortMode.of(sort));
         return ResponseEntity.ok(assembler.toCollectionModel(giftCertificates));
     }
 
@@ -84,10 +83,10 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
                                                                          UriComponentsBuilder uriComponentsBuilder)
-            throws ResourceAlreadyExistException, BadParametersException, ServiceException {
+            throws ResourceAlreadyExistException, BadParametersException {
 
         try {
-            GiftCertificate updatedGftCertificate = giftCertificateService.updateAndReturn(giftCertificate, id);
+            GiftCertificate updatedGftCertificate = giftCertificateService.update(giftCertificate, id);
             return ResponseEntity.ok(assembler.toModel(updatedGftCertificate));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
@@ -102,11 +101,11 @@ public class GiftCertificateController {
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePartOfGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                               @RequestBody @Valid PatchGiftCertificate patchGiftCertificate)
-            throws ResourceNotFoundException, ServiceException, BadParametersException {
+            throws ResourceNotFoundException, BadParametersException {
 
-        GiftCertificate existingGiftCertificates = giftCertificateService.getGiftCertificatesById(id);
+        GiftCertificate existingGiftCertificates = giftCertificateService.getById(id);
         patchGiftCertificate.mergeToEntity(existingGiftCertificates);
-        GiftCertificate updatedGftCertificate = giftCertificateService.updateAndReturn(existingGiftCertificates, id);
+        GiftCertificate updatedGftCertificate = giftCertificateService.update(existingGiftCertificates, id);
         return ResponseEntity.ok(assembler.toModel(updatedGftCertificate));
     }
 

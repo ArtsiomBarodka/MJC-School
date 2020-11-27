@@ -4,8 +4,6 @@ import com.epam.esm.component.assembler.OrderAssembler;
 import com.epam.esm.entity.Order;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
-import com.epam.esm.patch.PatchOrder;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,7 +36,7 @@ public class OrderController {
     public ResponseEntity<Order> getOrderById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        Order order = orderService.getOrderById(id);
+        Order order = orderService.getById(id);
         return ResponseEntity.ok(assembler.toModel(order));
     }
 
@@ -48,7 +46,7 @@ public class OrderController {
                                                                    PagedResourcesAssembler<Order> pagedResourcesAssembler)
             throws ResourceNotFoundException {
 
-        Page<Order> orders = orderService.listOrdersByUserId(id, pageable);
+        Page<Order> orders = orderService.getListByUserId(id, pageable);
         PagedModel<Order> pagedModel = pagedResourcesAssembler.toModel(orders, assembler);
         pagedModel.add(assembler.getLinksToCollectionModel(orders.getContent()));
         return ResponseEntity.ok(pagedModel);
@@ -65,36 +63,6 @@ public class OrderController {
                         .buildAndExpand(orderService.create(order))
                         .toUri())
                 .build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrCreateOrder(@PathVariable("id") @Min(1) Long id,
-                                                     @RequestBody @Valid Order order,
-                                                     UriComponentsBuilder uriComponentsBuilder)
-            throws BadParametersException, ServiceException {
-
-        try {
-            Order updatedOrder = orderService.updateAndReturn(order, id);
-            return ResponseEntity.ok(assembler.toModel(updatedOrder));
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.created(
-                    uriComponentsBuilder
-                            .path("/api/v1/orders/{id}")
-                            .buildAndExpand(orderService.create(order))
-                            .toUri())
-                    .build();
-        }
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Object> updatePartOfOrder(@PathVariable("id") @Min(1) Long id,
-                                                    @RequestBody @Valid PatchOrder patchOrder)
-            throws ResourceNotFoundException, ServiceException, BadParametersException {
-
-        Order existingOrder = orderService.getOrderById(id);
-        patchOrder.mergeToEntity(existingOrder);
-        Order updatedOrder = orderService.updateAndReturn(existingOrder, id);
-        return ResponseEntity.ok(assembler.toModel(updatedOrder));
     }
 
     @DeleteMapping("/{id}")

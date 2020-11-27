@@ -7,7 +7,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import com.epam.esm.patch.PatchTag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class TagController {
     public ResponseEntity<Tag> geTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(@RequestParam("id") @NotNull @Min(1) Long userId)
             throws ResourceNotFoundException {
 
-        Tag tag = tagService.getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders(userId);
+        Tag tag = tagService.getTheMostWidelyUsedTagOfUserFromTheHighestCostOfAllOrders(userId);
         return ResponseEntity.ok(assembler.toModel(tag));
     }
 
@@ -48,7 +47,7 @@ public class TagController {
     public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
 
-        Tag tag = tagService.getTagById(id);
+        Tag tag = tagService.getById(id);
         return ResponseEntity.ok(assembler.toModel(tag));
     }
 
@@ -59,7 +58,7 @@ public class TagController {
             throws ResourceNotFoundException {
 
         Page pageable = new Page(page, size);
-        List<Tag> tags = tagService.getListAllTagsWithGiftCertificates(pageable, SortMode.of(sort));
+        List<Tag> tags = tagService.getAll(pageable, SortMode.of(sort));
         return ResponseEntity.ok(assembler.toCollectionModel(tags));
     }
 
@@ -71,7 +70,7 @@ public class TagController {
             throws ResourceNotFoundException {
 
         Page pageable = new Page(page, size);
-        List<Tag> tags = tagService.getListTagsWithGiftCertificatesByGiftCertificateId(id, pageable, SortMode.of(sort));
+        List<Tag> tags = tagService.getListByGiftCertificateId(id, pageable, SortMode.of(sort));
         return ResponseEntity.ok(assembler.toCollectionModel(tags));
     }
 
@@ -92,10 +91,10 @@ public class TagController {
     public ResponseEntity<Tag> updateOrCreateTag(@PathVariable("id") @Min(1) Long id,
                                                  @RequestBody @Valid Tag tag,
                                                  UriComponentsBuilder uriComponentsBuilder)
-            throws ResourceAlreadyExistException, BadParametersException, ServiceException {
+            throws ResourceAlreadyExistException, BadParametersException {
 
         try {
-            Tag updatedTag = tagService.updateAndReturn(tag, id);
+            Tag updatedTag = tagService.update(tag, id);
             return ResponseEntity.ok(assembler.toModel(updatedTag));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.created(
@@ -110,11 +109,11 @@ public class TagController {
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePartOfTag(@PathVariable("id") @Min(1) Long id,
                                                   @RequestBody @Valid PatchTag patchTag)
-            throws ResourceNotFoundException, ServiceException, BadParametersException {
+            throws ResourceNotFoundException, BadParametersException {
 
-        Tag existingTag = tagService.getTagById(id);
+        Tag existingTag = tagService.getById(id);
         patchTag.mergeToEntity(existingTag);
-        Tag updatedTag = tagService.updateAndReturn(existingTag, id);
+        Tag updatedTag = tagService.update(existingTag, id);
         return ResponseEntity.ok(assembler.toModel(updatedTag));
     }
 

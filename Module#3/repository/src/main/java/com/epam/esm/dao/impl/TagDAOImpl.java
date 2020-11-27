@@ -51,6 +51,9 @@ public class TagDAOImpl implements TagDAO {
 
     @Override
     public Tag save(Tag tag) {
+        if(tag.getId()!=null){
+            return entityManager.merge(tag);
+        }
         entityManager.persist(tag);
         return tag;
     }

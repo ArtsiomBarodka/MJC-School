@@ -3,7 +3,6 @@ package com.epam.esm.component.handler;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.exception.service.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -31,7 +30,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION = "Exception.resourceNotFound";
     private static final String RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION = "Exception.resourceAlreadyExist";
     private static final String BAD_PARAMETERS_MESSAGE_EXCEPTION = "Exception.badParameters";
-    private static final String SERVICE_MESSAGE_EXCEPTION = "Exception.service";
     private static final String MESSAGE_EXCEPTION = "Exception.service";
 
     private final MessageSource messageSource;
@@ -88,21 +86,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         String message = messageSource.getMessage(BAD_PARAMETERS_MESSAGE_EXCEPTION, null, locale);
         String errorCode = HttpStatus.BAD_REQUEST.value() + ex.getErrorCode();
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.BAD_REQUEST, message, errorCode);
-        return buildResponseEntity(apiErrorResponse);
-    }
-
-    /**
-     * Handle service exception response entity.
-     *
-     * @param ex     the ex
-     * @param locale the locale
-     * @return the response entity
-     */
-    @ExceptionHandler(value = ServiceException.class)
-    protected ResponseEntity<Object> handleServiceException(ServiceException ex, Locale locale) {
-        String message = messageSource.getMessage(SERVICE_MESSAGE_EXCEPTION, null, locale);
-        String errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value() + ex.getErrorCode();
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, errorCode);
         return buildResponseEntity(apiErrorResponse);
     }
 
