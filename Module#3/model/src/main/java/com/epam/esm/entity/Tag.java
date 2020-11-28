@@ -3,6 +3,7 @@ package com.epam.esm.entity;
 import com.epam.esm.validation.annotation.EnglishLanguage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ public class Tag extends RepresentationModel<Tag> {
     @Column
     private String name;
 
+    @ToString.Exclude
     @JsonIgnoreProperties("tags")
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<GiftCertificate> giftCertificates;

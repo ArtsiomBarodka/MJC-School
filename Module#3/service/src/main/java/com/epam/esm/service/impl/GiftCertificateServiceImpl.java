@@ -42,7 +42,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificate> getAll(Page page, SortMode sortMode)
             throws ResourceNotFoundException {
 
-        List<GiftCertificate> result = giftCertificateDAO.listAllGiftCertificates(page, sortMode);
+        List<GiftCertificate> result = giftCertificateDAO.listAll(page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of gift certificates are not found");
@@ -57,7 +57,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificate> getListByTagNames(List<String> tagName, Page page, SortMode sortMode)
             throws ResourceNotFoundException {
 
-        List<GiftCertificate> result = giftCertificateDAO.listAllGiftCertificatesByTagNames(tagName, page, sortMode);
+        List<GiftCertificate> result = giftCertificateDAO.listByTagNames(tagName, page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of gift certificates with tag names {} not found", tagName);

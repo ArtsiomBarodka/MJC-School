@@ -2,6 +2,7 @@ package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -31,6 +32,7 @@ public class Order extends RepresentationModel<Order> {
     @NotNull
     private User user;
 
+    @ToString.Exclude
     @JoinTable(name = "certificate_order",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id"))

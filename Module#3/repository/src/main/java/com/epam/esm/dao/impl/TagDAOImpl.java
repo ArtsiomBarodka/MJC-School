@@ -46,12 +46,16 @@ public class TagDAOImpl implements TagDAO {
     public Optional<Tag> findTheMostWidelyUsedOfUserWithTheHighestCostOfAllOrders(Long userId) {
         Query query = entityManager.createNativeQuery(FIND_THE_MOST_WIDELY_USED_TAG_QUERY, Tag.class);
         query.setParameter(1, userId);
-        return Optional.ofNullable((Tag) query.getSingleResult());
+        List<Tag> resultList = query.getResultList();
+        if (resultList.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(resultList.get(0));
     }
 
     @Override
     public Tag save(Tag tag) {
-        if(tag.getId()!=null){
+        if (tag.getId() != null) {
             return entityManager.merge(tag);
         }
         entityManager.persist(tag);
@@ -77,7 +81,7 @@ public class TagDAOImpl implements TagDAO {
     }
 
     @Override
-    public List<Tag> listAllTags(Page page, SortMode sortMode) {
+    public List<Tag> listAll(Page page, SortMode sortMode) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tag = criteriaQuery.from(Tag.class);
@@ -97,7 +101,7 @@ public class TagDAOImpl implements TagDAO {
 
 
     @Override
-    public List<Tag> listTagsByGiftCertificateId(Long giftCertificateId, Page page, SortMode sortMode) {
+    public List<Tag> listByGiftCertificateId(Long giftCertificateId, Page page, SortMode sortMode) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tag = criteriaQuery.from(Tag.class);
@@ -117,12 +121,12 @@ public class TagDAOImpl implements TagDAO {
 
     }
 
-    public Long allTagsCount() {
+    public Long countAll() {
         Query query = entityManager.createQuery(ALL_TAGS_COUNT);
         return (Long) query.getSingleResult();
     }
 
-    public Long allTagsByGiftCertificateIdCount(Long giftCertificateId) {
+    public Long countByGiftCertificateId(Long giftCertificateId) {
         Query query = entityManager.createQuery(ALL_TAGS_BY_GIFT_CERTIFICATE_ID_COUNT);
         query.setParameter("cid", giftCertificateId);
         return (Long) query.getSingleResult();

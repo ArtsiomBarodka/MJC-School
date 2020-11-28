@@ -34,6 +34,9 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
     @Override
     public GiftCertificate save(GiftCertificate giftCertificate) {
+        if (giftCertificate.getId() != null) {
+            return entityManager.merge(giftCertificate);
+        }
         entityManager.persist(giftCertificate);
         return giftCertificate;
     }
@@ -57,7 +60,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificates(Page page, SortMode sortMode) {
+    public List<GiftCertificate> listAll(Page page, SortMode sortMode) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificate = criteriaQuery.from(GiftCertificate.class);
@@ -76,7 +79,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public List<GiftCertificate> listAllGiftCertificatesByTagNames(List<String> tagNames, Page page, SortMode sortMode) {
+    public List<GiftCertificate> listByTagNames(List<String> tagNames, Page page, SortMode sortMode) {
         String select = "SELECT c";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));
@@ -84,13 +87,13 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     @Override
-    public Long allGiftCertificatesCount() {
+    public Long countAll() {
         Query query = entityManager.createQuery(ALL_CERTIFICATES_COUNT);
         return (Long) query.getSingleResult();
     }
 
     @Override
-    public Long allGiftCertificatesByTagNamesCount(List<String> tagNames) {
+    public Long countByTagNames(List<String> tagNames) {
         String select = "SELECT count (c.id)";
         Map<String, Object> params = new HashMap<>();
         tagNames.forEach(name -> params.put(name, name));

@@ -9,7 +9,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -220,7 +219,7 @@ class TagServiceImplTest {
         Page page = new Page();
         SortMode sortMode = SortMode.ID_ASC;
 
-        when(tagDAO.listAllTags(any(Page.class), any(SortMode.class)))
+        when(tagDAO.listAll(any(Page.class), any(SortMode.class)))
                 .thenReturn(Collections.emptyList());
 
         assertThrows(ResourceNotFoundException.class,
@@ -228,14 +227,14 @@ class TagServiceImplTest {
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"ID_ASC", "ID_DESC", "NAME_ASC", "NAME_DESC"})
+    @EnumSource(value = SortMode.class, names = {"ID_ASC", "ID_DESC", "NAME_ASC", "NAME_DESC"})
     void getAllTest_SHOULD_RETURN_LIST(SortMode sortMode) throws ResourceNotFoundException {
         List<Tag> expected = new ArrayList<>();
         expected.add(spy(Tag.class));
 
         Page page = new Page();
 
-        when(tagDAO.listAllTags(any(Page.class), any(SortMode.class)))
+        when(tagDAO.listAll(any(Page.class), any(SortMode.class)))
                 .thenReturn(expected);
 
         List<Tag> actual = tagService.getAll(page, sortMode);
@@ -249,7 +248,7 @@ class TagServiceImplTest {
         Page page = new Page();
         SortMode sortMode = SortMode.ID_ASC;
 
-        when(tagDAO.listTagsByGiftCertificateId(anyLong(), any(Page.class), any(SortMode.class)))
+        when(tagDAO.listByGiftCertificateId(anyLong(), any(Page.class), any(SortMode.class)))
                 .thenReturn(Collections.emptyList());
 
         assertThrows(ResourceNotFoundException.class,
@@ -257,7 +256,7 @@ class TagServiceImplTest {
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"ID_ASC", "ID_DESC", "NAME_ASC", "NAME_DESC"})
+    @EnumSource(value = SortMode.class, names = {"ID_ASC", "ID_DESC", "NAME_ASC", "NAME_DESC"})
     void getListByGiftCertificateIdTest_SHOULD_RETURN_LIST(SortMode sortMode) throws ResourceNotFoundException {
         List<Tag> expected = new ArrayList<>();
         expected.add(spy(Tag.class));
@@ -265,7 +264,7 @@ class TagServiceImplTest {
         Long giftCertificateId = 1L;
         Page page = new Page();
 
-        when(tagDAO.listTagsByGiftCertificateId(anyLong(), any(Page.class), any(SortMode.class)))
+        when(tagDAO.listByGiftCertificateId(anyLong(), any(Page.class), any(SortMode.class)))
                 .thenReturn(expected);
 
         List<Tag> actual = tagService.getListByGiftCertificateId(giftCertificateId, page, sortMode);

@@ -9,7 +9,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.service.BadParametersException;
 import com.epam.esm.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.exception.service.ResourceNotFoundException;
-import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +41,7 @@ class GiftCertificateServiceImplTest {
         Page page = new Page();
         SortMode sortMode = SortMode.ID_ASC;
 
-        when(giftCertificateDAO.listAllGiftCertificates(any(Page.class), any(SortMode.class)))
+        when(giftCertificateDAO.listAll(any(Page.class), any(SortMode.class)))
                 .thenReturn(Collections.emptyList());
 
         assertThrows(ResourceNotFoundException.class,
@@ -57,7 +56,7 @@ class GiftCertificateServiceImplTest {
         List<GiftCertificate> expected = new ArrayList<>();
         expected.add(spy(GiftCertificate.class));
 
-        when(giftCertificateDAO.listAllGiftCertificates(any(Page.class), any(SortMode.class)))
+        when(giftCertificateDAO.listAll(any(Page.class), any(SortMode.class)))
                 .thenReturn(expected);
 
         List<GiftCertificate> actual = giftCertificateService.getAll(page, sortMode);
@@ -72,7 +71,7 @@ class GiftCertificateServiceImplTest {
         Page page = new Page();
         SortMode sortMode = SortMode.ID_ASC;
 
-        when(giftCertificateDAO.listAllGiftCertificatesByTagNames(anyList(), any(Page.class), any(SortMode.class)))
+        when(giftCertificateDAO.listByTagNames(anyList(), any(Page.class), any(SortMode.class)))
                 .thenReturn(Collections.emptyList());
 
         assertThrows(ResourceNotFoundException.class,
@@ -89,7 +88,7 @@ class GiftCertificateServiceImplTest {
         List<GiftCertificate> expected = new ArrayList<>();
         expected.add(spy(GiftCertificate.class));
 
-        when(giftCertificateDAO.listAllGiftCertificatesByTagNames(anyList(), any(Page.class), any(SortMode.class)))
+        when(giftCertificateDAO.listByTagNames(anyList(), any(Page.class), any(SortMode.class)))
                 .thenReturn(expected);
 
         List<GiftCertificate> actual = giftCertificateService.getListByTagNames(tagNames, page, sortMode);

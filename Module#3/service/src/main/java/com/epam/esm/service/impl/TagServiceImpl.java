@@ -113,7 +113,7 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Tag> getAll(Page page, SortMode sortMode) throws ResourceNotFoundException {
-        List<Tag> result = tagDAO.listAllTags(page, sortMode);
+        List<Tag> result = tagDAO.listAll(page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of tags are not found");
@@ -126,7 +126,7 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Tag> getListByGiftCertificateId(Long id, Page page, SortMode sortMode) throws ResourceNotFoundException {
-        List<Tag> result = tagDAO.listTagsByGiftCertificateId(id, page, sortMode);
+        List<Tag> result = tagDAO.listByGiftCertificateId(id, page, sortMode);
 
         if (result.isEmpty()) {
             LOGGER.warn("List of tags are not found");

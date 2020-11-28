@@ -3,6 +3,7 @@ package com.epam.esm.entity;
 import com.epam.esm.validation.annotation.EnglishLanguage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class User extends RepresentationModel<User> {
     @EnglishLanguage(withSpecSymbols = false, withPunctuations = false)
     private String name;
 
+    @ToString.Exclude
     @JsonIgnoreProperties("user")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private List<Order> orders;

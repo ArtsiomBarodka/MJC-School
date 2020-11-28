@@ -1,301 +1,184 @@
 package com.epam.esm.dao.impl;
 
-
+import com.epam.esm.TestMain;
 import com.epam.esm.dao.GiftCertificateDAO;
+import com.epam.esm.domain.Page;
+import com.epam.esm.domain.SortMode;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.repository.RepositoryException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * The type Gift certificate dao impl test.
- */
+@ActiveProfiles("test")
+@Transactional
+@Sql({"classpath:dump/insert.sql"})
+@SpringBootTest(classes = TestMain.class)
+class GiftCertificateDAOImplTest {
+    private static final String GIFT_CERTIFICATE_NAME = "name";
+    private static final String GIFT_CERTIFICATE_DESCRIPTION = "Some description for gift certificate!";
+    private static final Double GIFT_CERTIFICATE_PRICE = 100.25;
+    private static final Integer GIFT_CERTIFICATE_DURATION = 7;
 
-//@ActiveProfiles("test")
-//@SpringBootTest(classes = DataConfiguration.class)
-//public class GiftCertificateDAOImplTest {
-//    private static final String GIFT_CERTIFICATE_NAME = "name";
-//    private static final String GIFT_CERTIFICATE_DESCRIPTION = "Some description for gift certificate!";
-//    private static final Double GIFT_CERTIFICATE_PRICE = 100.25;
-//    private static final Integer GIFT_CERTIFICATE_DURATION = 7;
-//
-//    private GiftCertificateDAO giftCertificateDAO;
-//    private GiftCertificate giftCertificate;
-//
-//    /**
-//     * Instantiates a new Gift certificate dao impl test.
-//     *
-//     * @param dataSource the test data source
-//     */
-//    @Autowired
-//    public GiftCertificateDAOImplTest(DataSource dataSource) {
-//        giftCertificateDAO = new GiftCertificatesDAOImpl(dataSource);
-//        giftCertificate = new GiftCertificate();
-//        giftCertificate.setName(GIFT_CERTIFICATE_NAME);
-//        giftCertificate.setDescription(GIFT_CERTIFICATE_DESCRIPTION);
-//        giftCertificate.setPrice(GIFT_CERTIFICATE_PRICE);
-//        giftCertificate.setDuration(GIFT_CERTIFICATE_DURATION);
-//    }
-//
-//    /**
-//     * Delete tag in db.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @AfterEach
-//    void deleteTagInDb() throws RepositoryException {
-//        giftCertificateDAO.delete(giftCertificate.getId());
-//    }
-//
-//    /**
-//     * Create tag in db.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @BeforeEach
-//    void createTagInDb() throws RepositoryException {
-//        giftCertificate.setId(giftCertificateDAO.create(giftCertificate));
-//    }
-//
-//    /**
-//     * Is already exist by name test should return true.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void isAlreadyExistByNameTest_SHOULD_RETURN_TRUE() throws RepositoryException {
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())).isTrue();
-//    }
-//
-//    /**
-//     * Is already exist by name test should return false.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void isAlreadyExistByNameTest_SHOULD_RETURN_FALSE() throws RepositoryException {
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(" ")).isFalse();
-//    }
-//
-//    /**
-//     * Create test should create gift certificate and return valid id.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void createTest_SHOULD_CREATE_GIFT_CERTIFICATE_AND_RETURN_VALID_ID() throws RepositoryException {
-//        GiftCertificate newGiftCertificate = new GiftCertificate();
-//        newGiftCertificate.setName("giftCertificate");
-//        newGiftCertificate.setDescription("some desc");
-//        newGiftCertificate.setPrice(22.2);
-//        newGiftCertificate.setDuration(8);
-//
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(newGiftCertificate.getName())).isFalse();
-//
-//        Long newId = giftCertificateDAO.create(newGiftCertificate);
-//
-//        assertThat(newId).isGreaterThan(0L);
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(newGiftCertificate.getName())).isTrue();
-//    }
-//
-//    /**
-//     * Find by id test should return valid gift certificate.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void findByIdTest_SHOULD_RETURN_VALID_GIFT_CERTIFICATE() throws RepositoryException {
-//        Optional<GiftCertificate> repositoryGiftCertificate = giftCertificateDAO.findById(giftCertificate.getId());
-//
-//        assertThat(repositoryGiftCertificate).isPresent();
-//        assertThat(repositoryGiftCertificate.get()).hasFieldOrProperty(giftCertificate.getName());
-//    }
-//
-//    /**
-//     * Find by id test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void findByIdTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        Long notExistingTagId = 10L;
-//
-//        assertThat(giftCertificateDAO.findById(notExistingTagId)).isEmpty();
-//    }
-//
-//    /**
-//     * Delete test should delete gift certificate.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void deleteTest_SHOULD_DELETE_GIFT_CERTIFICATE() throws RepositoryException {
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())).isTrue();
-//
-//        giftCertificateDAO.delete(giftCertificate.getId());
-//
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(giftCertificate.getName())).isFalse();
-//    }
-//
-//    /**
-//     * Update test should update gift certificate.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void updateTest_SHOULD_UPDATE_GIFT_CERTIFICATE() throws RepositoryException {
-//        String newName = "newName";
-//
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(newName)).isFalse();
-//
-//        giftCertificate.setName(newName);
-//        giftCertificateDAO.update(giftCertificate);
-//
-//        assertThat(giftCertificateDAO.isAlreadyExistByName(newName)).isTrue();
-//    }
-//
-//    /**
-//     * Gets all list gift certificates sort by date asc test should return not empty gift certificates list.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getAllListGiftCertificatesSortByDateAscTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST() throws RepositoryException {
-//        assertThat(giftCertificateDAO.getAllListGiftCertificatesSortByDateAsc()).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets all list gift certificates sort by date desc test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getAllListGiftCertificatesSortByDateDescTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        assertThat(giftCertificateDAO.getAllListGiftCertificatesSortByDateDesc()).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets all list gift certificates sort by name asc test should return not empty gift certificates list.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getAllListGiftCertificatesSortByNameAscTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST() throws RepositoryException {
-//        assertThat(giftCertificateDAO.getAllListGiftCertificatesSortByNameAsc()).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets all list gift certificates sort by name desc test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getAllListGiftCertificatesSortByNameDescTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        assertThat(giftCertificateDAO.getAllListGiftCertificatesSortByNameDesc()).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by date asc test should return not empty gift certificates list.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByDateAscTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST() throws RepositoryException {
-//        String tagName = "one";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByDateAsc(tagName)).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by date asc test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByDateAscTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        String notExistingTagName = " ";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByDateAsc(notExistingTagName)).isEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by date desc test should return not empty gift certificates list.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByDateDescTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST() throws RepositoryException {
-//        String tagName = "one";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByDateDesc(tagName)).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by date desc test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByDateDescTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        String notExistingTagName = " ";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByDateDesc(notExistingTagName)).isEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by name desc test should return not empty gift certificates list.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByNameDescTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST() throws RepositoryException {
-//        String tagName = "one";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByNameDesc(tagName)).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by name desc test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByNameDescTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        String notExistingTagName = " ";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByNameDesc(notExistingTagName)).isEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by name asc test should return not empty gift certificates list.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByNameAscTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST() throws RepositoryException {
-//        String tagName = "one";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByNameAsc(tagName)).isNotEmpty();
-//    }
-//
-//    /**
-//     * Gets list gift certificates by tag name sort by name asc test should return empty result.
-//     *
-//     * @throws RepositoryException the repository exception
-//     */
-//    @Test
-//    void getListGiftCertificatesByTagNameSortByNameAscTest_SHOULD_RETURN_EMPTY_RESULT() throws RepositoryException {
-//        String notExistingTagName = " ";
-//
-//        assertThat(giftCertificateDAO.getListGiftCertificatesByTagNameSortByNameAsc(notExistingTagName)).isEmpty();
-//    }
-//}
+    @Autowired
+    private GiftCertificateDAO giftCertificateDAO;
+
+    private final GiftCertificate giftCertificate;
+
+    public GiftCertificateDAOImplTest() {
+        giftCertificate = new GiftCertificate();
+        giftCertificate.setName(GIFT_CERTIFICATE_NAME);
+        giftCertificate.setDescription(GIFT_CERTIFICATE_DESCRIPTION);
+        giftCertificate.setPrice(GIFT_CERTIFICATE_PRICE);
+        giftCertificate.setDuration(GIFT_CERTIFICATE_DURATION);
+        giftCertificate.setTags(Collections.emptyList());
+    }
+
+    @AfterEach
+    void deleteGiftCertificateInDb() {
+        if (giftCertificateDAO.isExistById(giftCertificate.getId())) {
+            giftCertificateDAO.delete(giftCertificate.getId());
+        }
+    }
+
+    @BeforeEach
+    void createGiftCertificateInDb() {
+        giftCertificateDAO.save(giftCertificate);
+    }
+
+    @Test
+    void isExistByIdTest_SHOULD_RETURN_TRUE() {
+        assertThat(giftCertificateDAO.isExistById(giftCertificate.getId())).isTrue();
+    }
+
+    @Test
+    void isExistByIdTest_SHOULD_RETURN_FALSE() {
+        assertThat(giftCertificateDAO.isExistById(100L)).isFalse();
+    }
+
+    @Test
+    void isExistByNameTest_SHOULD_RETURN_TRUE() {
+        assertThat(giftCertificateDAO.isExistByName(giftCertificate.getName())).isTrue();
+    }
+
+    @Test
+    void isExistByNameTest_SHOULD_RETURN_FALSE() {
+        assertThat(giftCertificateDAO.isExistByName(" ")).isFalse();
+    }
+
+    @Test
+    void saveTest_SHOULD_CREATE_NEW_GIFT_CERTIFICATE_AND_RETURN_WITH_VALID_ID() {
+        GiftCertificate newGiftCertificate = new GiftCertificate();
+        newGiftCertificate.setName("giftCertificate");
+        newGiftCertificate.setDescription("some desc");
+        newGiftCertificate.setPrice(22.2);
+        newGiftCertificate.setDuration(8);
+        newGiftCertificate.setTags(Collections.emptyList());
+
+        assertThat(giftCertificateDAO.isExistByName(newGiftCertificate.getName())).isFalse();
+
+        GiftCertificate repositoryGiftCertificate = giftCertificateDAO.save(newGiftCertificate);
+
+        assertThat(repositoryGiftCertificate).isNotNull();
+        assertThat(repositoryGiftCertificate.getId()).isNotNull().isGreaterThan(0L);
+        assertThat(giftCertificateDAO.isExistByName(newGiftCertificate.getName())).isTrue();
+    }
+
+    @Test
+    void saveTest_SHOULD_UPDATE_NOT_MANAGED_CURRENT_GIFT_CERTIFICATE_AND_RETURN() {
+        String newName = "newName";
+
+        assertThat(giftCertificateDAO.isExistByName(newName)).isFalse();
+
+        giftCertificate.setName(newName);
+        GiftCertificate updatedGiftCertificate = giftCertificateDAO.save(giftCertificate);
+
+        assertThat(updatedGiftCertificate).isNotNull();
+        assertThat(giftCertificateDAO.isExistByName(newName)).isTrue();
+    }
+
+    @Test
+    void findByIdTest_SHOULD_RETURN_VALID_GIFT_CERTIFICATE() {
+        Optional<GiftCertificate> repositoryGiftCertificate = giftCertificateDAO.findById(giftCertificate.getId());
+
+        assertThat(repositoryGiftCertificate).isPresent();
+        assertThat(repositoryGiftCertificate.get()).hasFieldOrProperty(giftCertificate.getName());
+    }
+
+    @Test
+    void findByIdTest_SHOULD_RETURN_EMPTY_RESULT() {
+        Long notExistingTagId = 10L;
+
+        assertThat(giftCertificateDAO.findById(notExistingTagId)).isEmpty();
+    }
+
+    @Test
+    void deleteTest_SHOULD_DELETE_GIFT_CERTIFICATE() {
+        assertThat(giftCertificateDAO.isExistById(giftCertificate.getId())).isTrue();
+
+        giftCertificateDAO.delete(giftCertificate.getId());
+
+        assertThat(giftCertificateDAO.isExistById(giftCertificate.getId())).isFalse();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SortMode.class)
+    void listAllTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST(SortMode sortMode) {
+        Page page = new Page();
+        assertThat(giftCertificateDAO.listAll(page, sortMode)).isNotEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SortMode.class)
+    void listByTagNamesTest_SHOULD_RETURN_EMPTY_GIFT_CERTIFICATES_LIST(SortMode sortMode) {
+        Page page = new Page();
+        List<String> notExistingTagNames = new ArrayList<>();
+        notExistingTagNames.add("newTag");
+
+        assertThat(giftCertificateDAO.listByTagNames(notExistingTagNames, page, sortMode)).isEmpty();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = SortMode.class)
+    void listByTagNamesTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST(SortMode sortMode) {
+        Page page = new Page();
+        List<String> existingTagNames = new ArrayList<>();
+        existingTagNames.add("one");
+
+        assertThat(giftCertificateDAO.listByTagNames(existingTagNames, page, sortMode)).isNotEmpty();
+    }
+
+    @Test
+    void countAllTest_SHOULD_RETURN_POSITIVE_COUNT() {
+        assertThat(giftCertificateDAO.countAll()).isPositive();
+    }
+
+    @Test
+    void countByTagNamesTest_SHOULD_RETURN_ZERO_COUNT() {
+        List<String> notExistingTagNames = new ArrayList<>();
+        notExistingTagNames.add("newTag");
+
+        assertThat(giftCertificateDAO.countByTagNames(notExistingTagNames)).isZero();
+    }
+
+    @Test
+    void countByTagNamesTest_SHOULD_RETURN_POSITIVE_COUNT() {
+        List<String> existingTagNames = new ArrayList<>();
+        existingTagNames.add("one");
+
+        assertThat(giftCertificateDAO.countByTagNames(existingTagNames)).isPositive();
+    }
+}

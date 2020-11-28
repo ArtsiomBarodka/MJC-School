@@ -25,14 +25,16 @@ public interface GiftCertificateDAO {
     boolean isExistByName(@NonNull String name);
 
     @NonNull
-    List<GiftCertificate> listAllGiftCertificates(@NonNull Page page, SortMode sortMode);
+    List<GiftCertificate> listAll(@NonNull Page page, @NonNull SortMode sortMode);
 
     @NonNull
-    List<GiftCertificate> listAllGiftCertificatesByTagNames(@NonNull List<String> tagNames, @NonNull Page page, @NonNull SortMode sortMode);
+    List<GiftCertificate> listByTagNames(@NonNull List<String> tagNames, @NonNull Page page, @NonNull SortMode sortMode);
 
-    Long allGiftCertificatesCount();
+    @NonNull
+    Long countAll();
 
-    Long allGiftCertificatesByTagNamesCount(List<String> tagNames);
+    @NonNull
+    Long countByTagNames(@NonNull List<String> tagNames);
 }
 
 

@@ -23,19 +23,20 @@ public interface TagDAO {
 
     void delete(@NonNull Long id);
 
-    public boolean isExistById(@NonNull Long id);
+    boolean isExistById(@NonNull Long id);
 
     boolean isExistByName(@NonNull String name);
 
     @NonNull
-    List<Tag> listAllTags(@NonNull Page page, @NonNull SortMode sortMode);
+    List<Tag> listAll(@NonNull Page page, @NonNull SortMode sortMode);
 
     @NonNull
-    List<Tag> listTagsByGiftCertificateId(@NonNull Long giftCertificateId,
-                                          @NonNull Page page, SortMode sortMode);
+    List<Tag> listByGiftCertificateId(@NonNull Long giftCertificateId, @NonNull Page page, @NonNull SortMode sortMode);
 
-    Long allTagsCount();
+    @NonNull
+    Long countAll();
 
-    Long allTagsByGiftCertificateIdCount(Long giftCertificateId);
+    @NonNull
+    Long countByGiftCertificateId(@NonNull Long giftCertificateId);
 
 }

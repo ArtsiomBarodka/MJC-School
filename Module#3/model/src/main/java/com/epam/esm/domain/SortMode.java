@@ -1,41 +1,23 @@
 package com.epam.esm.domain;
 
 
+import org.apache.commons.text.WordUtils;
 import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
 
-/**
- * The enum Sort mode.
- */
 public enum SortMode {
     ID_ASC,
     ID_DESC,
-    /**
-     * Date asc sort mode.
-     */
-    DATE_ASC,
-    /**
-     * Date desc sort mode.
-     */
-    DATE_DESC,
-    /**
-     * Name asc sort mode.
-     */
+    LAST_UPDATE_DATE_ASC,
+    LAST_UPDATE_DATE_DESC,
+    CREATE_DATE_ASC,
+    CREATE_DATE_DESC,
     NAME_ASC,
-    /**
-     * Name desc sort mode.
-     */
     NAME_DESC;
 
     private static final String DELIMITER = "_";
 
-    /**
-     * Of sort mode.
-     *
-     * @param name the name
-     * @return the sort mode
-     */
     public static SortMode of(String name) {
         return Arrays.stream(SortMode.values())
                 .filter(v -> v.name().equalsIgnoreCase(name))
@@ -45,16 +27,16 @@ public enum SortMode {
 
     public static Entry split(@NonNull SortMode sortMode){
         String[] result = sortMode.name().split(DELIMITER);
-        return new Entry(result[1],result[0]);
+        return new Entry(result[result.length - 1], Arrays.copyOf(result, result.length - 1));
     }
 
     public static class Entry{
         private final String destination;
         private final String field;
 
-        Entry(String destination, String field) {
+        Entry(String destination, String... field) {
             this.destination = destination.toLowerCase();
-            this.field = field.toLowerCase();
+            this.field = toCamelCaseArray(field);
         }
 
         public String getDestination() {
@@ -63,6 +45,17 @@ public enum SortMode {
 
         public String getField() {
             return field;
+        }
+
+        private String toCamelCaseArray(String[] s) {
+            s[0] = s[0].toLowerCase();
+            if (s.length == 1) {
+                return s[0];
+            }
+            for (int i = 1; i < s.length; i++) {
+                s[i] = WordUtils.capitalizeFully(s[i]);
+            }
+            return String.join("", s);
         }
     }
 }
