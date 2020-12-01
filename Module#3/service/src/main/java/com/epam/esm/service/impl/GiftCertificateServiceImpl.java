@@ -27,10 +27,15 @@ import java.util.List;
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateServiceImpl.class);
 
-
     private final GiftCertificateDAO giftCertificateDAO;
     private final TagDAO tagDAO;
 
+    /**
+     * Instantiates a new Gift certificate service.
+     *
+     * @param giftCertificateDAO the gift certificate dao
+     * @param tagDAO             the tag dao
+     */
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDAO tagDAO) {
         this.giftCertificateDAO = giftCertificateDAO;

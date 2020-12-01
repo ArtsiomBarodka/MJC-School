@@ -12,6 +12,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * The type User dao test.
+ */
 @ActiveProfiles("test")
 @Sql({"classpath:dump/insert.sql"})
 @DataJpaTest
@@ -23,11 +26,17 @@ class UserDAOTest {
 
     private final User user;
 
+    /**
+     * Instantiates a new User dao test.
+     */
     public UserDAOTest() {
         user = new User();
         user.setName(USER_NAME);
     }
 
+    /**
+     * Delete user in db.
+     */
     @AfterEach
     void deleteUserInDb() {
         if (userDAO.existsById(user.getId())) {
@@ -35,16 +44,25 @@ class UserDAOTest {
         }
     }
 
+    /**
+     * Create user in db.
+     */
     @BeforeEach
     void createUserInDb() {
         userDAO.save(user);
     }
 
+    /**
+     * Exists by name test should return true.
+     */
     @Test
     void existsByNameTest_SHOULD_RETURN_TRUE() {
         assertThat(userDAO.existsByName(user.getName())).isTrue();
     }
 
+    /**
+     * Exists by name test should return false.
+     */
     @Test
     void existsByNameTest_SHOULD_RETURN_FALSE() {
         assertThat(userDAO.existsByName(" ")).isFalse();

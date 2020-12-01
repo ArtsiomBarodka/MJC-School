@@ -24,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * The type User service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     @Mock
@@ -33,6 +36,9 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    /**
+     * Gets by id test resource in not exist.
+     */
     @Test
     void getByIdTest_RESOURCE_IN_NOT_EXIST() {
         Long id = 1L;
@@ -44,6 +50,11 @@ class UserServiceImplTest {
                 () -> userService.getById(id));
     }
 
+    /**
+     * Gets by id test should return user.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByIdTest_SHOULD_RETURN_USER() throws ResourceNotFoundException {
         User expected = mock(User.class);
@@ -58,6 +69,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Gets all test resource in not exist.
+     */
     @Test
     void getAllTest_RESOURCE_IN_NOT_EXIST() {
         Pageable pageableMock = mock(Pageable.class);
@@ -69,6 +83,11 @@ class UserServiceImplTest {
                 () -> userService.getAll(pageableMock));
     }
 
+    /**
+     * Gets all test should return list.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getAllTest_SHOULD_RETURN_LIST() throws ResourceNotFoundException {
         Page expected = mock(Page.class);
@@ -84,6 +103,9 @@ class UserServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Create test user already exist with name.
+     */
     @Test
     void createTest_USER_ALREADY_EXIST_WITH_NAME() {
         User userMock = mock(User.class);
@@ -97,6 +119,9 @@ class UserServiceImplTest {
                 () -> userService.create(userMock));
     }
 
+    /**
+     * Create test current order is not exist.
+     */
     @Test
     void createTest_CURRENT_ORDER_IS_NOT_EXIST() {
         User userMock = mock(User.class);
@@ -118,6 +143,12 @@ class UserServiceImplTest {
                 () -> userService.create(userMock));
     }
 
+    /**
+     * Create test should create user.
+     *
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
+     */
     @Test
     void createTest_SHOULD_CREATE_USER() throws ResourceAlreadyExistException, BadParametersException {
         Long expected = 1L;
@@ -146,6 +177,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Update test user is not exist with id.
+     */
     @Test
     void updateTest_USER_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;
@@ -158,6 +192,9 @@ class UserServiceImplTest {
                 () -> userService.update(userMock, id));
     }
 
+    /**
+     * Update test user updated name already exist.
+     */
     @Test
     void updateTest_USER_UPDATED_NAME_ALREADY_EXIST() {
         Long id = 1L;
@@ -177,6 +214,12 @@ class UserServiceImplTest {
                 () -> userService.update(userMock, id));
     }
 
+    /**
+     * Update test should update user.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @Test
     void updateTest_SHOULD_UPDATE_USER() throws ResourceNotFoundException, BadParametersException {
         Long id = 1L;

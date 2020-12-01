@@ -27,8 +27,8 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
     private Long id;
 
     @NotNull
-    @Size(min = 3, max = 20)
-    @EnglishLanguage(withPunctuations = false)
+    @Size(min = 3, max = 50)
+    @EnglishLanguage(withNumbers = false, withSpecSymbols = false)
     @Column
     private String name;
 

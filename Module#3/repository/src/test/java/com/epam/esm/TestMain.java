@@ -1,8 +1,10 @@
 package com.epam.esm;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * The type Test main.
+ */
 @SpringBootApplication
 public class TestMain {
 }

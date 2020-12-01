@@ -9,6 +9,9 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+/**
+ * The type Patch gift certificate.
+ */
 @Data
 public class PatchGiftCertificate implements PatchOperation<GiftCertificate> {
     @Size(min = 3, max = 20)

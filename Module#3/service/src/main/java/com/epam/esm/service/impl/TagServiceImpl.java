@@ -20,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
+/**
+ * The type Tag service.
+ */
 @Service
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagServiceImpl.class);
@@ -27,6 +30,12 @@ public class TagServiceImpl implements TagService {
     private final TagDAO tagDAO;
     private final GiftCertificateDAO giftCertificateDAO;
 
+    /**
+     * Instantiates a new Tag service.
+     *
+     * @param tagDAO             the tag dao
+     * @param giftCertificateDAO the gift certificate dao
+     */
     @Autowired
     public TagServiceImpl(TagDAO tagDAO, GiftCertificateDAO giftCertificateDAO) {
         this.tagDAO = tagDAO;
@@ -44,15 +53,6 @@ public class TagServiceImpl implements TagService {
 
         //save in repository
         Tag savedTag = tagDAO.save(tag);
-
-
-//        for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
-//            //check if the current gift certificate exists in repository and if true add relation
-//            savedTag.addGiftCertificates(giftCertificateDAO.findById(giftCertificate.getId()).orElseThrow(()->{
-//                LOGGER.warn("Gift certificate with id {} is not exist", giftCertificate.getId());
-//                return new BadParametersException(String.format("Gift certificate with id %d is not exist", giftCertificate.getId()));
-//            }));
-//        }
 
         return savedTag.getId();
     }

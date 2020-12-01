@@ -8,6 +8,9 @@ import lombok.Data;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+/**
+ * The type Patch user.
+ */
 @Data
 public class PatchUser implements PatchOperation<User> {
     @Size(min = 3, max = 20)

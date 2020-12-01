@@ -18,6 +18,9 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The type Tag dao.
+ */
 @Repository
 public class TagDAOImpl implements TagDAO {
     private static final String ALL_TAGS_COUNT = "SELECT count (t.id) FROM Tag t";

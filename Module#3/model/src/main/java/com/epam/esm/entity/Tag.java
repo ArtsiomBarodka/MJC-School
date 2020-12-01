@@ -25,8 +25,8 @@ public class Tag extends RepresentationModel<Tag> {
     private Long id;
 
     @NotNull
-    @Size(min = 3, max = 20)
-    @EnglishLanguage(withPunctuations = false)
+    @Size(min = 3, max = 50)
+    @EnglishLanguage(withSpecSymbols = false, withNumbers = false)
     @Column
     private String name;
 
@@ -36,10 +36,18 @@ public class Tag extends RepresentationModel<Tag> {
     private List<GiftCertificate> giftCertificates;
 
 
+    /**
+     * Instantiates a new Tag.
+     */
     public Tag() {
         giftCertificates = new ArrayList<>();
     }
 
+    /**
+     * Add gift certificates.
+     *
+     * @param giftCertificate the gift certificate
+     */
     public void addGiftCertificates(GiftCertificate giftCertificate) {
         if (giftCertificate != null) {
             giftCertificates.add(giftCertificate);
@@ -48,6 +56,11 @@ public class Tag extends RepresentationModel<Tag> {
     }
 
 
+    /**
+     * Delete gift certificates.
+     *
+     * @param giftCertificate the gift certificate
+     */
     public void deleteGiftCertificates(GiftCertificate giftCertificate) {
         if (giftCertificate != null) {
             giftCertificates.removeIf(g -> g.getId().equals(giftCertificate.getId()));

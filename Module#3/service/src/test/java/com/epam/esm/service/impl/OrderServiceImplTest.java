@@ -28,6 +28,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * The type Order service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
     @Mock
@@ -39,6 +42,9 @@ class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
+    /**
+     * Create test created order user is not exist.
+     */
     @Test
     void createTest_CREATED_ORDER_USER_IS_NOT_EXIST() {
         Order orderMock = mock(Order.class);
@@ -54,6 +60,9 @@ class OrderServiceImplTest {
                 () -> orderService.create(orderMock));
     }
 
+    /**
+     * Create test created order list of gift certificates is empty.
+     */
     @Test
     void createTest_CREATED_ORDER_LIST_OF_GIFT_CERTIFICATES_IS_EMPTY() {
         Order orderMock = mock(Order.class);
@@ -70,6 +79,9 @@ class OrderServiceImplTest {
                 () -> orderService.create(orderMock));
     }
 
+    /**
+     * Create test created order gift certificate is not exist.
+     */
     @Test
     void createTest_CREATED_ORDER_GIFT_CERTIFICATE_IS_NOT_EXIST() {
         Order orderMock = mock(Order.class);
@@ -93,6 +105,11 @@ class OrderServiceImplTest {
                 () -> orderService.create(orderMock));
     }
 
+    /**
+     * Create test should create order.
+     *
+     * @throws BadParametersException the bad parameters exception
+     */
     @Test
     void createTest_SHOULD_CREATE_ORDER() throws BadParametersException {
         Long expected = 1L;
@@ -124,6 +141,9 @@ class OrderServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Gets by id test resource in not exist.
+     */
     @Test
     void getByIdTest_RESOURCE_IN_NOT_EXIST() {
         Long id = 1L;
@@ -135,6 +155,11 @@ class OrderServiceImplTest {
                 () -> orderService.getById(id));
     }
 
+    /**
+     * Gets by id test should return order.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByIdTest_SHOULD_RETURN_ORDER() throws ResourceNotFoundException {
         Order expected = mock(Order.class);
@@ -149,6 +174,9 @@ class OrderServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Delete test order is not exist with id.
+     */
     @Test
     void deleteTest_ORDER_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;
@@ -160,6 +188,9 @@ class OrderServiceImplTest {
                 () -> orderService.delete(id));
     }
 
+    /**
+     * Gets list by user id resource in not exist.
+     */
     @Test
     void getListByUserId_RESOURCE_IN_NOT_EXIST() {
         Long userId = 1L;
@@ -172,6 +203,11 @@ class OrderServiceImplTest {
                 () -> orderService.getListByUserId(userId, pageableMock));
     }
 
+    /**
+     * Gets list by user id should return list.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getListByUserId_SHOULD_RETURN_LIST() throws ResourceNotFoundException {
         Page expected = mock(Page.class);

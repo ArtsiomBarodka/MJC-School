@@ -12,6 +12,9 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type User.
+ */
 @Entity
 @Data
 @Table(name = "user")
@@ -21,7 +24,7 @@ public class User extends RepresentationModel<User> {
     private Long id;
 
     @NotNull
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 30)
     @EnglishLanguage(withSpecSymbols = false, withPunctuations = false)
     private String name;
 
@@ -30,6 +33,9 @@ public class User extends RepresentationModel<User> {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private List<Order> orders;
 
+    /**
+     * Instantiates a new User.
+     */
     public User() {
         orders = new ArrayList<>();
     }

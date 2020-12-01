@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The type Gift certificate dao.
+ */
 @Repository
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     private static final String FIND_CERTIFICATE_BY_NAME = "SELECT count (c.id) FROM GiftCertificate c WHERE c.name = :cname";

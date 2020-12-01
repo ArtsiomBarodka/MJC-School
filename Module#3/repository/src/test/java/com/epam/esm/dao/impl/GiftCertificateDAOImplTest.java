@@ -23,6 +23,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * The type Gift certificate dao impl test.
+ */
 @ActiveProfiles("test")
 @Transactional
 @Sql({"classpath:dump/insert.sql"})
@@ -38,6 +41,9 @@ class GiftCertificateDAOImplTest {
 
     private final GiftCertificate giftCertificate;
 
+    /**
+     * Instantiates a new Gift certificate dao impl test.
+     */
     public GiftCertificateDAOImplTest() {
         giftCertificate = new GiftCertificate();
         giftCertificate.setName(GIFT_CERTIFICATE_NAME);
@@ -47,6 +53,9 @@ class GiftCertificateDAOImplTest {
         giftCertificate.setTags(Collections.emptyList());
     }
 
+    /**
+     * Delete gift certificate in db.
+     */
     @AfterEach
     void deleteGiftCertificateInDb() {
         if (giftCertificateDAO.isExistById(giftCertificate.getId())) {
@@ -54,31 +63,49 @@ class GiftCertificateDAOImplTest {
         }
     }
 
+    /**
+     * Create gift certificate in db.
+     */
     @BeforeEach
     void createGiftCertificateInDb() {
         giftCertificateDAO.save(giftCertificate);
     }
 
+    /**
+     * Is exist by id test should return true.
+     */
     @Test
     void isExistByIdTest_SHOULD_RETURN_TRUE() {
         assertThat(giftCertificateDAO.isExistById(giftCertificate.getId())).isTrue();
     }
 
+    /**
+     * Is exist by id test should return false.
+     */
     @Test
     void isExistByIdTest_SHOULD_RETURN_FALSE() {
         assertThat(giftCertificateDAO.isExistById(100L)).isFalse();
     }
 
+    /**
+     * Is exist by name test should return true.
+     */
     @Test
     void isExistByNameTest_SHOULD_RETURN_TRUE() {
         assertThat(giftCertificateDAO.isExistByName(giftCertificate.getName())).isTrue();
     }
 
+    /**
+     * Is exist by name test should return false.
+     */
     @Test
     void isExistByNameTest_SHOULD_RETURN_FALSE() {
         assertThat(giftCertificateDAO.isExistByName(" ")).isFalse();
     }
 
+    /**
+     * Save test should create new gift certificate and return with valid id.
+     */
     @Test
     void saveTest_SHOULD_CREATE_NEW_GIFT_CERTIFICATE_AND_RETURN_WITH_VALID_ID() {
         GiftCertificate newGiftCertificate = new GiftCertificate();
@@ -97,6 +124,9 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.isExistByName(newGiftCertificate.getName())).isTrue();
     }
 
+    /**
+     * Save test should update not managed current gift certificate and return.
+     */
     @Test
     void saveTest_SHOULD_UPDATE_NOT_MANAGED_CURRENT_GIFT_CERTIFICATE_AND_RETURN() {
         String newName = "newName";
@@ -110,6 +140,9 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.isExistByName(newName)).isTrue();
     }
 
+    /**
+     * Find by id test should return valid gift certificate.
+     */
     @Test
     void findByIdTest_SHOULD_RETURN_VALID_GIFT_CERTIFICATE() {
         Optional<GiftCertificate> repositoryGiftCertificate = giftCertificateDAO.findById(giftCertificate.getId());
@@ -118,6 +151,9 @@ class GiftCertificateDAOImplTest {
         assertThat(repositoryGiftCertificate.get()).hasFieldOrProperty(giftCertificate.getName());
     }
 
+    /**
+     * Find by id test should return empty result.
+     */
     @Test
     void findByIdTest_SHOULD_RETURN_EMPTY_RESULT() {
         Long notExistingTagId = 10L;
@@ -125,6 +161,9 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.findById(notExistingTagId)).isEmpty();
     }
 
+    /**
+     * Delete test should delete gift certificate.
+     */
     @Test
     void deleteTest_SHOULD_DELETE_GIFT_CERTIFICATE() {
         assertThat(giftCertificateDAO.isExistById(giftCertificate.getId())).isTrue();
@@ -134,6 +173,11 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.isExistById(giftCertificate.getId())).isFalse();
     }
 
+    /**
+     * List all test should return not empty gift certificates list.
+     *
+     * @param sortMode the sort mode
+     */
     @ParameterizedTest
     @EnumSource(value = SortMode.class)
     void listAllTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST(SortMode sortMode) {
@@ -141,6 +185,11 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.listAll(page, sortMode)).isNotEmpty();
     }
 
+    /**
+     * List by tag names test should return empty gift certificates list.
+     *
+     * @param sortMode the sort mode
+     */
     @ParameterizedTest
     @EnumSource(value = SortMode.class)
     void listByTagNamesTest_SHOULD_RETURN_EMPTY_GIFT_CERTIFICATES_LIST(SortMode sortMode) {
@@ -151,6 +200,11 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.listByTagNames(notExistingTagNames, page, sortMode)).isEmpty();
     }
 
+    /**
+     * List by tag names test should return not empty gift certificates list.
+     *
+     * @param sortMode the sort mode
+     */
     @ParameterizedTest
     @EnumSource(value = SortMode.class)
     void listByTagNamesTest_SHOULD_RETURN_NOT_EMPTY_GIFT_CERTIFICATES_LIST(SortMode sortMode) {
@@ -161,11 +215,17 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.listByTagNames(existingTagNames, page, sortMode)).isNotEmpty();
     }
 
+    /**
+     * Count all test should return positive count.
+     */
     @Test
     void countAllTest_SHOULD_RETURN_POSITIVE_COUNT() {
         assertThat(giftCertificateDAO.countAll()).isPositive();
     }
 
+    /**
+     * Count by tag names test should return zero count.
+     */
     @Test
     void countByTagNamesTest_SHOULD_RETURN_ZERO_COUNT() {
         List<String> notExistingTagNames = new ArrayList<>();
@@ -174,6 +234,9 @@ class GiftCertificateDAOImplTest {
         assertThat(giftCertificateDAO.countByTagNames(notExistingTagNames)).isZero();
     }
 
+    /**
+     * Count by tag names test should return positive count.
+     */
     @Test
     void countByTagNamesTest_SHOULD_RETURN_POSITIVE_COUNT() {
         List<String> existingTagNames = new ArrayList<>();

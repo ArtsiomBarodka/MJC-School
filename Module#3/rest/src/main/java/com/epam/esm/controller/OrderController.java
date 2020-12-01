@@ -19,6 +19,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The type Order controller.
+ */
 @RestController
 @RequestMapping("api/v1/orders")
 @Validated
@@ -26,12 +29,25 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderAssembler assembler;
 
+    /**
+     * Instantiates a new Order controller.
+     *
+     * @param orderService the order service
+     * @param assembler    the assembler
+     */
     @Autowired
     public OrderController(OrderService orderService, OrderAssembler assembler) {
         this.orderService = orderService;
         this.assembler = assembler;
     }
 
+    /**
+     * Gets order by id.
+     *
+     * @param id the id
+     * @return the order by id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
@@ -40,6 +56,15 @@ public class OrderController {
         return ResponseEntity.ok(assembler.toModel(order));
     }
 
+    /**
+     * Gets list orders by user id.
+     *
+     * @param id                      the id
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the list orders by user id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @GetMapping("/user")
     public ResponseEntity<PagedModel<Order>> getListOrdersByUserId(@RequestParam(value = "id") @NotNull @Min(1) Long id,
                                                                    Pageable pageable,
@@ -52,6 +77,14 @@ public class OrderController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Create order response entity.
+     *
+     * @param order                the order
+     * @param uriComponentsBuilder the uri components builder
+     * @return the response entity
+     * @throws BadParametersException the bad parameters exception
+     */
     @PostMapping
     public ResponseEntity<Object> createOrder(@RequestBody @Valid Order order,
                                               UriComponentsBuilder uriComponentsBuilder)
@@ -65,6 +98,13 @@ public class OrderController {
                 .build();
     }
 
+    /**
+     * Delete order response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteOrder(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
