@@ -1,0 +1,12 @@
+
+dependencies {
+    implementation project(':model')
+    implementation project(':service')
+
+    implementation "org.springframework:spring-webmvc:$springVersion"
+    implementation "org.springframework:spring-web:$springVersion"
+
+    providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
+    implementation "org.hibernate.validator:hibernate-validator:$hibernateValidatorVersion"
+}

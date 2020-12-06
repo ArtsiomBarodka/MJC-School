@@ -1,0 +1,6 @@
+rootProject.name = 'REST API Basic'
+include 'repository'
+include 'model'
+include 'rest'
+include 'service'
+
