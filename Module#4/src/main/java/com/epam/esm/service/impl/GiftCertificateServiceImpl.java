@@ -2,8 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.model.domain.Page;
-import com.epam.esm.model.domain.SortMode;
+import com.epam.esm.dao.specification.GiftCertificateSpecification;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.exception.service.BadParametersException;
@@ -13,6 +12,8 @@ import com.epam.esm.service.GiftCertificateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-/**
- * The type Gift certificate service.
- */
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GiftCertificateServiceImpl.class);
@@ -30,12 +28,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final GiftCertificateDAO giftCertificateDAO;
     private final TagDAO tagDAO;
 
-    /**
-     * Instantiates a new Gift certificate service.
-     *
-     * @param giftCertificateDAO the gift certificate dao
-     * @param tagDAO             the tag dao
-     */
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDAO tagDAO) {
         this.giftCertificateDAO = giftCertificateDAO;
@@ -44,12 +36,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<GiftCertificate> getAll(Page page, SortMode sortMode)
+    public Page<GiftCertificate> getAll(Pageable pageable)
             throws ResourceNotFoundException {
 
-        List<GiftCertificate> result = giftCertificateDAO.listAll(page, sortMode);
+        Page<GiftCertificate> result = giftCertificateDAO.findAll(pageable);
 
-        if (result.isEmpty()) {
+        if (!result.hasContent()) {
             LOGGER.warn("List of gift certificates are not found");
             throw new ResourceNotFoundException("List of gift certificates are not found");
         }
@@ -59,14 +51,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<GiftCertificate> getListByTagNames(List<String> tagName, Page page, SortMode sortMode)
+    public Page<GiftCertificate> getListByTagNames(List<String> names, Pageable pageable)
             throws ResourceNotFoundException {
 
-        List<GiftCertificate> result = giftCertificateDAO.listByTagNames(tagName, page, sortMode);
+        Iterable<Tag> byNameIn = tagDAO.getByNameIn(names);
 
-        if (result.isEmpty()) {
-            LOGGER.warn("List of gift certificates with tag names {} not found", tagName);
-            throw new ResourceNotFoundException(String.format("List of gift certificates with tag names %s not found", tagName));
+        GiftCertificateSpecification giftCertificateSpecification = new GiftCertificateSpecification(byNameIn);
+        Page<GiftCertificate> result = giftCertificateDAO.findAll(giftCertificateSpecification,pageable);
+
+        if (!result.hasContent()) {
+            LOGGER.warn("List of gift certificates with tag names {} not found", names);
+            throw new ResourceNotFoundException(String.format("List of gift certificates with tag names %s not found", names));
         }
 
         return result;
@@ -85,14 +80,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public Long create(GiftCertificate giftCertificate)
             throws ResourceAlreadyExistException, BadParametersException {
         //check if the gift certificate name already has in repository (must be unique)
-        if (giftCertificateDAO.isExistByName(giftCertificate.getName())) {
+        if (giftCertificateDAO.existsByName(giftCertificate.getName())) {
             LOGGER.warn("Gift certificate with name {} already exist", giftCertificate.getName());
             throw new ResourceAlreadyExistException(String.format("Gift certificate with name %s already exist", giftCertificate.getName()));
         }
 
         for (Tag t : giftCertificate.getTags()) {
             //check if the current tag is exist in repository
-            if (!tagDAO.isExistById(t.getId())) {
+            if (!tagDAO.existsById(t.getId())) {
                 LOGGER.warn("Tag with id {} is not exist", t.getId());
                 throw new BadParametersException(String.format("Tag with id %d is not exist", t.getId()));
             }
@@ -111,7 +106,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Gift certificate with id %d is not exist", id)));
 
         //check if the updated name unique
-        if (giftCertificateDAO.isExistByName(giftCertificate.getName()) &&
+        if (giftCertificateDAO.existsByName(giftCertificate.getName()) &&
                 !repositoryGiftCertificate.getName().equalsIgnoreCase(giftCertificate.getName())) {
             LOGGER.warn("Gift Certificate with name {} is already exist", giftCertificate.getName());
             throw new BadParametersException(String.format("Gift Certificate with name %s is already exist", giftCertificate.getName()));
@@ -119,7 +114,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         for (Tag tag : giftCertificate.getTags()) {
             //check if the current tag is exist in repository
-            if(!tagDAO.isExistById(tag.getId())) {
+            if(!tagDAO.existsById(tag.getId())) {
                 LOGGER.warn("Tag with id {} is not exist", tag.getId());
                 throw new BadParametersException(String.format("Tag with id %d is not exist", tag.getId()));
             }
@@ -141,6 +136,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             LOGGER.warn("Gift certificate with {} is not exist", id);
             throw new ResourceNotFoundException(String.format("Gift certificate with %d is not exist", id));
         }
-        giftCertificateDAO.delete(id);
+        giftCertificateDAO.deleteById(id);
     }
 }

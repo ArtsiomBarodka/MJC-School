@@ -12,9 +12,6 @@ import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The type Tag.
- */
 @Data
 @Entity
 @Table(name = "tag")
@@ -36,18 +33,10 @@ public class Tag extends RepresentationModel<Tag> {
     private List<GiftCertificate> giftCertificates;
 
 
-    /**
-     * Instantiates a new Tag.
-     */
     public Tag() {
         giftCertificates = new ArrayList<>();
     }
 
-    /**
-     * Add gift certificates.
-     *
-     * @param giftCertificate the gift certificate
-     */
     public void addGiftCertificates(GiftCertificate giftCertificate) {
         if (giftCertificate != null) {
             giftCertificates.add(giftCertificate);
@@ -56,11 +45,6 @@ public class Tag extends RepresentationModel<Tag> {
     }
 
 
-    /**
-     * Delete gift certificates.
-     *
-     * @param giftCertificate the gift certificate
-     */
     public void deleteGiftCertificates(GiftCertificate giftCertificate) {
         if (giftCertificate != null) {
             giftCertificates.removeIf(g -> g.getId().equals(giftCertificate.getId()));

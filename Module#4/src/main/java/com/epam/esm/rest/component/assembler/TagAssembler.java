@@ -6,12 +6,11 @@ import com.epam.esm.model.exception.service.ResourceNotFoundException;
 import com.epam.esm.rest.controller.GiftCertificateController;
 import com.epam.esm.rest.controller.TagController;
 import lombok.SneakyThrows;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +18,6 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * The type Tag assembler.
- */
 @Component
 public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> {
     private static final String GET_THE_MOST_WIDELY_USED_TAG = "top/user";
@@ -34,9 +30,6 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> 
     private static final String GET_THE_MOST_WIDELY_USED_LINK_RELATION = "getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders";
     private static final String GET_BY_GIFT_CERTIFICATE_ID_LINK_RELATION = "getTagsByGiftCertificateId";
 
-    /**
-     * Instantiates a new Tag assembler.
-     */
     public TagAssembler() {
         super(TagController.class, Tag.class);
     }
@@ -56,18 +49,15 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> 
         return entity;
     }
 
-    @SneakyThrows
-    @Override
-    public CollectionModel<Tag> toCollectionModel(Iterable<? extends Tag> entities) {
-        CollectionModel<Tag> tagModels = super.toCollectionModel(entities);
+    public List<Link> getLinksToCollectionModel() {
+        List<Link> result = new ArrayList<>();
         Link createLink = linkTo(TagController.class).withRel(CREATE_LINK_RELATION);
         Link getTheMostWidelyUsed = linkTo(TagController.class).slash(GET_THE_MOST_WIDELY_USED_TAG).withRel(GET_THE_MOST_WIDELY_USED_LINK_RELATION);
         Link getTagsByGiftCertificateId = linkTo(TagController.class).slash(GET_TAGS_BY_GIFT_CERTIFICATE_ID).withRel(GET_BY_GIFT_CERTIFICATE_ID_LINK_RELATION);
-        tagModels.add(getSelfLink());
-        tagModels.add(createLink);
-        tagModels.add(getTheMostWidelyUsed);
-        tagModels.add(getTagsByGiftCertificateId);
-        return tagModels;
+        result.add(createLink);
+        result.add(getTheMostWidelyUsed);
+        result.add(getTagsByGiftCertificateId);
+        return result;
     }
 
     private List<GiftCertificate> toGiftCertificateModel(List<GiftCertificate> giftCertificates) {
@@ -89,10 +79,5 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> 
                     return giftCertificate;
                 })
                 .collect(Collectors.toList());
-    }
-
-    private Link getSelfLink() {
-        String self = ServletUriComponentsBuilder.fromCurrentRequest().build().toString();
-        return Link.of(self);
     }
 }

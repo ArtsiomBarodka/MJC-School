@@ -6,12 +6,11 @@ import com.epam.esm.model.exception.service.ResourceNotFoundException;
 import com.epam.esm.rest.controller.GiftCertificateController;
 import com.epam.esm.rest.controller.TagController;
 import lombok.SneakyThrows;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +18,6 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * The type Gift certificate assembler.
- */
 @Component
 public class GiftCertificateAssembler extends RepresentationModelAssemblerSupport<GiftCertificate, GiftCertificate> {
 
@@ -33,9 +29,6 @@ public class GiftCertificateAssembler extends RepresentationModelAssemblerSuppor
     private static final String GET_ALL_LINK_RELATION = "getAllGiftCertificates";
     private static final String GET_BY_TAG_NAMES_LINK_RELATION = "getGiftCertificatesByTagNames";
 
-    /**
-     * Instantiates a new Gift certificate assembler.
-     */
     public GiftCertificateAssembler() {
         super(GiftCertificateController.class, GiftCertificate.class);
     }
@@ -56,15 +49,13 @@ public class GiftCertificateAssembler extends RepresentationModelAssemblerSuppor
         return entity;
     }
 
-    @Override
-    public CollectionModel<GiftCertificate> toCollectionModel(Iterable<? extends GiftCertificate> entities) {
-        CollectionModel<GiftCertificate> giftCertificateModels = super.toCollectionModel(entities);
+    public List<Link> getLinksToCollectionModel() {
+        List<Link> result = new ArrayList<>();
         Link getByTagNamesLink = linkTo(GiftCertificateController.class).slash(GET_GIFT_CERTIFICATES_BY_TAG_NAMES).withRel(GET_BY_TAG_NAMES_LINK_RELATION);
         Link createLink = linkTo(GiftCertificateController.class).withRel(CREATE_LINK_RELATION);
-        giftCertificateModels.add(getSelfLink());
-        giftCertificateModels.add(getByTagNamesLink);
-        giftCertificateModels.add(createLink);
-        return giftCertificateModels;
+        result.add(getByTagNamesLink);
+        result.add(createLink);
+        return result;
     }
 
     private List<Tag> toTagModel(List<Tag> tags) {
@@ -86,10 +77,5 @@ public class GiftCertificateAssembler extends RepresentationModelAssemblerSuppor
                     return tag;
                 })
                 .collect(Collectors.toList());
-    }
-
-    private Link getSelfLink() {
-        String self = ServletUriComponentsBuilder.fromCurrentRequest().build().toString();
-        return Link.of(self);
     }
 }

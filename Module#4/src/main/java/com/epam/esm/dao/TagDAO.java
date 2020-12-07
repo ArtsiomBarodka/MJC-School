@@ -1,103 +1,33 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.model.domain.Page;
-import com.epam.esm.model.domain.SortMode;
 import com.epam.esm.model.entity.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Optional;
 
-/**
- * The interface Tag dao.
- */
-public interface TagDAO {
-    /**
-     * Find by id optional.
-     *
-     * @param id the id
-     * @return the optional
-     */
+public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
+
+    @Query(value = "select tag.* from tag " +
+            "inner join gift_certificate_tag on gift_certificate_tag.tag_id=tag.id " +
+            "inner join certificate on certificate.id=gift_certificate_tag.gift_certificate_id " +
+            "inner join certificate_order on certificate_order.certificate_id=certificate.id " +
+            "inner join user_order on user_order.id = certificate_order.order_id " +
+            "inner join user on user.id = user_order.fk_user_id " +
+            "group by tag.id, user_order.id " +
+            "order by user_order.price desc ,count(tag.id) desc " +
+            "limit 1", nativeQuery = true)
+    @NonNull Optional<Tag> findTheMostWidelyUsedOfUsersWithTheHighestCostOfAllOrders();
+
+    boolean existsByName(@NonNull String name);
+
     @NonNull
-    Optional<Tag> findById(@NonNull Long id);
+    Iterable<Tag> getByNameIn(@NonNull List<String> names);
 
-    /**
-     * Find the most widely used of user with the highest cost of all orders optional.
-     *
-     * @param userId the user id
-     * @return the optional
-     */
     @NonNull
-    Optional<Tag> findTheMostWidelyUsedOfUserWithTheHighestCostOfAllOrders(@NonNull Long userId);
-
-    /**
-     * Save tag.
-     *
-     * @param tag the tag
-     * @return the tag
-     */
-    @NonNull
-    Tag save(@NonNull Tag tag);
-
-    /**
-     * Delete.
-     *
-     * @param id the id
-     */
-    void delete(@NonNull Long id);
-
-    /**
-     * Is exist by id boolean.
-     *
-     * @param id the id
-     * @return the boolean
-     */
-    boolean isExistById(@NonNull Long id);
-
-    /**
-     * Is exist by name boolean.
-     *
-     * @param name the name
-     * @return the boolean
-     */
-    boolean isExistByName(@NonNull String name);
-
-    /**
-     * List all list.
-     *
-     * @param page     the page
-     * @param sortMode the sort mode
-     * @return the list
-     */
-    @NonNull
-    List<Tag> listAll(@NonNull Page page, @NonNull SortMode sortMode);
-
-    /**
-     * List by gift certificate id list.
-     *
-     * @param giftCertificateId the gift certificate id
-     * @param page              the page
-     * @param sortMode          the sort mode
-     * @return the list
-     */
-    @NonNull
-    List<Tag> listByGiftCertificateId(@NonNull Long giftCertificateId, @NonNull Page page, @NonNull SortMode sortMode);
-
-    /**
-     * Count all long.
-     *
-     * @return the long
-     */
-    @NonNull
-    Long countAll();
-
-    /**
-     * Count by gift certificate id long.
-     *
-     * @param giftCertificateId the gift certificate id
-     * @return the long
-     */
-    @NonNull
-    Long countByGiftCertificateId(@NonNull Long giftCertificateId);
-
+    Page<Tag> getByGiftCertificates_Id(@NonNull Long id, @NonNull Pageable pageable);
 }

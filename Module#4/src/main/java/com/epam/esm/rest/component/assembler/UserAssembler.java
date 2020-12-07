@@ -22,18 +22,12 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * The type User assembler.
- */
 @Component
 public class UserAssembler extends RepresentationModelAssemblerSupport<User, User> {
     private static final String CREATE_LINK_RELATION = "createUser";
     private static final String UPDATE_LINK_RELATION = "updateUser";
     private static final String GET_ALL_LINK_RELATION = "getAllUsers";
 
-    /**
-     * Instantiates a new User assembler.
-     */
     public UserAssembler() {
         super(UserController.class, User.class);
     }
@@ -51,13 +45,7 @@ public class UserAssembler extends RepresentationModelAssemblerSupport<User, Use
         return entity;
     }
 
-    /**
-     * Gets links to collection model.
-     *
-     * @param entities the entities
-     * @return the links to collection model
-     */
-    public List<Link> getLinksToCollectionModel(Iterable<? extends User> entities) {
+    public List<Link> getLinksToCollectionModel() {
         List<Link> result = new ArrayList<>();
         Link createLink = linkTo(UserController.class).withRel(CREATE_LINK_RELATION);
         result.add(createLink);

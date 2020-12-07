@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * The type Order assembler.
- */
 @Component
 public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, Order> {
     private static final String GET_ORDERS_BY_USER_ID = "user";
@@ -34,9 +31,6 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
     private static final String DELETE_LINK_RELATION = "deleteOrder";
     private static final String GET_ORDERS_BY_USER_ID_LINK_RELATION = "getOrdersByUserId";
 
-    /**
-     * Instantiates a new Order assembler.
-     */
     public OrderAssembler() {
         super(OrderController.class, Order.class);
     }
@@ -53,13 +47,7 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
         return entity;
     }
 
-    /**
-     * Gets links to collection model.
-     *
-     * @param entities the entities
-     * @return the links to collection model
-     */
-    public List<Link> getLinksToCollectionModel(Iterable<? extends Order> entities) {
+    public List<Link> getLinksToCollectionModel() {
         List<Link> result = new ArrayList<>();
         Link createLink = linkTo(OrderController.class).withRel(CREATE_LINK_RELATION);
         Link getOrdersByUserId = linkTo(OrderController.class).slash(GET_ORDERS_BY_USER_ID).withRel(GET_ORDERS_BY_USER_ID_LINK_RELATION);

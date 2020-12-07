@@ -21,9 +21,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * The type Rest exception handler.
- */
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String EXCEPTION_ERROR_CODE = "00";
@@ -34,23 +31,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
 
-    /**
-     * Instantiates a new Rest exception handler.
-     *
-     * @param messageSource the message source
-     */
     @Autowired
     public RestExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
-    /**
-     * Handle resource not found exception response entity.
-     *
-     * @param ex     the ex
-     * @param locale the locale
-     * @return the response entity
-     */
     @ExceptionHandler(value = ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, Locale locale) {
         String message = messageSource.getMessage(RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION, null, locale);
@@ -59,13 +44,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiErrorResponse);
     }
 
-    /**
-     * Handle resource already exist exception response entity.
-     *
-     * @param ex     the ex
-     * @param locale the locale
-     * @return the response entity
-     */
     @ExceptionHandler(value = ResourceAlreadyExistException.class)
     protected ResponseEntity<Object> handleResourceAlreadyExistException(ResourceAlreadyExistException ex, Locale locale) {
         String message = messageSource.getMessage(RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION, null, locale);
@@ -74,13 +52,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiErrorResponse);
     }
 
-    /**
-     * Handle bad parameters exception response entity.
-     *
-     * @param ex     the ex
-     * @param locale the locale
-     * @return the response entity
-     */
     @ExceptionHandler(value = BadParametersException.class)
     protected ResponseEntity<Object> handleBadParametersException(BadParametersException ex, Locale locale) {
         String message = messageSource.getMessage(BAD_PARAMETERS_MESSAGE_EXCEPTION, null, locale);
@@ -89,12 +60,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiErrorResponse);
     }
 
-    /**
-     * Handle all exception response entity.
-     *
-     * @param locale the locale
-     * @return the response entity
-     */
     @ExceptionHandler(value = Exception.class)
     protected ResponseEntity<Object> handleALLException(Locale locale) {
         String message = messageSource.getMessage(MESSAGE_EXCEPTION, null, locale);
@@ -103,12 +68,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiErrorResponse);
     }
 
-    /**
-     * Handle constraint violation exception response entity.
-     *
-     * @param ex the ex
-     * @return the response entity
-     */
     @ExceptionHandler(value = ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
         String errorCode = HttpStatus.BAD_REQUEST.value() + EXCEPTION_ERROR_CODE;

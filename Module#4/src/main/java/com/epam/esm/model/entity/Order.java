@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * The type Order.
- */
 @Data
 @Entity
 @Table(name = "user_order")
@@ -43,9 +40,6 @@ public class Order extends RepresentationModel<Order> {
     @NotNull
     private List<GiftCertificate> giftCertificates;
 
-    /**
-     * Instantiates a new Order.
-     */
     public Order() {
         giftCertificates = new ArrayList<>();
     }
