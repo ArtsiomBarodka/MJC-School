@@ -18,9 +18,9 @@ public class PatchUser implements PatchOperation<User> {
 
     @Override
     public void mergeToEntity(User existing) {
-        if (name != null) {
-            existing.setName(name);
-        }
+//        if (name != null) {
+//            existing.setName(name);
+//        }
         if (orders != null) {
             existing.setOrders(orders);
         }

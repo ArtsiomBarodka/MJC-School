@@ -5,7 +5,10 @@ import com.epam.esm.model.exception.service.BadParametersException;
 import com.epam.esm.model.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
 import com.epam.esm.model.patch.PatchGiftCertificate;
-import com.epam.esm.rest.component.assembler.GiftCertificateAssembler;
+import com.epam.esm.rest.hateoas.GiftCertificateAssembler;
+import com.epam.esm.security.anotation.AdminRole;
+import com.epam.esm.security.anotation.AllRoles;
+import com.epam.esm.security.anotation.UserRole;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class GiftCertificateController {
         this.assembler = assembler;
     }
 
+    @AllRoles
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificate> getGiftCertificate(@PathVariable("id") @Min(1) Long id)
             throws ResourceNotFoundException {
@@ -44,7 +48,7 @@ public class GiftCertificateController {
         return ResponseEntity.ok(assembler.toModel(giftCertificate));
     }
 
-
+    @AllRoles
     @GetMapping("/tags")
     public ResponseEntity<PagedModel<GiftCertificate>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") @NotNull List<String> tagNames,
                                                                                          Pageable pageable,
@@ -57,6 +61,7 @@ public class GiftCertificateController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    @AllRoles
     @GetMapping
     public ResponseEntity<PagedModel<GiftCertificate>> getListGiftCertificates(Pageable pageable,
                                                                                PagedResourcesAssembler<GiftCertificate> pagedResourcesAssembler)
@@ -68,7 +73,7 @@ public class GiftCertificateController {
         return ResponseEntity.ok(pagedModel);
     }
 
-
+    @AdminRole
     @PostMapping
     public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificate giftCertificate,
                                                         UriComponentsBuilder uriComponentsBuilder)
@@ -82,6 +87,7 @@ public class GiftCertificateController {
                 .build();
     }
 
+    @AdminRole
     @PutMapping("/{id}")
     public ResponseEntity<GiftCertificate> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                                          @RequestBody @Valid GiftCertificate giftCertificate,
@@ -101,6 +107,7 @@ public class GiftCertificateController {
         }
     }
 
+    @AdminRole
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePartOfGiftCertificate(@PathVariable("id") @Min(1) Long id,
                                                               @RequestBody @Valid PatchGiftCertificate patchGiftCertificate)
@@ -112,6 +119,7 @@ public class GiftCertificateController {
         return ResponseEntity.ok(assembler.toModel(updatedGftCertificate));
     }
 
+    @AdminRole
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @Min(1) Long id)
             throws ResourceNotFoundException {

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.PropertySource;
 
-@PropertySource("classpath:application.yaml")
+@PropertySource("classpath:application.properties")
 @EntityScan(basePackages = {"com.epam.esm"})
 @SpringBootApplication(scanBasePackages = "com.epam.esm")
 public class Main {

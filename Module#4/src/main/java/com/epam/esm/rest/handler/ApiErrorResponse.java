@@ -1,4 +1,4 @@
-package com.epam.esm.rest.component.handler;
+package com.epam.esm.rest.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

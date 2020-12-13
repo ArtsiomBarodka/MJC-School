@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.dao.specification.GiftCertificateSpecification;
+import com.epam.esm.dao.specification.GiftCertificateByTagsSpecification;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.exception.service.BadParametersException;
@@ -56,8 +56,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Iterable<Tag> byNameIn = tagDAO.getByNameIn(names);
 
-        GiftCertificateSpecification giftCertificateSpecification = new GiftCertificateSpecification(byNameIn);
-        Page<GiftCertificate> result = giftCertificateDAO.findAll(giftCertificateSpecification,pageable);
+        GiftCertificateByTagsSpecification giftCertificateByTagsSpecification = new GiftCertificateByTagsSpecification(byNameIn);
+        Page<GiftCertificate> result = giftCertificateDAO.findAll(giftCertificateByTagsSpecification,pageable);
 
         if (!result.hasContent()) {
             LOGGER.warn("List of gift certificates with tag names {} not found", names);

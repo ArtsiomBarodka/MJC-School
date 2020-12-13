@@ -1,5 +1,6 @@
-package com.epam.esm.rest.component.handler;
+package com.epam.esm.rest.handler;
 
+import com.epam.esm.model.exception.security.InvalidJwtAuthenticationException;
 import com.epam.esm.model.exception.service.BadParametersException;
 import com.epam.esm.model.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
@@ -9,6 +10,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,10 +27,16 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String EXCEPTION_ERROR_CODE = "00";
+    private static final String EXCEPTION_AUTHENTICATION_ERROR_CODE = "42";
+    private static final String EXCEPTION_ACCESS_DENIED_ERROR_CODE = "43";
+
     private static final String RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION = "Exception.resourceNotFound";
     private static final String RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION = "Exception.resourceAlreadyExist";
     private static final String BAD_PARAMETERS_MESSAGE_EXCEPTION = "Exception.badParameters";
     private static final String MESSAGE_EXCEPTION = "Exception.service";
+    private static final String AUTHENTICATION_EXCEPTION = "Exception.service";
+    private static final String ACCESS_DENIED_EXCEPTION = "Exception.service";
+    private static final String INVALID_JWT_AUTHENTICATION_EXCEPTION = "Exception.service";
 
     private final MessageSource messageSource;
 
@@ -76,6 +85,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiErrorResponse);
     }
 
+    @ExceptionHandler(value = AuthenticationException.class)
+    protected ResponseEntity<Object> handleAuthenticationException(Locale locale) {
+        String message = messageSource.getMessage(AUTHENTICATION_EXCEPTION, null, locale);
+        String errorCode = HttpStatus.UNAUTHORIZED.value() + EXCEPTION_AUTHENTICATION_ERROR_CODE;
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.UNAUTHORIZED, message, errorCode);
+        return buildResponseEntity(apiErrorResponse);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    protected ResponseEntity<Object> handleAccessDeniedException(Locale locale) {
+        String message = messageSource.getMessage(ACCESS_DENIED_EXCEPTION, null, locale);
+        String errorCode = HttpStatus.FORBIDDEN.value() + EXCEPTION_ACCESS_DENIED_ERROR_CODE;
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.FORBIDDEN, message, errorCode);
+        return buildResponseEntity(apiErrorResponse);
+    }
+
+    @ExceptionHandler(value = InvalidJwtAuthenticationException.class)
+    protected ResponseEntity<Object> handleInvalidJwtAuthenticationException(InvalidJwtAuthenticationException ex, Locale locale) {
+        String message = messageSource.getMessage(INVALID_JWT_AUTHENTICATION_EXCEPTION, null, locale);
+        String errorCode = HttpStatus.UNAUTHORIZED.value() + ex.getErrorCode();
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.UNAUTHORIZED, message, errorCode);
+        return buildResponseEntity(apiErrorResponse);
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {

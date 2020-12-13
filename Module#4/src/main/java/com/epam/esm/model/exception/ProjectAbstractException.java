@@ -1,7 +1,6 @@
 package com.epam.esm.model.exception;
 
-public abstract class ProjectAbstractException extends Exception {
-
+public abstract class ProjectAbstractException extends RuntimeException {
     private final String errorCode;
 
     public ProjectAbstractException(String errorCode) {

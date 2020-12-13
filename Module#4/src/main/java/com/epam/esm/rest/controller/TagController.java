@@ -5,7 +5,10 @@ import com.epam.esm.model.exception.service.BadParametersException;
 import com.epam.esm.model.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
 import com.epam.esm.model.patch.PatchTag;
-import com.epam.esm.rest.component.assembler.TagAssembler;
+import com.epam.esm.rest.hateoas.TagAssembler;
+import com.epam.esm.security.anotation.AdminRole;
+import com.epam.esm.security.anotation.AllRoles;
+import com.epam.esm.security.anotation.UserRole;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class TagController {
         this.assembler = assembler;
     }
 
+    @AllRoles
     @GetMapping("/top/user")
     public ResponseEntity<Tag> geTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders()
             throws ResourceNotFoundException {
@@ -44,6 +48,7 @@ public class TagController {
         return ResponseEntity.ok(assembler.toModel(tag));
     }
 
+    @AllRoles
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
@@ -52,6 +57,7 @@ public class TagController {
         return ResponseEntity.ok(assembler.toModel(tag));
     }
 
+    @AllRoles
     @GetMapping
     public ResponseEntity<PagedModel<Tag>> getListTags(Pageable pageable,
                                                        PagedResourcesAssembler<Tag> pagedResourcesAssembler)
@@ -63,6 +69,7 @@ public class TagController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    @AllRoles
     @GetMapping("/giftCertificates")
     public ResponseEntity<CollectionModel<Tag>> getListTagsByGiftCertificatesById(@RequestParam @NotNull @Min(1) Long id,
                                                                                   Pageable pageable,
@@ -75,6 +82,7 @@ public class TagController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    @AdminRole
     @PostMapping
     public ResponseEntity<Object> createTag(@RequestBody @Valid Tag tag,
                                             UriComponentsBuilder uriComponentsBuilder)
@@ -88,6 +96,7 @@ public class TagController {
                 .build();
     }
 
+    @AdminRole
     @PutMapping("/{id}")
     public ResponseEntity<Tag> updateOrCreateTag(@PathVariable("id") @Min(1) Long id,
                                                  @RequestBody @Valid Tag tag,
@@ -107,6 +116,7 @@ public class TagController {
         }
     }
 
+    @AdminRole
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePartOfTag(@PathVariable("id") @Min(1) Long id,
                                                   @RequestBody @Valid PatchTag patchTag)
@@ -119,6 +129,7 @@ public class TagController {
     }
 
 
+    @AdminRole
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTag(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {

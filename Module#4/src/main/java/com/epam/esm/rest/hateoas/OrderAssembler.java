@@ -1,4 +1,4 @@
-package com.epam.esm.rest.component.assembler;
+package com.epam.esm.rest.hateoas;
 
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
@@ -17,61 +17,53 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class UserAssembler extends RepresentationModelAssemblerSupport<User, User> {
-    private static final String CREATE_LINK_RELATION = "createUser";
-    private static final String UPDATE_LINK_RELATION = "updateUser";
-    private static final String GET_ALL_LINK_RELATION = "getAllUsers";
+public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, Order> {
+    private static final String GET_ORDERS_BY_USER_ID = "user";
 
-    public UserAssembler() {
-        super(UserController.class, User.class);
+    private static final String CREATE_LINK_RELATION = "createOrder";
+    private static final String DELETE_LINK_RELATION = "deleteOrder";
+    private static final String GET_ORDERS_BY_USER_ID_LINK_RELATION = "getOrdersByUserId";
+
+    public OrderAssembler() {
+        super(OrderController.class, Order.class);
     }
 
     @SneakyThrows
     @Override
-    public User toModel(User entity) {
-        Link selfLink = linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel();
-        Link updateLink = linkTo(UserController.class).slash(entity.getId()).withRel(UPDATE_LINK_RELATION);
-        Link getAllLink = linkTo(UserController.class).withRel(GET_ALL_LINK_RELATION);
+    public Order toModel(Order entity) {
+        Link selfLink = linkTo(methodOn(OrderController.class).getOrderById(entity.getId())).withSelfRel();
+        Link deleteLink = linkTo(methodOn(OrderController.class).getOrderById(entity.getId())).withRel(DELETE_LINK_RELATION);
         entity.add(selfLink);
-        entity.add(updateLink);
-        entity.add(getAllLink);
-        entity.setOrders(toOrderModel(entity.getOrders()));
+        entity.add(deleteLink);
+        entity.setUser(toUserModel(entity.getUser()));
+        entity.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
         return entity;
     }
 
     public List<Link> getLinksToCollectionModel() {
         List<Link> result = new ArrayList<>();
-        Link createLink = linkTo(UserController.class).withRel(CREATE_LINK_RELATION);
+        Link createLink = linkTo(OrderController.class).withRel(CREATE_LINK_RELATION);
+        Link getOrdersByUserId = linkTo(OrderController.class).slash(GET_ORDERS_BY_USER_ID).withRel(GET_ORDERS_BY_USER_ID_LINK_RELATION);
         result.add(createLink);
+        result.add(getOrdersByUserId);
         return result;
     }
 
-    private List<Order> toOrderModel(List<Order> orders) {
-        if (orders.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        return orders.stream()
-                .map(order -> {
-                    try {
-                        Link link = linkTo(methodOn(OrderController.class).getOrderById(order.getId())).withSelfRel();
-                        if (!order.hasLink(link.getRel())) {
-                            order.add(link);
-                            order.setGiftCertificates(toGiftCertificateModel(order.getGiftCertificates()));
-                        }
-                        return order;
-                    } catch (ResourceNotFoundException e) {
-                        //do nothing
-                    }
-                    return order;
-                })
-                .collect(Collectors.toList());
+    private User toUserModel(User user) {
+        return Optional.ofNullable(user).map((u) -> {
+            Link link = linkTo(UserController.class).slash(u.getId()).withSelfRel();
+                if (!u.hasLink(link.getRel())) {
+                    u.add(link);
+                }
+                return u;
+        }).orElse(user);
     }
 
     private List<GiftCertificate> toGiftCertificateModel(List<GiftCertificate> giftCertificates) {

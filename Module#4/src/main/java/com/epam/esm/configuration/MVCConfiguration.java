@@ -1,4 +1,4 @@
-package com.epam.esm.rest.configuration;
+package com.epam.esm.configuration;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

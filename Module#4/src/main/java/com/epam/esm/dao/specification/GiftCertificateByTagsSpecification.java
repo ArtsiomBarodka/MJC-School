@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class GiftCertificateSpecification implements Specification<GiftCertificate> {
+public class GiftCertificateByTagsSpecification implements Specification<GiftCertificate> {
     private Iterable<Tag> list;
 
     @Override

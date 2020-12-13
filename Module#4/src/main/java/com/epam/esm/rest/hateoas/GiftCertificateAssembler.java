@@ -1,4 +1,4 @@
-package com.epam.esm.rest.component.assembler;
+package com.epam.esm.rest.hateoas;
 
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;

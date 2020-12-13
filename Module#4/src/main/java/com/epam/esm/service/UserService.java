@@ -9,15 +9,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 
 public interface UserService {
+
     @NonNull
     User getById(@NonNull Long id) throws ResourceNotFoundException;
+
+    @NonNull
+    User getByUserName(@NonNull String username);
+
+    @NonNull
+    User getByUserNameAndPassword(@NonNull String username, @NonNull String password) throws ResourceNotFoundException;
 
     @NonNull
     Page<User> getAll(Pageable pageable) throws ResourceNotFoundException;
 
     @NonNull
-    Long create(@NonNull User user) throws ResourceAlreadyExistException, BadParametersException;
+    User update(@NonNull User user, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
 
     @NonNull
-    User update(@NonNull User user, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+    User save(@NonNull User user) throws ResourceAlreadyExistException;
+
+    void delete(@NonNull Long id) throws ResourceNotFoundException;
 }
