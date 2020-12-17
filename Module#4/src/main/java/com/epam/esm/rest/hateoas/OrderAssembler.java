@@ -5,6 +5,10 @@ import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
+import com.epam.esm.model.view.GiftCertificateView;
+import com.epam.esm.model.view.OrderView;
+import com.epam.esm.model.view.TagView;
+import com.epam.esm.model.view.UserView;
 import com.epam.esm.rest.controller.GiftCertificateController;
 import com.epam.esm.rest.controller.OrderController;
 import com.epam.esm.rest.controller.TagController;
@@ -17,14 +21,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, Order> {
+public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, OrderView> {
     private static final String GET_ORDERS_BY_USER_ID = "user";
 
     private static final String CREATE_LINK_RELATION = "createOrder";
@@ -32,19 +35,20 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
     private static final String GET_ORDERS_BY_USER_ID_LINK_RELATION = "getOrdersByUserId";
 
     public OrderAssembler() {
-        super(OrderController.class, Order.class);
+        super(OrderController.class, OrderView.class);
     }
 
     @SneakyThrows
     @Override
-    public Order toModel(Order entity) {
-        Link selfLink = linkTo(methodOn(OrderController.class).getOrderById(entity.getId())).withSelfRel();
-        Link deleteLink = linkTo(methodOn(OrderController.class).getOrderById(entity.getId())).withRel(DELETE_LINK_RELATION);
-        entity.add(selfLink);
-        entity.add(deleteLink);
-        entity.setUser(toUserModel(entity.getUser()));
-        entity.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
-        return entity;
+    public OrderView toModel(Order entity) {
+        OrderView model = OrderView.fromOrderToOrderView(entity);
+        Link selfLink = linkTo(methodOn(OrderController.class).getOrderById(model.getId())).withSelfRel();
+        Link deleteLink = linkTo(methodOn(OrderController.class).getOrderById(model.getId())).withRel(DELETE_LINK_RELATION);
+        model.add(selfLink);
+        model.add(deleteLink);
+        model.setUser(toUserModel(entity.getUser()));
+        model.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
+        return model;
     }
 
     public List<Link> getLinksToCollectionModel() {
@@ -56,55 +60,56 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
         return result;
     }
 
-    private User toUserModel(User user) {
-        return Optional.ofNullable(user).map((u) -> {
-            Link link = linkTo(UserController.class).slash(u.getId()).withSelfRel();
-                if (!u.hasLink(link.getRel())) {
-                    u.add(link);
-                }
-                return u;
-        }).orElse(user);
+    private UserView toUserModel(User user) {
+        UserView model = UserView.fromUserToUserView(user);
+        Link link = linkTo(UserController.class).slash(model.getId()).withSelfRel();
+        if (!model.hasLink(link.getRel())) {
+            model.add(link);
+        }
+        return model;
     }
 
-    private List<GiftCertificate> toGiftCertificateModel(List<GiftCertificate> giftCertificates) {
+    private List<GiftCertificateView> toGiftCertificateModel(List<GiftCertificate> giftCertificates) {
         if (giftCertificates.isEmpty()) {
             return Collections.emptyList();
         }
 
         return giftCertificates.stream()
                 .map(giftCertificate -> {
+                    GiftCertificateView model = GiftCertificateView.fromGiftCertificateToGiftCertificateView(giftCertificate);
                     try {
-                        Link link = linkTo(methodOn(GiftCertificateController.class).getGiftCertificate(giftCertificate.getId())).withSelfRel();
-                        if (!giftCertificate.hasLink(link.getRel())) {
-                            giftCertificate.add(link);
-                            giftCertificate.setTags(toTagModel(giftCertificate.getTags()));
+                        Link link = linkTo(methodOn(GiftCertificateController.class).getGiftCertificate(model.getId())).withSelfRel();
+                        if (!model.hasLink(link.getRel())) {
+                            model.add(link);
+                            model.setTags(toTagModel(giftCertificate.getTags()));
                         }
-                        return giftCertificate;
+                        return model;
                     } catch (ResourceNotFoundException e) {
                         //do nothing
                     }
-                    return giftCertificate;
+                    return model;
                 })
                 .collect(Collectors.toList());
     }
 
-    private List<Tag> toTagModel(List<Tag> tags) {
+    private List<TagView> toTagModel(List<Tag> tags) {
         if (tags.isEmpty()) {
             return Collections.emptyList();
         }
 
         return tags.stream()
                 .map(tag -> {
+                    TagView model = TagView.fromTagToTagView(tag);
                     try {
-                        Link link = linkTo(methodOn(TagController.class).getTagById(tag.getId())).withSelfRel();
-                        if (!tag.hasLink(link.getRel())) {
-                            tag.add(link);
+                        Link link = linkTo(methodOn(TagController.class).getTagById(model.getId())).withSelfRel();
+                        if (!model.hasLink(link.getRel())) {
+                            model.add(link);
                         }
-                        return tag;
+                        return model;
                     } catch (ResourceNotFoundException e) {
                         //do nothing
                     }
-                    return tag;
+                    return model;
                 })
                 .collect(Collectors.toList());
     }

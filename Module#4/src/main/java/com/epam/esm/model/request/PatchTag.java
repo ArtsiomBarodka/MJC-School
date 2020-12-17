@@ -1,28 +1,21 @@
-package com.epam.esm.model.patch;
+package com.epam.esm.model.request;
 
-import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.validation.annotation.EnglishLanguage;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Data
 public class PatchTag implements PatchOperation<Tag> {
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 50)
     @EnglishLanguage(withPunctuations = false)
     private String name;
-
-    private List<GiftCertificate> giftCertificates;
 
     @Override
     public void mergeToEntity(Tag existing) {
         if (name != null) {
             existing.setName(name);
-        }
-        if (giftCertificates != null) {
-            existing.setGiftCertificates(giftCertificates);
         }
     }
 }

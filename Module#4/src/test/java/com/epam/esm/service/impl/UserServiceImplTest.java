@@ -1,10 +1,10 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.OrderDAO;
+import com.epam.esm.dao.RoleDAO;
 import com.epam.esm.dao.UserDAO;
-import com.epam.esm.model.entity.Order;
+import com.epam.esm.model.entity.Role;
 import com.epam.esm.model.entity.User;
-import com.epam.esm.model.exception.service.BadParametersException;
+import com.epam.esm.model.exception.service.InnerServiceException;
 import com.epam.esm.model.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -14,9 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +27,10 @@ class UserServiceImplTest {
     @Mock
     private UserDAO userDAO;
     @Mock
-    private OrderDAO orderDAO;
+    private RoleDAO roleDAO;
+    @Mock
+    BCryptPasswordEncoder passwordEncoder;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -53,6 +55,82 @@ class UserServiceImplTest {
                 .thenReturn(Optional.of(expected));
 
         User actual = userService.getById(id);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void getByUserNameTest_RESOURCE_IN_NOT_EXIST() {
+        String notExistingUsername = "username";
+
+        when(userDAO.findByUsername(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> userService.getByUserName(notExistingUsername));
+    }
+
+    @Test
+    void getByUserNameTest_SHOULD_RETURN_USER() throws ResourceNotFoundException {
+        User expected = mock(User.class);
+
+        String existingUsername = "username";
+
+        when(userDAO.findByUsername(anyString()))
+                .thenReturn(Optional.of(expected));
+
+        User actual = userService.getByUserName(existingUsername);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void getByUserNameAndPasswordTest_RESOURCE_IN_NOT_EXIST_BY_USERNAME() {
+        String notExistingUsername = "username";
+        String password = "password";
+
+        when(userDAO.findByUsername(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> userService.getByUserNameAndPassword(notExistingUsername, password));
+    }
+
+    @Test
+    void getByUserNameAndPasswordTest_PASSWORD_IS_NOT_EQUALS() {
+        User userMock = mock(User.class);
+
+        String existingUsername = "username";
+        String notExistingPassword = "password";
+
+        when(userMock.getPassword()).thenReturn("");
+
+        when(userDAO.findByUsername(anyString()))
+                .thenReturn(Optional.of(userMock));
+
+        when(passwordEncoder.matches(anyString(), anyString()))
+                .thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> userService.getByUserNameAndPassword(existingUsername, notExistingPassword));
+    }
+
+    @Test
+    void getByUserNameAndPasswordTest_SHOULD_RETURN_USER() throws ResourceNotFoundException {
+        User expected = mock(User.class);
+
+        String existingUsername = "username";
+        String existingPassword = "password";
+
+        when(expected.getPassword()).thenReturn("");
+
+        when(userDAO.findByUsername(anyString()))
+                .thenReturn(Optional.of(expected));
+
+        when(passwordEncoder.matches(anyString(), anyString()))
+                .thenReturn(true);
+
+        User actual = userService.getByUserNameAndPassword(existingUsername, existingPassword);
 
         assertEquals(expected, actual);
     }
@@ -84,63 +162,87 @@ class UserServiceImplTest {
     }
 
     @Test
-    void createTest_USER_ALREADY_EXIST_WITH_NAME() {
+    void saveTest_USER_ALREADY_EXIST_WITH_USERNAME() {
         User userMock = mock(User.class);
 
-        when(userMock.getName()).thenReturn("");
+        when(userMock.getUsername()).thenReturn("");
 
-        when(userDAO.existsByName(anyString()))
+        when(userDAO.existsByUsername(anyString()))
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistException.class,
-                () -> userService.create(userMock));
+                () -> userService.save(userMock));
     }
 
     @Test
-    void createTest_CURRENT_ORDER_IS_NOT_EXIST() {
+    void saveTest_USER_ROLE_NOT_EXIST_IN_REPOSITORY() {
         User userMock = mock(User.class);
-        Order orderMock = mock(Order.class);
-        List<Order> orders = new ArrayList<>();
-        orders.add(orderMock);
 
-        when(userMock.getName()).thenReturn("");
-        when(userMock.getOrders()).thenReturn(orders);
-        when(orderMock.getId()).thenReturn(1L);
+        when(userMock.getUsername()).thenReturn("");
 
-        when(userDAO.existsByName(anyString()))
+        when(userDAO.existsByUsername(anyString()))
                 .thenReturn(false);
 
-        when(orderDAO.existsById(anyLong()))
-                .thenReturn(false);
+        when(roleDAO.findByName(anyString()))
+                .thenReturn(Optional.empty());
 
-        assertThrows(BadParametersException.class,
-                () -> userService.create(userMock));
+        assertThrows(InnerServiceException.class,
+                () -> userService.save(userMock));
     }
 
     @Test
-    void createTest_SHOULD_CREATE_USER() throws ResourceAlreadyExistException, BadParametersException {
+    void saveTest_SHOULD_CREATE_USER() throws ResourceAlreadyExistException, InnerServiceException {
         Long expected = 1L;
 
         User userMock = mock(User.class);
-        Order orderMock = mock(Order.class);
-        List<Order> orders = new ArrayList<>();
-        orders.add(orderMock);
+        Role roleMock = mock(Role.class);
 
-        when(userMock.getName()).thenReturn("");
-        when(userMock.getOrders()).thenReturn(orders);
+        when(userMock.getUsername()).thenReturn("");
+        when(userMock.getPassword()).thenReturn("");
         when(userMock.getId()).thenReturn(expected);
-        when(orderMock.getId()).thenReturn(1L);
 
-        when(userDAO.existsByName(anyString()))
+        when(userDAO.existsByUsername(anyString()))
                 .thenReturn(false);
 
-        when(orderDAO.existsById(anyLong()))
-                .thenReturn(true);
+        when(roleDAO.findByName(anyString()))
+                .thenReturn(Optional.of(roleMock));
 
         when(userDAO.save(any(User.class)))
                 .thenReturn(userMock);
 
-        Long actual = userService.create(userMock);
+        Long actual = userService.save(userMock).getId();
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void saveByUsernameTest_USER_ROLE_NOT_EXIST_IN_REPOSITORY() {
+        String username = "";
+
+        when(roleDAO.findByName(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(InnerServiceException.class,
+                () -> userService.saveByUsername(username));
+    }
+
+    @Test
+    void saveByUsernameTest_SHOULD_CREATE_USER() throws InnerServiceException {
+        Long expected = 1L;
+
+        String username = "";
+        Role roleMock = mock(Role.class);
+        User userMock = mock(User.class);
+
+        when(userMock.getId()).thenReturn(expected);
+
+        when(roleDAO.findByName(anyString()))
+                .thenReturn(Optional.of(roleMock));
+
+        when(userDAO.save(any(User.class)))
+                .thenReturn(userMock);
+
+        Long actual = userService.saveByUsername(username).getId();
 
         assertEquals(expected, actual);
     }
@@ -157,40 +259,31 @@ class UserServiceImplTest {
                 () -> userService.update(userMock, id));
     }
 
-    @Test
-    void updateTest_USER_UPDATED_NAME_ALREADY_EXIST() {
-        Long id = 1L;
-        User userMock = mock(User.class);
-        User repositoryUserMock = mock(User.class);
-
-        when(userMock.getName()).thenReturn("name");
-        when(repositoryUserMock.getName()).thenReturn("anotherName");
-
-        when(userDAO.findById(any(Long.TYPE)))
-                .thenReturn(Optional.of(repositoryUserMock));
-
-        when(userDAO.existsByName(anyString()))
-                .thenReturn(true);
-
-        assertThrows(BadParametersException.class,
-                () -> userService.update(userMock, id));
-    }
 
     @Test
-    void updateTest_SHOULD_UPDATE_USER() throws ResourceNotFoundException, BadParametersException {
+    void updateTest_SHOULD_UPDATE_USER() throws ResourceNotFoundException {
         Long id = 1L;
         User userMock = mock(User.class);
 
-        when(userMock.getName()).thenReturn("name");
+        when(userMock.getFirstName()).thenReturn("");
+        when(userMock.getLastName()).thenReturn("");
 
         when(userDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.of(userMock));
 
-        when(userDAO.existsByName(anyString()))
-                .thenReturn(false);
-
         User actual = userService.update(userMock, id);
 
         assertNotNull(actual);
+    }
+
+    @Test
+    void deleteTest_USER_IS_NOT_EXIST_WITH_ID() {
+        Long id = 1L;
+
+        when(userDAO.existsById(any(Long.TYPE)))
+                .thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> userService.delete(id));
     }
 }

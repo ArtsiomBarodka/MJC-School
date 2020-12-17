@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.exception.service.BadParametersException;
 import com.epam.esm.model.exception.service.ResourceAlreadyExistException;
@@ -15,8 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -155,52 +152,17 @@ class TagServiceImplTest {
     }
 
     @Test
-    void updateTest_UDATED_GIFT_CERTIFICATE_IS_NOT_EXIST() {
-        Long id = 1L;
-        Tag tagMock = mock(Tag.class);
-        GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
-        List<GiftCertificate> giftCertificates = new ArrayList<>();
-        giftCertificates.add(giftCertificateMock);
-
-
-        when(tagMock.getName()).thenReturn("name");
-        when(tagMock.getGiftCertificates()).thenReturn(giftCertificates);
-        when(giftCertificateMock.getId()).thenReturn(1L);
-
-        when(tagDAO.findById(any(Long.TYPE)))
-                .thenReturn(Optional.of(tagMock));
-
-        when(tagDAO.existsByName(anyString()))
-                .thenReturn(false);
-
-        when(giftCertificateDAO.existsById(any(Long.TYPE)))
-                .thenReturn(false);
-
-        assertThrows(BadParametersException.class,
-                () -> tagService.update(tagMock, id));
-    }
-
-    @Test
     void updateTest_SHOULD_UPDATE_TAG() throws ResourceNotFoundException, BadParametersException {
         Long id = 1L;
         Tag tagMock = mock(Tag.class);
-        GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
-        List<GiftCertificate> giftCertificates = new ArrayList<>();
-        giftCertificates.add(giftCertificateMock);
-
 
         when(tagMock.getName()).thenReturn("name");
-        when(tagMock.getGiftCertificates()).thenReturn(giftCertificates);
-        when(giftCertificateMock.getId()).thenReturn(1L);
 
         when(tagDAO.findById(any(Long.TYPE)))
                 .thenReturn(Optional.of(tagMock));
 
         when(tagDAO.existsByName(anyString()))
                 .thenReturn(false);
-
-        when(giftCertificateDAO.existsById(any(Long.TYPE)))
-                .thenReturn(true);
 
         Tag actual = tagService.update(tagMock, id);
 

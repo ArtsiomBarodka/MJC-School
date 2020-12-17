@@ -15,7 +15,7 @@ ext{
     mySqlConnectorVersion = "8.0.22"
     h2databaseVersion = "1.4.200"
     assertjVersion = "3.18.0"
-    jsonwebtokenVersiom = "0.9.1"
+    jsonwebtokenVersion = "0.9.1"
 }
 
 repositories {
@@ -30,11 +30,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    testImplementation 'org.springframework.security:spring-security-test'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-    implementation "io.jsonwebtoken:jjwt:$jsonwebtokenVersiom"
+    implementation "io.jsonwebtoken:jjwt:$jsonwebtokenVersion"
     implementation "org.apache.commons:commons-text:$apacheCommonsVersion"
     implementation "javax.validation:validation-api:$beanValidationVersion"
     implementation "mysql:mysql-connector-java:$mySqlConnectorVersion"

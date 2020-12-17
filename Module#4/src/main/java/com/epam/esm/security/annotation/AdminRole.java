@@ -1,4 +1,4 @@
-package com.epam.esm.security.anotation;
+package com.epam.esm.security.annotation;
 
 import org.springframework.security.access.annotation.Secured;
 

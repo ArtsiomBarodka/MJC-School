@@ -2,15 +2,15 @@ package com.epam.esm.security;
 
 import com.epam.esm.dao.UserDAO;
 import com.epam.esm.model.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+@AllArgsConstructor
 @Component
 public class JpaUserDetailsService implements UserDetailsService {
-    @Autowired
-    UserDAO userDAO;
+    private final UserDAO userDAO;
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) {

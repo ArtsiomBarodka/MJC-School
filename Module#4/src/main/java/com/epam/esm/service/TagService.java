@@ -10,22 +10,29 @@ import org.springframework.lang.NonNull;
 
 public interface TagService {
     @NonNull
-    Long create(@NonNull Tag tag) throws ResourceAlreadyExistException, BadParametersException;
+    Long create(@NonNull Tag tag)
+            throws ResourceAlreadyExistException, BadParametersException;
 
-    void delete(@NonNull Long id) throws ResourceNotFoundException;
-
-    @NonNull
-    Tag getTheMostWidelyUsedTagOfUsersFromTheHighestCostOfAllOrders() throws ResourceNotFoundException;
-
-    @NonNull
-    Tag getById(@NonNull Long id) throws ResourceNotFoundException;
+    void delete(@NonNull Long id)
+            throws ResourceNotFoundException;
 
     @NonNull
-    Tag update(@NonNull Tag tag, @NonNull Long id) throws ResourceNotFoundException, BadParametersException;
+    Tag getTheMostWidelyUsedTagOfUsersFromTheHighestCostOfAllOrders()
+            throws ResourceNotFoundException;
 
     @NonNull
-    Page<Tag> getAll(@NonNull Pageable pageable) throws ResourceNotFoundException;
+    Tag getById(@NonNull Long id)
+            throws ResourceNotFoundException;
 
     @NonNull
-    Page<Tag> getListByGiftCertificateId(@NonNull Long id, @NonNull Pageable pageable) throws ResourceNotFoundException;
+    Tag update(@NonNull Tag tag, @NonNull Long id)
+            throws ResourceNotFoundException, BadParametersException;
+
+    @NonNull
+    Page<Tag> getAll(@NonNull Pageable pageable)
+            throws ResourceNotFoundException;
+
+    @NonNull
+    Page<Tag> getListByGiftCertificateId(@NonNull Long id, @NonNull Pageable pageable)
+            throws ResourceNotFoundException;
 }

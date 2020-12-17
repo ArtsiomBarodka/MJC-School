@@ -1,10 +1,10 @@
 package com.epam.esm.rest.handler;
 
-import com.epam.esm.model.exception.security.InvalidJwtAuthenticationException;
 import com.epam.esm.model.exception.service.BadParametersException;
+import com.epam.esm.model.exception.service.InnerServiceException;
 import com.epam.esm.model.exception.service.ResourceAlreadyExistException;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -24,26 +24,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.epam.esm.rest.handler.RestResponseConstants.*;
+
+@AllArgsConstructor
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final String EXCEPTION_ERROR_CODE = "00";
-    private static final String EXCEPTION_AUTHENTICATION_ERROR_CODE = "42";
-    private static final String EXCEPTION_ACCESS_DENIED_ERROR_CODE = "43";
-
-    private static final String RESOURCE_NOT_FOUND_MESSAGE_EXCEPTION = "Exception.resourceNotFound";
-    private static final String RESOURCE_ALREADY_EXIST_MESSAGE_EXCEPTION = "Exception.resourceAlreadyExist";
-    private static final String BAD_PARAMETERS_MESSAGE_EXCEPTION = "Exception.badParameters";
-    private static final String MESSAGE_EXCEPTION = "Exception.service";
-    private static final String AUTHENTICATION_EXCEPTION = "Exception.service";
-    private static final String ACCESS_DENIED_EXCEPTION = "Exception.service";
-    private static final String INVALID_JWT_AUTHENTICATION_EXCEPTION = "Exception.service";
-
     private final MessageSource messageSource;
-
-    @Autowired
-    public RestExceptionHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex, Locale locale) {
@@ -101,11 +87,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiErrorResponse);
     }
 
-    @ExceptionHandler(value = InvalidJwtAuthenticationException.class)
-    protected ResponseEntity<Object> handleInvalidJwtAuthenticationException(InvalidJwtAuthenticationException ex, Locale locale) {
-        String message = messageSource.getMessage(INVALID_JWT_AUTHENTICATION_EXCEPTION, null, locale);
-        String errorCode = HttpStatus.UNAUTHORIZED.value() + ex.getErrorCode();
-        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.UNAUTHORIZED, message, errorCode);
+    @ExceptionHandler(value = InnerServiceException.class)
+    protected ResponseEntity<Object> handleInvalidJwtAuthenticationException(InnerServiceException ex, Locale locale) {
+        String message = messageSource.getMessage(MESSAGE_EXCEPTION, null, locale);
+        String errorCode = HttpStatus.INTERNAL_SERVER_ERROR.value() + ex.getErrorCode();
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, errorCode);
         return buildResponseEntity(apiErrorResponse);
     }
 

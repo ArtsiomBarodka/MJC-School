@@ -7,8 +7,12 @@ INSERT INTO `tag` (id,name) VALUES (1,'one'),(2,'two'),(3,'three'),(4,'four'),(5
 
 INSERT INTO `gift_certificate_tag` VALUES (1,1),(2,1),(3,1),(1,2),(2,2),(1,3),(2,3),(3,3),(4,3),(1,4),(2,4),(3,5),(4,5),(1,6);
 
-INSERT INTO `user`(id, name) VALUES (1, 'Artsiom'), (2, 'Anna'), (3, 'Poul');
+INSERT INTO `users`(id, username, password , first_name, last_name) VALUES (1, 'Artsiom', 'Artsiom', 'Artsiom', 'Artsiom'), (2, 'Anna' ,'Anna', 'Anna', 'Anna'), (3, 'Poul', 'Poul', 'Poul', 'Poul');
+
+INSERT INTO `role` (id, name) VALUES (1, 'ROLE_ADMIN'), (2, 'ROLE_USER');
 
 INSERT INTO `user_order` (id, fk_user_id) VALUES (1,1),(2,1),(3,1),(4,2);
 
 INSERT INTO `certificate_order` VALUES (1,1),(2,1),(3,1),(1,2),(4,2),(2,3),(2,4),(4,4);
+
+INSERT INTO `user_role` VALUES (1,1),(2,2),(3,2);

@@ -1,4 +1,4 @@
-package com.epam.esm.security.anotation;
+package com.epam.esm.security.annotation;
 
 import org.springframework.security.access.annotation.Secured;
 
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Secured("ROLE_USER")
-public @interface UserRole {
+@Secured({"ROLE_ADMIN", "ROLE_USER"})
+public @interface AllRoles {
 }

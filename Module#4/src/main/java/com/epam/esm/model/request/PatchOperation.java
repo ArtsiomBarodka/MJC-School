@@ -1,4 +1,4 @@
-package com.epam.esm.model.patch;
+package com.epam.esm.model.request;
 
 @FunctionalInterface
 public interface PatchOperation<F> {

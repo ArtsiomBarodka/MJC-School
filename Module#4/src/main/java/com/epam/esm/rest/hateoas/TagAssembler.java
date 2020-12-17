@@ -3,6 +3,8 @@ package com.epam.esm.rest.hateoas;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.exception.service.ResourceNotFoundException;
+import com.epam.esm.model.view.GiftCertificateView;
+import com.epam.esm.model.view.TagView;
 import com.epam.esm.rest.controller.GiftCertificateController;
 import com.epam.esm.rest.controller.TagController;
 import lombok.SneakyThrows;
@@ -19,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> {
+public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, TagView> {
     private static final String GET_THE_MOST_WIDELY_USED_TAG = "top/user";
     private static final String GET_TAGS_BY_GIFT_CERTIFICATE_ID = "certificate";
 
@@ -31,22 +33,23 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> 
     private static final String GET_BY_GIFT_CERTIFICATE_ID_LINK_RELATION = "getTagsByGiftCertificateId";
 
     public TagAssembler() {
-        super(TagController.class, Tag.class);
+        super(TagController.class, TagView.class);
     }
 
     @SneakyThrows
     @Override
-    public Tag toModel(Tag entity) {
-        Link selfLink = linkTo(methodOn(TagController.class).getTagById(entity.getId())).withSelfRel();
-        Link deleteLink = linkTo(methodOn(TagController.class).deleteTag(entity.getId())).withRel(DELETE_LINK_RELATION);
-        Link updateLink = linkTo(TagController.class).slash(entity.getId()).withRel(UPDATE_LINK_RELATION);
+    public TagView toModel(Tag entity) {
+        TagView model = TagView.fromTagToTagView(entity);
+        Link selfLink = linkTo(methodOn(TagController.class).getTagById(model.getId())).withSelfRel();
+        Link deleteLink = linkTo(methodOn(TagController.class).deleteTag(model.getId())).withRel(DELETE_LINK_RELATION);
+        Link updateLink = linkTo(TagController.class).slash(model.getId()).withRel(UPDATE_LINK_RELATION);
         Link getAllLink = linkTo(TagController.class).withRel(GET_ALL_LINK_RELATION);
-        entity.add(selfLink);
-        entity.add(updateLink);
-        entity.add(deleteLink);
-        entity.add(getAllLink);
-        entity.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
-        return entity;
+        model.add(selfLink);
+        model.add(updateLink);
+        model.add(deleteLink);
+        model.add(getAllLink);
+        model.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
+        return model;
     }
 
     public List<Link> getLinksToCollectionModel() {
@@ -60,23 +63,24 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, Tag> 
         return result;
     }
 
-    private List<GiftCertificate> toGiftCertificateModel(List<GiftCertificate> giftCertificates) {
+    private List<GiftCertificateView> toGiftCertificateModel(List<GiftCertificate> giftCertificates) {
         if (giftCertificates.isEmpty()) {
             return Collections.emptyList();
         }
 
         return giftCertificates.stream()
                 .map(giftCertificate -> {
+                    GiftCertificateView model = GiftCertificateView.fromGiftCertificateToGiftCertificateView(giftCertificate);
                     try {
-                        Link link = linkTo(methodOn(GiftCertificateController.class).getGiftCertificate(giftCertificate.getId())).withSelfRel();
-                        if (!giftCertificate.hasLink(link.getRel())) {
-                            giftCertificate.add(link);
+                        Link link = linkTo(methodOn(GiftCertificateController.class).getGiftCertificate(model.getId())).withSelfRel();
+                        if (!model.hasLink(link.getRel())) {
+                            model.add(link);
                         }
-                        return giftCertificate;
+                        return model;
                     } catch (ResourceNotFoundException e) {
                         //do nothing
                     }
-                    return giftCertificate;
+                    return model;
                 })
                 .collect(Collectors.toList());
     }

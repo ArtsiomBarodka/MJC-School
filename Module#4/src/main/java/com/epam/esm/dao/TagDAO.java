@@ -17,7 +17,7 @@ public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
             "inner join certificate on certificate.id=gift_certificate_tag.gift_certificate_id " +
             "inner join certificate_order on certificate_order.certificate_id=certificate.id " +
             "inner join user_order on user_order.id = certificate_order.order_id " +
-            "inner join user on user.id = user_order.fk_user_id " +
+            "inner join users on users.id = user_order.fk_user_id " +
             "group by tag.id, user_order.id " +
             "order by user_order.price desc ,count(tag.id) desc " +
             "limit 1", nativeQuery = true)

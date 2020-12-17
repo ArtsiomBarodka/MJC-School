@@ -1,9 +1,12 @@
 package com.epam.esm.configuration;
 
-import com.epam.esm.security.JpaUserDetailsService;
-import com.epam.esm.security.SecurityProvider;
+import com.epam.esm.rest.handler.RestAccessDeniedHandler;
+import com.epam.esm.rest.handler.RestAuthenticationEntryPoint;
 import com.epam.esm.security.jwt.JwtAuthorizationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.epam.esm.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.epam.esm.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.epam.esm.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,28 +16,38 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    @Autowired
-    JwtAuthorizationFilter jwtAuthorizationFilter;
-    @Autowired
-    SecurityProvider securityProvider;
 
+@AllArgsConstructor
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final HttpCookieOAuth2AuthorizationRequestRepository authorizationRequestRepository;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable()
+                .formLogin().disable()
+                .cors().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                .antMatchers("/api/v1/users/sign-in", "/api/v1/users/sign-up").permitAll()
-                .antMatchers("/api/v1/users/{id}/**")
-                .access("hasRole('ROLE_ADMIN') or @securityProvider.hasUserId(authentication,#id)")
+                .anonymous().disable()
+                .exceptionHandling()
+                .accessDeniedHandler(restAccessDeniedHandler)
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .failureHandler(oAuth2AuthenticationFailureHandler)
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .authorizationEndpoint(authEndpoint -> authEndpoint.authorizationRequestRepository(authorizationRequestRepository))
+                );
     }
 
     @Bean
