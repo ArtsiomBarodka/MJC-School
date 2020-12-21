@@ -23,7 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
@@ -43,10 +42,10 @@ public class GiftCertificateController {
     }
 
     @GetMapping("/tags")
-    public ResponseEntity<PagedModel<GiftCertificateView>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") @NotNull List<String> tagNames,
+    public ResponseEntity<PagedModel<GiftCertificateView>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") List<String> tagNames,
                                                                                              @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
                                                                                              PagedResourcesAssembler<GiftCertificate> pagedResourcesAssembler)
-            throws ResourceNotFoundException {
+            throws ResourceNotFoundException, BadParametersException {
 
         Page<GiftCertificate> giftCertificates = giftCertificateService.getListByTagNames(tagNames, pageable);
         PagedModel<GiftCertificateView> pagedModel = pagedResourcesAssembler.toModel(giftCertificates, assembler);

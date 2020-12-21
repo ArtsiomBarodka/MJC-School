@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,9 +63,23 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void getListByTagNamesTest_RESOURCE_IN_NOT_EXIST() {
+    void getListByTagNamesTest_TAGS_IS_NOT_EXIST() {
+        List<String> tagNames = new ArrayList<>();
+        Pageable pageableMock = mock(Pageable.class);
+
+        when(tagDAO.getByNameIn(anyList()))
+                .thenReturn(Collections.emptyList());
+
+        assertThrows(BadParametersException.class,
+                () -> giftCertificateService.getListByTagNames(tagNames, pageableMock));
+    }
+
+    @Test
+    void getListByTagNamesTest_RESOURCE_IS_NOT_EXIST() {
         List<String> tagNames = new ArrayList<>();
         List<Tag> tags = new ArrayList<>();
+        Tag tagMock = mock(Tag.class);
+        tags.add(tagMock);
         Pageable pageableMock = mock(Pageable.class);
 
         when(tagDAO.getByNameIn(anyList()))
@@ -78,19 +93,22 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void getListByTagNamesTest_SHOULD_RETURN_PAGE_OF_GIFT_CERTIFICATES() throws ResourceNotFoundException {
+    void getListByTagNamesTest_SHOULD_RETURN_PAGE_OF_GIFT_CERTIFICATES() throws ResourceNotFoundException, BadParametersException {
         Page expected = mock(Page.class);
 
         List<String> tagNames = new ArrayList<>();
         tagNames.add("tagName");
+        List<Tag> tags = new ArrayList<>();
+        Tag tagMock = mock(Tag.class);
+        tags.add(tagMock);
         List<Tag> tagsMock = new ArrayList<>();
         Pageable pageableMock = mock(Pageable.class);
 
+        when(tagDAO.getByNameIn(anyList()))
+                .thenReturn(tags);
+
         when(expected.hasContent())
                 .thenReturn(true);
-
-        when(tagDAO.getByNameIn(anyList()))
-                .thenReturn(tagsMock);
 
         when(giftCertificateDAO.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(expected);

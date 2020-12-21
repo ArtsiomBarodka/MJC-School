@@ -32,6 +32,7 @@ public class JwtAuthorizationFilter extends GenericFilter {
             CustomUserDetails userDetails = userDetailsService.loadUserByUsername(userLogin);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
+            log.info("Added authentication to securityContextHolder");
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

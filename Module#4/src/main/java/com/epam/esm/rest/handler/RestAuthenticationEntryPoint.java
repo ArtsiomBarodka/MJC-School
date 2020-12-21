@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import static com.epam.esm.rest.handler.RestResponseConstants.AUTHENTICATION_EXCEPTION;
 import static com.epam.esm.rest.handler.RestResponseConstants.EXCEPTION_AUTHENTICATION_ERROR_CODE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 @AllArgsConstructor
@@ -27,8 +28,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         String message = messageSource.getMessage(AUTHENTICATION_EXCEPTION, null, httpServletRequest.getLocale());
         String errorCode = HttpStatus.UNAUTHORIZED.value() + EXCEPTION_AUTHENTICATION_ERROR_CODE;
         ApiErrorResponse response = new ApiErrorResponse(HttpStatus.UNAUTHORIZED, message, errorCode);
-
-        httpServletResponse.setContentType("application/json");
+        httpServletResponse.setContentType(APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         OutputStream out = httpServletResponse.getOutputStream();

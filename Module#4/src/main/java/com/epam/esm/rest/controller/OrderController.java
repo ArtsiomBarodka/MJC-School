@@ -6,8 +6,7 @@ import com.epam.esm.model.exception.service.ResourceNotFoundException;
 import com.epam.esm.model.request.OrderRequest;
 import com.epam.esm.model.view.OrderView;
 import com.epam.esm.rest.hateoas.OrderAssembler;
-import com.epam.esm.security.annotation.AllRoles;
-import com.epam.esm.security.annotation.UserRole;
+import com.epam.esm.security.annotation.AdminRole;
 import com.epam.esm.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,6 +32,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderAssembler assembler;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or @securityProvider.hasUserId(authentication,#id)")
     @GetMapping("/user")
     public ResponseEntity<PagedModel<OrderView>> getListOrdersByUserId(@RequestParam(value = "id") @NotNull @Min(1) Long id,
                                                                        @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
@@ -44,7 +45,7 @@ public class OrderController {
         return ResponseEntity.ok(pagedModel);
     }
 
-    @AllRoles
+    @AdminRole
     @GetMapping("/{id}")
     public ResponseEntity<OrderView> getOrderById(@PathVariable @NotNull @Min(1) Long id)
             throws ResourceNotFoundException {
@@ -53,7 +54,8 @@ public class OrderController {
         return ResponseEntity.ok(assembler.toModel(order));
     }
 
-    @UserRole
+
+    @PreAuthorize("@securityProvider.hasUserId(authentication,#orderRequest.userId)")
     @PostMapping
     public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderRequest orderRequest,
                                               UriComponentsBuilder uriComponentsBuilder)
@@ -65,14 +67,5 @@ public class OrderController {
                         .buildAndExpand(orderService.create(OrderRequest.toOrder(orderRequest)))
                         .toUri())
                 .build();
-    }
-
-    @UserRole
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteOrder(@PathVariable @NotNull @Min(1) Long id)
-            throws ResourceNotFoundException {
-
-        orderService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

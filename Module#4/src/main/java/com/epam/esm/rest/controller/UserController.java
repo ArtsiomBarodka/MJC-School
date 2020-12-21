@@ -11,6 +11,7 @@ import com.epam.esm.model.request.SignUpRequest;
 import com.epam.esm.model.view.UserView;
 import com.epam.esm.rest.hateoas.UserAssembler;
 import com.epam.esm.security.SecurityProvider;
+import com.epam.esm.security.annotation.AdminRole;
 import com.epam.esm.security.annotation.AllRoles;
 import com.epam.esm.service.UserService;
 import lombok.AllArgsConstructor;
@@ -61,7 +62,7 @@ public class UserController {
         return ResponseEntity.ok(assembler.toModel(user));
     }
 
-    @AllRoles
+    @AdminRole
     @GetMapping
     public ResponseEntity<PagedModel<UserView>> getAllUsers(@PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
                                                             PagedResourcesAssembler<User> pagedResourcesAssembler)

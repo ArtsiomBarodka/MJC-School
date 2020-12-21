@@ -26,7 +26,7 @@ public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
     boolean existsByName(@NonNull String name);
 
     @NonNull
-    Iterable<Tag> getByNameIn(@NonNull List<String> names);
+    List<Tag> getByNameIn(@NonNull List<String> names);
 
     @NonNull
     Page<Tag> getByGiftCertificates_Id(@NonNull Long id, @NonNull Pageable pageable);

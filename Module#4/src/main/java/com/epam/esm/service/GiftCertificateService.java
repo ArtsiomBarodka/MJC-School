@@ -17,8 +17,9 @@ public interface GiftCertificateService {
             throws ResourceNotFoundException;
 
     @NonNull
-    Page<GiftCertificate> getListByTagNames(@NonNull List<String> names, @NonNull Pageable pageable)
-            throws ResourceNotFoundException;
+    Page<GiftCertificate> getListByTagNames(@NonNull List<String> names,
+                                            @NonNull Pageable pageable)
+            throws ResourceNotFoundException, BadParametersException;
 
     @NonNull
     GiftCertificate getById(@NonNull Long id)

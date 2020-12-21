@@ -3,6 +3,7 @@ package com.epam.esm.security.oauth2;
 import com.epam.esm.security.jwt.JwtProvider;
 import com.epam.esm.util.CookieUtils;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -19,6 +20,7 @@ import static com.epam.esm.security.oauth2.OAuth2Constants.REDIRECT_URI_PARAM_CO
 import static com.epam.esm.security.oauth2.OAuth2Constants.TOKEN_QUERY_PARAMETER;
 
 @Component
+@Slf4j
 @AllArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
@@ -30,7 +32,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = determineTargetUrl(request, response, authentication);
 
         if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            log.info("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
 

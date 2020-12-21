@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,13 +29,14 @@ public class GiftCertificateView extends RepresentationModel<GiftCertificateView
     private Integer duration;
 
     @JsonIgnoreProperties("giftCertificates")
-    private List<TagView> tags = new ArrayList<>();
+    private List<TagView> tags;
 
     public static GiftCertificateView fromGiftCertificateToGiftCertificateView(GiftCertificate giftCertificate) {
         GiftCertificateView giftCertificateView = new GiftCertificateView();
         giftCertificateView.setId(giftCertificate.getId());
         giftCertificateView.setName(giftCertificate.getName());
         giftCertificateView.setDescription(giftCertificate.getDescription());
+        giftCertificateView.setPrice(giftCertificate.getPrice());
         giftCertificateView.setCreateDate(giftCertificate.getCreateDate());
         giftCertificateView.setLastUpdateDate(giftCertificate.getLastUpdateDate());
         giftCertificateView.setDuration(giftCertificate.getDuration());

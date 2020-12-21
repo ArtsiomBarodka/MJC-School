@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import static com.epam.esm.rest.handler.RestResponseConstants.ACCESS_DENIED_EXCEPTION;
 import static com.epam.esm.rest.handler.RestResponseConstants.EXCEPTION_ACCESS_DENIED_ERROR_CODE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 @AllArgsConstructor
@@ -27,8 +28,7 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
         String message = messageSource.getMessage(ACCESS_DENIED_EXCEPTION, null, httpServletRequest.getLocale());
         String errorCode = HttpStatus.FORBIDDEN.value() + EXCEPTION_ACCESS_DENIED_ERROR_CODE;
         ApiErrorResponse response = new ApiErrorResponse(HttpStatus.FORBIDDEN, message, errorCode);
-
-        httpServletResponse.setContentType("application/json");
+        httpServletResponse.setContentType(APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
 
         OutputStream out = httpServletResponse.getOutputStream();

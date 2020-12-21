@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,11 +46,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Page<GiftCertificate> getListByTagNames(List<String> names, Pageable pageable)
-            throws ResourceNotFoundException {
+            throws ResourceNotFoundException, BadParametersException {
 
-        Iterable<Tag> byNameIn = tagDAO.getByNameIn(names);
+        List<Tag>tags = tagDAO.getByNameIn(names);
 
-        GiftCertificateByTagsSpecification giftCertificateByTagsSpecification = new GiftCertificateByTagsSpecification(byNameIn);
+        if(tags.isEmpty()){
+            log.warn("List of tag names {} not exist", names);
+            throw new BadParametersException(String.format("List of tag names %s not exist", names));
+        }
+
+        GiftCertificateByTagsSpecification giftCertificateByTagsSpecification = new GiftCertificateByTagsSpecification(tags);
         Page<GiftCertificate> result = giftCertificateDAO.findAll(giftCertificateByTagsSpecification,pageable);
 
         if (!result.hasContent()) {

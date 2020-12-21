@@ -1,67 +1,37 @@
 package com.epam.esm.security;
 
 import com.epam.esm.model.entity.User;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class CustomUserDetails implements UserDetails {
+@EqualsAndHashCode(callSuper = true)
+public class CustomUserDetails extends org.springframework.security.core.userdetails.User {
     private Long id;
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> grantedAuthorities;
+
+    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, Long id) {
+        super(username, password, authorities);
+        this.id = id;
+    }
 
     public static CustomUserDetails fromUserToCustomUserDetails(User user) {
-        CustomUserDetails c = new CustomUserDetails();
-        c.id = user.getId();
-        c.username = user.getUsername();
-        c.password = user.getPassword();
-        c.grantedAuthorities = user.getRoles()
-                .stream()
-                .map(r -> new SimpleGrantedAuthority(r.getName()))
-                .collect(Collectors.toList());
-        return c;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return grantedAuthorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
+        return new CustomUserDetails(user.getUsername(),
+                user.getPassword(),
+                user.getRoles()
+                        .stream()
+                        .map(r -> new SimpleGrantedAuthority(r.getName()))
+                        .collect(Collectors.toList()),
+                user.getId());
     }
 
     public Long getId() {
         return id;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

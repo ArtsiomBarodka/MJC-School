@@ -19,11 +19,10 @@ public class JwtProvider {
     private long jwtValidityInMilliseconds;
 
     public String createToken(String username) {
-        Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtValidityInMilliseconds);
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
@@ -53,6 +52,9 @@ public class JwtProvider {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

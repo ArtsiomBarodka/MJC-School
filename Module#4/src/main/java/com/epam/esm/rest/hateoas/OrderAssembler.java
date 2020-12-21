@@ -31,7 +31,6 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
     private static final String GET_ORDERS_BY_USER_ID = "user";
 
     private static final String CREATE_LINK_RELATION = "createOrder";
-    private static final String DELETE_LINK_RELATION = "deleteOrder";
     private static final String GET_ORDERS_BY_USER_ID_LINK_RELATION = "getOrdersByUserId";
 
     public OrderAssembler() {
@@ -43,9 +42,7 @@ public class OrderAssembler extends RepresentationModelAssemblerSupport<Order, O
     public OrderView toModel(Order entity) {
         OrderView model = OrderView.fromOrderToOrderView(entity);
         Link selfLink = linkTo(methodOn(OrderController.class).getOrderById(model.getId())).withSelfRel();
-        Link deleteLink = linkTo(methodOn(OrderController.class).getOrderById(model.getId())).withRel(DELETE_LINK_RELATION);
         model.add(selfLink);
-        model.add(deleteLink);
         model.setUser(toUserModel(entity.getUser()));
         model.setGiftCertificates(toGiftCertificateModel(entity.getGiftCertificates()));
         return model;

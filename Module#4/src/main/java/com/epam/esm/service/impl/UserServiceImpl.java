@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userDAO.save(user);
 
-        log.info("User {} successfully saved", savedUser);
+        log.info("User successfully saved with id {}", savedUser.getId());
 
         return savedUser;
     }
