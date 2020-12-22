@@ -1,0 +1,60 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+group 'com.epam.esm'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+ext{
+    lombokVersion = "1.18.16"
+    beanValidationVersion = "2.0.1.Final"
+    apacheCommonsVersion = "1.9"
+    mySqlConnectorVersion = "8.0.22"
+    h2databaseVersion = "1.4.200"
+    assertjVersion = "3.18.0"
+    jsonwebtokenVersion = "0.9.1"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    implementation "io.jsonwebtoken:jjwt:$jsonwebtokenVersion"
+    implementation "org.apache.commons:commons-text:$apacheCommonsVersion"
+    implementation "javax.validation:validation-api:$beanValidationVersion"
+    implementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
+    runtimeOnly "com.h2database:h2:$h2databaseVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+}
+
+test {
+    useTestNG()
+    useJUnitPlatform()
+}
