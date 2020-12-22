@@ -19,6 +19,9 @@ import java.util.Optional;
 import static com.epam.esm.security.oauth2.OAuth2Constants.REDIRECT_URI_PARAM_COOKIE_NAME;
 import static com.epam.esm.security.oauth2.OAuth2Constants.TOKEN_QUERY_PARAMETER;
 
+/**
+ * The type O auth 2 authentication success handler.
+ */
 @Component
 @Slf4j
 @AllArgsConstructor
@@ -53,6 +56,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .build().toUriString();
     }
 
+    /**
+     * Clear authentication attributes.
+     *
+     * @param request  the request
+     * @param response the response
+     */
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
         httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);

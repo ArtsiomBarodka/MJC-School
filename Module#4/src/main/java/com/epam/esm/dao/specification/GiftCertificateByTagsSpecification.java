@@ -10,6 +10,9 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Gift certificate by tags specification.
+ */
 @Data
 @AllArgsConstructor
 public class GiftCertificateByTagsSpecification implements Specification<GiftCertificate> {

@@ -10,6 +10,9 @@ import org.springframework.hateoas.server.core.Relation;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The type Order view.
+ */
 @Data
 @Relation(collectionRelation = "orders")
 @EqualsAndHashCode(callSuper = false)
@@ -25,6 +28,12 @@ public class OrderView extends RepresentationModel<OrderView> {
 
     private List<GiftCertificateView> giftCertificates;
 
+    /**
+     * From order to order view order view.
+     *
+     * @param order the order
+     * @return the order view
+     */
     public static OrderView fromOrderToOrderView(Order order) {
         OrderView orderView = new OrderView();
         orderView.setId(order.getId());

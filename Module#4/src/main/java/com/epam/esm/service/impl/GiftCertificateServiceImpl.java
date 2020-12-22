@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * The type Gift certificate service.
+ */
 @Service
 @Slf4j
 @AllArgsConstructor

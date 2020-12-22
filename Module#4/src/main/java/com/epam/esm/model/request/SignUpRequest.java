@@ -7,6 +7,9 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * The type Sign up request.
+ */
 @Data
 public class SignUpRequest {
     @NotNull
@@ -29,6 +32,12 @@ public class SignUpRequest {
     @EnglishLanguage(withSpecSymbols = false, withPunctuations = false, withNumbers = false)
     private String lastName;
 
+    /**
+     * To user user.
+     *
+     * @param signUpRequest the sign up request
+     * @return the user
+     */
     public static User toUser(SignUpRequest signUpRequest) {
         User user = new User();
         user.setUsername(signUpRequest.getUsername());

@@ -6,6 +6,9 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 
+/**
+ * The type Patch tag.
+ */
 @Data
 public class PatchTag implements PatchOperation<Tag> {
     @Size(min = 3, max = 50)

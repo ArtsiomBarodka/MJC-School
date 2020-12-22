@@ -22,18 +22,27 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * The type User service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     @Mock
     private UserDAO userDAO;
     @Mock
     private RoleDAO roleDAO;
+    /**
+     * The Password encoder.
+     */
     @Mock
     BCryptPasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
 
+    /**
+     * Gets by id test resource in not exist.
+     */
     @Test
     void getByIdTest_RESOURCE_IN_NOT_EXIST() {
         Long id = 1L;
@@ -45,6 +54,11 @@ class UserServiceImplTest {
                 () -> userService.getById(id));
     }
 
+    /**
+     * Gets by id test should return user.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByIdTest_SHOULD_RETURN_USER() throws ResourceNotFoundException {
         User expected = mock(User.class);
@@ -59,6 +73,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Gets by user name test resource in not exist.
+     */
     @Test
     void getByUserNameTest_RESOURCE_IN_NOT_EXIST() {
         String notExistingUsername = "username";
@@ -70,6 +87,11 @@ class UserServiceImplTest {
                 () -> userService.getByUserName(notExistingUsername));
     }
 
+    /**
+     * Gets by user name test should return user.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByUserNameTest_SHOULD_RETURN_USER() throws ResourceNotFoundException {
         User expected = mock(User.class);
@@ -84,6 +106,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Gets by user name and password test resource in not exist by username.
+     */
     @Test
     void getByUserNameAndPasswordTest_RESOURCE_IN_NOT_EXIST_BY_USERNAME() {
         String notExistingUsername = "username";
@@ -96,6 +121,9 @@ class UserServiceImplTest {
                 () -> userService.getByUserNameAndPassword(notExistingUsername, password));
     }
 
+    /**
+     * Gets by user name and password test password is not equals.
+     */
     @Test
     void getByUserNameAndPasswordTest_PASSWORD_IS_NOT_EQUALS() {
         User userMock = mock(User.class);
@@ -115,6 +143,11 @@ class UserServiceImplTest {
                 () -> userService.getByUserNameAndPassword(existingUsername, notExistingPassword));
     }
 
+    /**
+     * Gets by user name and password test should return user.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByUserNameAndPasswordTest_SHOULD_RETURN_USER() throws ResourceNotFoundException {
         User expected = mock(User.class);
@@ -135,6 +168,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Gets all test resource in not exist.
+     */
     @Test
     void getAllTest_RESOURCE_IN_NOT_EXIST() {
         Pageable pageableMock = mock(Pageable.class);
@@ -146,6 +182,11 @@ class UserServiceImplTest {
                 () -> userService.getAll(pageableMock));
     }
 
+    /**
+     * Gets all test should return list.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getAllTest_SHOULD_RETURN_LIST() throws ResourceNotFoundException {
         Page expected = mock(Page.class);
@@ -161,6 +202,9 @@ class UserServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Save test user already exist with username.
+     */
     @Test
     void saveTest_USER_ALREADY_EXIST_WITH_USERNAME() {
         User userMock = mock(User.class);
@@ -174,6 +218,9 @@ class UserServiceImplTest {
                 () -> userService.save(userMock));
     }
 
+    /**
+     * Save test user role not exist in repository.
+     */
     @Test
     void saveTest_USER_ROLE_NOT_EXIST_IN_REPOSITORY() {
         User userMock = mock(User.class);
@@ -190,6 +237,12 @@ class UserServiceImplTest {
                 () -> userService.save(userMock));
     }
 
+    /**
+     * Save test should create user.
+     *
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws InnerServiceException         the inner service exception
+     */
     @Test
     void saveTest_SHOULD_CREATE_USER() throws ResourceAlreadyExistException, InnerServiceException {
         Long expected = 1L;
@@ -215,6 +268,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Save by username test user role not exist in repository.
+     */
     @Test
     void saveByUsernameTest_USER_ROLE_NOT_EXIST_IN_REPOSITORY() {
         String username = "";
@@ -226,6 +282,11 @@ class UserServiceImplTest {
                 () -> userService.saveByUsername(username));
     }
 
+    /**
+     * Save by username test should create user.
+     *
+     * @throws InnerServiceException the inner service exception
+     */
     @Test
     void saveByUsernameTest_SHOULD_CREATE_USER() throws InnerServiceException {
         Long expected = 1L;
@@ -247,6 +308,9 @@ class UserServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Update test user is not exist with id.
+     */
     @Test
     void updateTest_USER_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;
@@ -260,6 +324,11 @@ class UserServiceImplTest {
     }
 
 
+    /**
+     * Update test should update user.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void updateTest_SHOULD_UPDATE_USER() throws ResourceNotFoundException {
         Long id = 1L;
@@ -276,6 +345,9 @@ class UserServiceImplTest {
         assertNotNull(actual);
     }
 
+    /**
+     * Delete test user is not exist with id.
+     */
     @Test
     void deleteTest_USER_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;

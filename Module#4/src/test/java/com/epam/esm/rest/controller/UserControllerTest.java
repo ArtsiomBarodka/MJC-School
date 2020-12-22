@@ -17,6 +17,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The type User controller test.
+ */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest {
@@ -31,6 +34,9 @@ class UserControllerTest {
 
     private MockMvc mvc;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders
@@ -39,6 +45,11 @@ class UserControllerTest {
                 .build();
     }
 
+    /**
+     * Gets all users test with user role should return status ok.
+     *
+     * @throws Exception the exception
+     */
     @WithMockUser
     @Test
     void getAllUsersTest_WITH_USER_ROLE_SHOULD_RETURN_STATUS_OK() throws Exception {
@@ -48,6 +59,11 @@ class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Gets all users test with admin role should return status ok.
+     *
+     * @throws Exception the exception
+     */
     @WithMockAdmin
     @Test
     void getAllUsersTest_WITH_ADMIN_ROLE_SHOULD_RETURN_STATUS_OK() throws Exception {
@@ -57,6 +73,11 @@ class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Gets all users test without role should return status unauthorized.
+     *
+     * @throws Exception the exception
+     */
     @Test
     void getAllUsersTest_WITHOUT_ROLE_SHOULD_RETURN_STATUS_UNAUTHORIZED() throws Exception {
         mvc.perform(get(GET_ALL_USERS_URI)
@@ -65,6 +86,11 @@ class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    /**
+     * Gets by id test with admin role should return status ok.
+     *
+     * @throws Exception the exception
+     */
     @WithMockAdmin
     @Test
     void  getByIdTest_WITH_ADMIN_ROLE_SHOULD_RETURN_STATUS_OK() throws Exception {
@@ -73,6 +99,11 @@ class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Gets by id test without role should return status unauthorized.
+     *
+     * @throws Exception the exception
+     */
     @Test
     void getByIdTest_WITHOUT_ROLE_SHOULD_RETURN_STATUS_UNAUTHORIZED() throws Exception {
         mvc.perform(get(GET_USER_BY_ID_URI)

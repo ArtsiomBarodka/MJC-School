@@ -12,6 +12,9 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The type Patch gift certificate.
+ */
 @Data
 public class PatchGiftCertificate implements PatchOperation<GiftCertificate> {
     @Size(min = 3, max = 50)

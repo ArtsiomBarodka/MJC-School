@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * The type Gift certificate assembler.
+ */
 @Component
 public class GiftCertificateAssembler extends RepresentationModelAssemblerSupport<GiftCertificate, GiftCertificateView> {
 
@@ -31,6 +34,9 @@ public class GiftCertificateAssembler extends RepresentationModelAssemblerSuppor
     private static final String GET_ALL_LINK_RELATION = "getAllGiftCertificates";
     private static final String GET_BY_TAG_NAMES_LINK_RELATION = "getGiftCertificatesByTagNames";
 
+    /**
+     * Instantiates a new Gift certificate assembler.
+     */
     public GiftCertificateAssembler() {
         super(GiftCertificateController.class, GiftCertificateView.class);
     }
@@ -52,6 +58,11 @@ public class GiftCertificateAssembler extends RepresentationModelAssemblerSuppor
         return model;
     }
 
+    /**
+     * Gets links to collection model.
+     *
+     * @return the links to collection model
+     */
     public List<Link> getLinksToCollectionModel() {
         List<Link> result = new ArrayList<>();
         Link getByTagNamesLink = linkTo(GiftCertificateController.class).slash(GET_GIFT_CERTIFICATES_BY_TAG_NAMES).withRel(GET_BY_TAG_NAMES_LINK_RELATION);

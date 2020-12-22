@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * The type Tag assembler.
+ */
 @Component
 public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, TagView> {
     private static final String GET_THE_MOST_WIDELY_USED_TAG = "top/user";
@@ -32,6 +35,9 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, TagVi
     private static final String GET_THE_MOST_WIDELY_USED_LINK_RELATION = "getTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders";
     private static final String GET_BY_GIFT_CERTIFICATE_ID_LINK_RELATION = "getTagsByGiftCertificateId";
 
+    /**
+     * Instantiates a new Tag assembler.
+     */
     public TagAssembler() {
         super(TagController.class, TagView.class);
     }
@@ -52,6 +58,11 @@ public class TagAssembler extends RepresentationModelAssemblerSupport<Tag, TagVi
         return model;
     }
 
+    /**
+     * Gets links to collection model.
+     *
+     * @return the links to collection model
+     */
     public List<Link> getLinksToCollectionModel() {
         List<Link> result = new ArrayList<>();
         Link createLink = linkTo(TagController.class).withRel(CREATE_LINK_RELATION);

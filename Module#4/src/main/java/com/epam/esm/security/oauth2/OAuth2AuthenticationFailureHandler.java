@@ -16,6 +16,9 @@ import java.io.IOException;
 import static com.epam.esm.security.oauth2.OAuth2Constants.ERROR_QUERY_PARAMETER;
 import static com.epam.esm.security.oauth2.OAuth2Constants.REDIRECT_URI_PARAM_COOKIE_NAME;
 
+/**
+ * The type O auth 2 authentication failure handler.
+ */
 @Component
 @AllArgsConstructor
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {

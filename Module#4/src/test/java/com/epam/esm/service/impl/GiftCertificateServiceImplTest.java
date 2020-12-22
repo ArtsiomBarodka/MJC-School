@@ -26,6 +26,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
+/**
+ * The type Gift certificate service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
     @Mock
@@ -35,6 +38,9 @@ class GiftCertificateServiceImplTest {
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
 
+    /**
+     * Gets all test resource in not exist.
+     */
     @Test
     void getAllTest_RESOURCE_IN_NOT_EXIST() {
         Pageable pageableMock = mock(Pageable.class);
@@ -46,6 +52,11 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.getAll(pageableMock));
     }
 
+    /**
+     * Gets all test should return page of gift certificates.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getAllTest_SHOULD_RETURN_PAGE_OF_GIFT_CERTIFICATES() throws ResourceNotFoundException {
         Page expected = mock(Page.class);
@@ -62,6 +73,9 @@ class GiftCertificateServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Gets list by tag names test tags is not exist.
+     */
     @Test
     void getListByTagNamesTest_TAGS_IS_NOT_EXIST() {
         List<String> tagNames = new ArrayList<>();
@@ -74,6 +88,9 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.getListByTagNames(tagNames, pageableMock));
     }
 
+    /**
+     * Gets list by tag names test resource is not exist.
+     */
     @Test
     void getListByTagNamesTest_RESOURCE_IS_NOT_EXIST() {
         List<String> tagNames = new ArrayList<>();
@@ -92,6 +109,12 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.getListByTagNames(tagNames, pageableMock));
     }
 
+    /**
+     * Gets list by tag names test should return page of gift certificates.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @Test
     void getListByTagNamesTest_SHOULD_RETURN_PAGE_OF_GIFT_CERTIFICATES() throws ResourceNotFoundException, BadParametersException {
         Page expected = mock(Page.class);
@@ -118,6 +141,9 @@ class GiftCertificateServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Gets by id test resource in not exist.
+     */
     @Test
     void getByIdTest_RESOURCE_IN_NOT_EXIST() {
         Long id = 1L;
@@ -129,6 +155,11 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.getById(id));
     }
 
+    /**
+     * Gets by id test should return gift certificate.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByIdTest_SHOULD_RETURN_GIFT_CERTIFICATE() throws ResourceNotFoundException {
         Long id = 1L;
@@ -143,6 +174,9 @@ class GiftCertificateServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Create test gift certificate already exist with name.
+     */
     @Test
     void createTest_GIFT_CERTIFICATE_ALREADY_EXIST_WITH_NAME() {
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
@@ -156,6 +190,9 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.create(giftCertificateMock));
     }
 
+    /**
+     * Create test current tag is not exist.
+     */
     @Test
     void createTest_CURRENT_TAG_IS_NOT_EXIST() {
         GiftCertificate giftCertificateMock = mock(GiftCertificate.class);
@@ -177,6 +214,12 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.create(giftCertificateMock));
     }
 
+    /**
+     * Create test should create gift certificate.
+     *
+     * @throws BadParametersException        the bad parameters exception
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     */
     @Test
     void createTest_SHOULD_CREATE_GIFT_CERTIFICATE()
             throws BadParametersException, ResourceAlreadyExistException {
@@ -207,6 +250,9 @@ class GiftCertificateServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Update test gift certificate is not exist with id.
+     */
     @Test
     void updateTest_GIFT_CERTIFICATE_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;
@@ -219,6 +265,9 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.update(giftCertificateMock, id));
     }
 
+    /**
+     * Update test gift certificate updated name already exist.
+     */
     @Test
     void updateTest_GIFT_CERTIFICATE_UPDATED_NAME_ALREADY_EXIST() {
         Long id = 1L;
@@ -238,6 +287,9 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.update(giftCertificateMock, id));
     }
 
+    /**
+     * Update test udated tag is not exist.
+     */
     @Test
     void updateTest_UDATED_TAG_IS_NOT_EXIST() {
         Long id = 1L;
@@ -263,6 +315,12 @@ class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.update(giftCertificateMock, id));
     }
 
+    /**
+     * Update test should update gift certificate.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @Test
     void updateTest_SHOULD_UPDATE_GIFT_CERTIFICATE() throws ResourceNotFoundException, BadParametersException {
         Long id = 1L;
@@ -289,6 +347,9 @@ class GiftCertificateServiceImplTest {
         assertNotNull(actual);
     }
 
+    /**
+     * Delete test gift certificate is not exist with id.
+     */
     @Test
     void deleteTest_GIFT_CERTIFICATE_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;

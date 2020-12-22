@@ -24,6 +24,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The type Order controller.
+ */
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/v1/orders")
@@ -32,6 +35,15 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderAssembler assembler;
 
+    /**
+     * Gets list orders by user id.
+     *
+     * @param id                      the id
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the list orders by user id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN') or @securityProvider.hasUserId(authentication,#id)")
     @GetMapping("/user")
     public ResponseEntity<PagedModel<OrderView>> getListOrdersByUserId(@RequestParam(value = "id") @NotNull @Min(1) Long id,
@@ -45,6 +57,13 @@ public class OrderController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Gets order by id.
+     *
+     * @param id the id
+     * @return the order by id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AdminRole
     @GetMapping("/{id}")
     public ResponseEntity<OrderView> getOrderById(@PathVariable @NotNull @Min(1) Long id)
@@ -55,6 +74,14 @@ public class OrderController {
     }
 
 
+    /**
+     * Create order response entity.
+     *
+     * @param orderRequest         the order request
+     * @param uriComponentsBuilder the uri components builder
+     * @return the response entity
+     * @throws BadParametersException the bad parameters exception
+     */
     @PreAuthorize("@securityProvider.hasUserId(authentication,#orderRequest.userId)")
     @PostMapping
     public ResponseEntity<Object> createOrder(@RequestBody @Valid OrderRequest orderRequest,

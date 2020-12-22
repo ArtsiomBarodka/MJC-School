@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+/**
+ * The type Jpa user details service.
+ */
 @AllArgsConstructor
 @Component
 public class JpaUserDetailsService implements UserDetailsService {

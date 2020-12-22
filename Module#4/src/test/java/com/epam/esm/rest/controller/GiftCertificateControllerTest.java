@@ -23,6 +23,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The type Gift certificate controller test.
+ */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GiftCertificateControllerTest {
@@ -31,11 +34,17 @@ class GiftCertificateControllerTest {
 
     @Autowired
     private WebApplicationContext context;
+    /**
+     * The Gift certificate service.
+     */
     @MockBean
     GiftCertificateService giftCertificateService;
 
     private MockMvc mvc;
 
+    /**
+     * Sets .
+     */
     @BeforeEach
     public void setup() {
         mvc = MockMvcBuilders
@@ -44,6 +53,11 @@ class GiftCertificateControllerTest {
                 .build();
     }
 
+    /**
+     * Gets gift certificate test without role should return status ok.
+     *
+     * @throws Exception the exception
+     */
     @Test
     void getGiftCertificateTest_WITHOUT_ROLE_SHOULD_RETURN_STATUS_OK() throws Exception {
         when(giftCertificateService.getById(anyLong()))
@@ -54,6 +68,11 @@ class GiftCertificateControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Gets list gift certificates by tag names test without role should return status ok.
+     *
+     * @throws Exception the exception
+     */
     @Test
     void getListGiftCertificatesByTagNamesTest_WITHOUT_ROLE_SHOULD_RETURN_STATUS_OK() throws Exception {
         String existingTagName = "";
@@ -66,6 +85,11 @@ class GiftCertificateControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Gets list gift certificates by tag names test without role should return status not found.
+     *
+     * @throws Exception the exception
+     */
     @Test
     void getListGiftCertificatesByTagNamesTest_WITHOUT_ROLE_SHOULD_RETURN_STATUS_NOT_FOUND() throws Exception {
         String notExistingTagName = "";

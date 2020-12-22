@@ -10,8 +10,16 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The interface Tag dao.
+ */
 public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
 
+    /**
+     * Find the most widely used of users with the highest cost of all orders optional.
+     *
+     * @return the optional
+     */
     @Query(value = "select tag.* from tag " +
             "inner join gift_certificate_tag on gift_certificate_tag.tag_id=tag.id " +
             "inner join certificate on certificate.id=gift_certificate_tag.gift_certificate_id " +
@@ -23,11 +31,30 @@ public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
             "limit 1", nativeQuery = true)
     @NonNull Optional<Tag> findTheMostWidelyUsedOfUsersWithTheHighestCostOfAllOrders();
 
+    /**
+     * Exists by name boolean.
+     *
+     * @param name the name
+     * @return the boolean
+     */
     boolean existsByName(@NonNull String name);
 
+    /**
+     * Gets by name in.
+     *
+     * @param names the names
+     * @return the by name in
+     */
     @NonNull
     List<Tag> getByNameIn(@NonNull List<String> names);
 
+    /**
+     * Gets by gift certificates id.
+     *
+     * @param id       the id
+     * @param pageable the pageable
+     * @return the by gift certificates id
+     */
     @NonNull
     Page<Tag> getByGiftCertificates_Id(@NonNull Long id, @NonNull Pageable pageable);
 }

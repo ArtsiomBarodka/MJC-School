@@ -16,6 +16,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * The type User dao test.
+ */
 @ActiveProfiles("test")
 @Sql({"classpath:dump/insert.sql"})
 @DataJpaTest
@@ -30,6 +33,9 @@ class UserDAOTest {
 
     private final User user;
 
+    /**
+     * Instantiates a new User dao test.
+     */
     public UserDAOTest() {
         user = new User();
         user.setUsername(USER_USERNAME);
@@ -38,6 +44,9 @@ class UserDAOTest {
         user.setLastName(USER_LAST_NAME);
     }
 
+    /**
+     * Delete user in db.
+     */
     @AfterEach
     void deleteUserInDb() {
         if (userDAO.existsById(user.getId())) {
@@ -45,27 +54,42 @@ class UserDAOTest {
         }
     }
 
+    /**
+     * Create user in db.
+     */
     @BeforeEach
     void createUserInDb() {
         userDAO.save(user);
     }
 
+    /**
+     * Exists by username test should return true.
+     */
     @Test
     void existsByUsernameTest_SHOULD_RETURN_TRUE() {
         assertThat(userDAO.existsByUsername(user.getUsername())).isTrue();
     }
 
+    /**
+     * Exists by username test should return false.
+     */
     @Test
     void existsByUsernameTest_SHOULD_RETURN_FALSE() {
         assertThat(userDAO.existsByUsername(" ")).isFalse();
     }
 
 
+    /**
+     * Find by username test should return optional of user.
+     */
     @Test
     void findByUsernameTest_SHOULD_RETURN_OPTIONAL_OF_USER() {
         assertThat(userDAO.findByUsername(user.getUsername())).contains(user);
     }
 
+    /**
+     * Find by username test should return empty optional.
+     */
     @Test
     void findByUsernameTest_SHOULD_RETURN_EMPTY_OPTIONAL() {
         assertThat(userDAO.findByUsername("")).isEmpty();

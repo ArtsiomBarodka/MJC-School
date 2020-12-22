@@ -7,6 +7,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Tag.
+ */
 @Data
 @Entity
 @Table(name = "tag")
@@ -22,6 +25,9 @@ public class Tag {
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<GiftCertificate> giftCertificates;
 
+    /**
+     * Instantiates a new Tag.
+     */
     public Tag() {
         giftCertificates = new ArrayList<>();
     }

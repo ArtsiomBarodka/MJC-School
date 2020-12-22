@@ -18,6 +18,9 @@ import static com.epam.esm.rest.handler.RestResponseConstants.AUTHENTICATION_EXC
 import static com.epam.esm.rest.handler.RestResponseConstants.EXCEPTION_AUTHENTICATION_ERROR_CODE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * The type Rest authentication entry point.
+ */
 @Component
 @AllArgsConstructor
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The type Order.
+ */
 @Data
 @Entity
 @Table(name = "user_order")
@@ -34,6 +37,9 @@ public class Order {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<GiftCertificate> giftCertificates;
 
+    /**
+     * Instantiates a new Order.
+     */
     public Order() {
         giftCertificates = new ArrayList<>();
     }

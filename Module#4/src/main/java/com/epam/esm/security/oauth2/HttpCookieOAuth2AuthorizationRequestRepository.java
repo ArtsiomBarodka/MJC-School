@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.epam.esm.security.oauth2.OAuth2Constants.*;
 
+/**
+ * The type Http cookie o auth 2 authorization request repository.
+ */
 @Slf4j
 @Component
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
@@ -33,7 +36,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
         }
         CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtils.serialize(authorizationRequest), cookieExpireSeconds);
         CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, REDIRECT_URI, cookieExpireSeconds);
-        log.info("Cookies ware added to response");
+        log.info("Cookies were added to response");
     }
 
     @Override
@@ -41,9 +44,15 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
         return this.loadAuthorizationRequest(request);
     }
 
+    /**
+     * Remove authorization request cookies.
+     *
+     * @param request  the request
+     * @param response the response
+     */
     protected void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
         CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
-        log.info("Cookies ware deleted from request");
+        log.info("Cookies were deleted from request");
     }
 }

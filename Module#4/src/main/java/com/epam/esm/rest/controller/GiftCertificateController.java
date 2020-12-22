@@ -25,6 +25,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * The type Gift certificate controller.
+ */
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/v1/giftCertificates")
@@ -33,6 +36,13 @@ public class GiftCertificateController {
     private final GiftCertificateService giftCertificateService;
     private final GiftCertificateAssembler assembler;
 
+    /**
+     * Gets gift certificate.
+     *
+     * @param id the id
+     * @return the gift certificate
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @GetMapping("/{id}")
     public ResponseEntity<GiftCertificateView> getGiftCertificate(@PathVariable("id") @Min(1) Long id)
             throws ResourceNotFoundException {
@@ -41,6 +51,16 @@ public class GiftCertificateController {
         return ResponseEntity.ok(assembler.toModel(giftCertificate));
     }
 
+    /**
+     * Gets list gift certificates by tag names.
+     *
+     * @param tagNames                the tag names
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the list gift certificates by tag names
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @GetMapping("/tags")
     public ResponseEntity<PagedModel<GiftCertificateView>> getListGiftCertificatesByTagNames(@RequestParam(value = "name") List<String> tagNames,
                                                                                              @PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
@@ -53,6 +73,14 @@ public class GiftCertificateController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Gets list gift certificates.
+     *
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the list gift certificates
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @GetMapping
     public ResponseEntity<PagedModel<GiftCertificateView>> getListGiftCertificates(@PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
                                                                                    PagedResourcesAssembler<GiftCertificate> pagedResourcesAssembler)
@@ -64,6 +92,15 @@ public class GiftCertificateController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Create gift certificate response entity.
+     *
+     * @param giftCertificateRequest the gift certificate request
+     * @param uriComponentsBuilder   the uri components builder
+     * @return the response entity
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
+     */
     @AdminRole
     @PostMapping
     public ResponseEntity<Object> createGiftCertificate(@RequestBody @Valid GiftCertificateRequest giftCertificateRequest,
@@ -78,6 +115,16 @@ public class GiftCertificateController {
                 .build();
     }
 
+    /**
+     * Update or create gift certificate response entity.
+     *
+     * @param id                     the id
+     * @param giftCertificateRequest the gift certificate request
+     * @param uriComponentsBuilder   the uri components builder
+     * @return the response entity
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
+     */
     @AdminRole
     @PutMapping("/{id}")
     public ResponseEntity<GiftCertificateView> updateOrCreateGiftCertificate(@PathVariable("id") @Min(1) Long id,
@@ -99,6 +146,15 @@ public class GiftCertificateController {
         }
     }
 
+    /**
+     * Update part of gift certificate response entity.
+     *
+     * @param id                   the id
+     * @param patchGiftCertificate the patch gift certificate
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @AdminRole
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePartOfGiftCertificate(@PathVariable("id") @Min(1) Long id,
@@ -111,6 +167,13 @@ public class GiftCertificateController {
         return ResponseEntity.ok(assembler.toModel(updatedGftCertificate));
     }
 
+    /**
+     * Delete gift certificate response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AdminRole
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteGiftCertificate(@PathVariable("id") @Min(1) Long id)

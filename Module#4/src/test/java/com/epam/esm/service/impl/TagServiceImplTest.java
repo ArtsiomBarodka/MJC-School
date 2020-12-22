@@ -21,6 +21,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * The type Tag service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class TagServiceImplTest {
     @Mock
@@ -30,6 +33,9 @@ class TagServiceImplTest {
     @InjectMocks
     private TagServiceImpl tagService;
 
+    /**
+     * Create test tag already exist with name.
+     */
     @Test
     void createTest_TAG_ALREADY_EXIST_WITH_NAME() {
         Tag tagMock = mock(Tag.class);
@@ -43,6 +49,12 @@ class TagServiceImplTest {
                 () -> tagService.create(tagMock));
     }
 
+    /**
+     * Create test should create tag.
+     *
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
+     */
     @Test
     void createTest_SHOULD_CREATE_TAG() throws ResourceAlreadyExistException, BadParametersException {
         Long expected = 1L;
@@ -61,6 +73,9 @@ class TagServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Gets the most widely used tag of user from the highest cost of all orders test tag is not exist.
+     */
     @Test
     void getTheMostWidelyUsedTagOfUserFromTheHighestCostOfAllOrdersTest_TAG_IS_NOT_EXIST() {
         when(tagDAO.findTheMostWidelyUsedOfUsersWithTheHighestCostOfAllOrders())
@@ -70,6 +85,11 @@ class TagServiceImplTest {
                 () -> tagService.getTheMostWidelyUsedTagOfUsersFromTheHighestCostOfAllOrders());
     }
 
+    /**
+     * Gets the most widely used tag of user from the highest cost of all orders test should return tag.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getTheMostWidelyUsedTagOfUserFromTheHighestCostOfAllOrdersTest_SHOULD_RETURN_TAG()
             throws ResourceNotFoundException {
@@ -84,6 +104,9 @@ class TagServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Delete test tag is not exist with id.
+     */
     @Test
     void deleteTest_TAG_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;
@@ -95,6 +118,9 @@ class TagServiceImplTest {
                 () -> tagService.delete(id));
     }
 
+    /**
+     * Gets by id test resource in not exist.
+     */
     @Test
     void getByIdTest_RESOURCE_IN_NOT_EXIST() {
         Long id = 1L;
@@ -106,6 +132,11 @@ class TagServiceImplTest {
                 () -> tagService.getById(id));
     }
 
+    /**
+     * Gets by id test should return tag.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getByIdTest_SHOULD_RETURN_TAG() throws ResourceNotFoundException {
         Tag expected = mock(Tag.class);
@@ -120,6 +151,9 @@ class TagServiceImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Update test tag is not exist with id.
+     */
     @Test
     void updateTest_TAG_IS_NOT_EXIST_WITH_ID() {
         Long id = 1L;
@@ -132,6 +166,9 @@ class TagServiceImplTest {
                 () -> tagService.update(tagMock, id));
     }
 
+    /**
+     * Update test tag updated name already exist.
+     */
     @Test
     void updateTest_TAG_UPDATED_NAME_ALREADY_EXIST() {
         Long id = 1L;
@@ -151,6 +188,12 @@ class TagServiceImplTest {
                 () -> tagService.update(tagMock, id));
     }
 
+    /**
+     * Update test should update tag.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @Test
     void updateTest_SHOULD_UPDATE_TAG() throws ResourceNotFoundException, BadParametersException {
         Long id = 1L;
@@ -169,6 +212,9 @@ class TagServiceImplTest {
         assertNotNull(actual);
     }
 
+    /**
+     * Gets all test resource in not exist.
+     */
     @Test
     void getAllTest_RESOURCE_IN_NOT_EXIST() {
         Pageable pageableMock = mock(Pageable.class);
@@ -180,6 +226,11 @@ class TagServiceImplTest {
                 () -> tagService.getAll(pageableMock));
     }
 
+    /**
+     * Gets all test should return page of tags.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getAllTest_SHOULD_RETURN_PAGE_OF_TAGS() throws ResourceNotFoundException {
         Page expected = mock(Page.class);
@@ -197,6 +248,9 @@ class TagServiceImplTest {
         assertIterableEquals(expected, actual);
     }
 
+    /**
+     * Gets list by gift certificate id test resource in not exist.
+     */
     @Test
     void getListByGiftCertificateIdTest_RESOURCE_IN_NOT_EXIST() {
         Long giftCertificateId = 1L;
@@ -209,6 +263,11 @@ class TagServiceImplTest {
                 () -> tagService.getListByGiftCertificateId(giftCertificateId, pageableMock));
     }
 
+    /**
+     * Gets list by gift certificate id test should return page of tags.
+     *
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @Test
     void getListByGiftCertificateIdTest_SHOULD_RETURN_PAGE_OF_TAGS() throws ResourceNotFoundException {
         Page expected = mock(Page.class);

@@ -28,6 +28,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The type Tag controller.
+ */
 @AllArgsConstructor
 @Controller
 @RequestMapping("api/v1/tags")
@@ -36,6 +39,12 @@ public class TagController {
     private final TagService tagService;
     private final TagAssembler assembler;
 
+    /**
+     * Ge the most widely used tag of user with the highest cost of all orders response entity.
+     *
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AllRoles
     @GetMapping("/top/user")
     public ResponseEntity<TagView> geTheMostWidelyUsedTagOfUserWithTheHighestCostOfAllOrders()
@@ -45,6 +54,13 @@ public class TagController {
         return ResponseEntity.ok(assembler.toModel(tag));
     }
 
+    /**
+     * Gets tag by id.
+     *
+     * @param id the id
+     * @return the tag by id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AllRoles
     @GetMapping("/{id}")
     public ResponseEntity<TagView> getTagById(@PathVariable("id") @NotNull @Min(1) Long id)
@@ -54,6 +70,14 @@ public class TagController {
         return ResponseEntity.ok(assembler.toModel(tag));
     }
 
+    /**
+     * Gets list tags.
+     *
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the list tags
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AllRoles
     @GetMapping
     public ResponseEntity<PagedModel<TagView>> getListTags(@PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
@@ -66,6 +90,15 @@ public class TagController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Gets list tags by gift certificates by id.
+     *
+     * @param id                      the id
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the list tags by gift certificates by id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AllRoles
     @GetMapping("/giftCertificates")
     public ResponseEntity<CollectionModel<TagView>> getListTagsByGiftCertificatesById(@RequestParam @NotNull @Min(1) Long id,
@@ -79,6 +112,15 @@ public class TagController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Create tag response entity.
+     *
+     * @param tagRequest           the tag request
+     * @param uriComponentsBuilder the uri components builder
+     * @return the response entity
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
+     */
     @AdminRole
     @PostMapping
     public ResponseEntity<Object> createTag(@RequestBody @Valid TagRequest tagRequest,
@@ -93,6 +135,16 @@ public class TagController {
                 .build();
     }
 
+    /**
+     * Update or create tag response entity.
+     *
+     * @param id                   the id
+     * @param tagRequest           the tag request
+     * @param uriComponentsBuilder the uri components builder
+     * @return the response entity
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws BadParametersException        the bad parameters exception
+     */
     @AdminRole
     @PutMapping("/{id}")
     public ResponseEntity<TagView> updateOrCreateTag(@PathVariable("id") @Min(1) Long id,
@@ -114,6 +166,15 @@ public class TagController {
         }
     }
 
+    /**
+     * Update part of tag response entity.
+     *
+     * @param id       the id
+     * @param patchTag the patch tag
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @AdminRole
     @PatchMapping("/{id}")
     public ResponseEntity<TagView> updatePartOfTag(@PathVariable("id") @Min(1) Long id,
@@ -127,6 +188,13 @@ public class TagController {
     }
 
 
+    /**
+     * Delete tag response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AdminRole
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTag(@PathVariable @NotNull @Min(1) Long id)

@@ -20,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type User service.
+ */
 @Slf4j
 @AllArgsConstructor
 @Service

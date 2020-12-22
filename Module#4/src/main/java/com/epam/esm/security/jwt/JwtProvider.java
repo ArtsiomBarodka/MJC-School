@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * The type Jwt provider.
+ */
 @Component
 public class JwtProvider {
     @Value("${jwt.token.secret}")
@@ -18,6 +21,12 @@ public class JwtProvider {
     @Value("${jwt.token.expired}")
     private long jwtValidityInMilliseconds;
 
+    /**
+     * Create token string.
+     *
+     * @param username the username
+     * @return the string
+     */
     public String createToken(String username) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtValidityInMilliseconds);
@@ -29,6 +38,12 @@ public class JwtProvider {
                 .compact();
     }
 
+    /**
+     * Validate token boolean.
+     *
+     * @param token the token
+     * @return the boolean
+     */
     public boolean validateToken(String token) {
         try {
             final Date expiration = getExpirationDateFromToken(token);
@@ -38,6 +53,12 @@ public class JwtProvider {
         }
     }
 
+    /**
+     * Gets login from token.
+     *
+     * @param token the token
+     * @return the login from token
+     */
     public String getLoginFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }

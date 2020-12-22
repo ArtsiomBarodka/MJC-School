@@ -7,6 +7,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type User.
+ */
 @Data
 @Entity
 @Table(name = "users")
@@ -35,6 +38,9 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     private List<Order> orders;
 
+    /**
+     * Instantiates a new User.
+     */
     public User() {
         orders = new ArrayList<>();
     }

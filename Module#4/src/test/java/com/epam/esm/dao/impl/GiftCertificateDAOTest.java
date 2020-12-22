@@ -14,6 +14,9 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * The type Gift certificate dao test.
+ */
 @ActiveProfiles("test")
 @Sql({"classpath:dump/insert.sql"})
 @DataJpaTest
@@ -28,6 +31,9 @@ class GiftCertificateDAOTest {
 
     private final GiftCertificate giftCertificate;
 
+    /**
+     * Instantiates a new Gift certificate dao test.
+     */
     public GiftCertificateDAOTest() {
         giftCertificate = new GiftCertificate();
         giftCertificate.setName(GIFT_CERTIFICATE_NAME);
@@ -37,6 +43,9 @@ class GiftCertificateDAOTest {
         giftCertificate.setTags(Collections.emptyList());
     }
 
+    /**
+     * Delete gift certificate in db.
+     */
     @AfterEach
     void deleteGiftCertificateInDb() {
         if (giftCertificateDAO.existsById(giftCertificate.getId())) {
@@ -44,16 +53,25 @@ class GiftCertificateDAOTest {
         }
     }
 
+    /**
+     * Create gift certificate in db.
+     */
     @BeforeEach
     void createGiftCertificateInDb() {
         giftCertificateDAO.save(giftCertificate);
     }
 
+    /**
+     * Exists by name test should return true.
+     */
     @Test
     void existsByNameTest_SHOULD_RETURN_TRUE() {
         assertThat(giftCertificateDAO.existsByName(giftCertificate.getName())).isTrue();
     }
 
+    /**
+     * Exists by name test should return false.
+     */
     @Test
     void existsByNameTest_SHOULD_RETURN_FALSE() {
         assertThat(giftCertificateDAO.existsByName(" ")).isFalse();

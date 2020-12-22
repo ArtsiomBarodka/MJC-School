@@ -8,15 +8,32 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+/**
+ * The type Custom user details.
+ */
 @EqualsAndHashCode(callSuper = true)
 public class CustomUserDetails extends org.springframework.security.core.userdetails.User {
     private Long id;
 
+    /**
+     * Instantiates a new Custom user details.
+     *
+     * @param username    the username
+     * @param password    the password
+     * @param authorities the authorities
+     * @param id          the id
+     */
     public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities, Long id) {
         super(username, password, authorities);
         this.id = id;
     }
 
+    /**
+     * From user to custom user details custom user details.
+     *
+     * @param user the user
+     * @return the custom user details
+     */
     public static CustomUserDetails fromUserToCustomUserDetails(User user) {
         return new CustomUserDetails(user.getUsername(),
                 user.getPassword(),
@@ -27,10 +44,20 @@ public class CustomUserDetails extends org.springframework.security.core.userdet
                 user.getId());
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(Long id) {
         this.id = id;
     }

@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * The type Order service.
+ */
 @Slf4j
 @AllArgsConstructor
 @Service

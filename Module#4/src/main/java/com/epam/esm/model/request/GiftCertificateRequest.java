@@ -5,7 +5,6 @@ import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.validation.annotation.EnglishLanguage;
 import lombok.Data;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -13,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The type Gift certificate request.
+ */
 @Data
 public class GiftCertificateRequest {
     @NotNull
@@ -33,8 +35,14 @@ public class GiftCertificateRequest {
     private Integer duration;
 
     @Size(min = 1)
-    private List<@NotNull @Min(1) Long> tags = new ArrayList<>();
+    private List<@NotNull @Positive Long> tags = new ArrayList<>();
 
+    /**
+     * To gift certificate gift certificate.
+     *
+     * @param giftCertificateRequest the gift certificate request
+     * @return the gift certificate
+     */
     public static GiftCertificate toGiftCertificate(GiftCertificateRequest giftCertificateRequest) {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName(giftCertificateRequest.getName());

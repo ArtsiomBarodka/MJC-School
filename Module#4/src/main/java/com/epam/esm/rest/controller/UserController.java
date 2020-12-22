@@ -34,6 +34,9 @@ import java.util.Optional;
 import static com.epam.esm.security.oauth2.OAuth2Constants.ERROR_QUERY_PARAMETER;
 import static com.epam.esm.security.oauth2.OAuth2Constants.TOKEN_QUERY_PARAMETER;
 
+/**
+ * The type User controller.
+ */
 @AllArgsConstructor
 @RestController
 @RequestMapping("api/v1/users")
@@ -43,6 +46,13 @@ public class UserController {
     private final UserAssembler assembler;
     private final SecurityProvider securityProvider;
 
+    /**
+     * Gets by id.
+     *
+     * @param id the id
+     * @return the by id
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN') or @securityProvider.hasUserId(authentication,#id)")
     @GetMapping("/{id}")
     public ResponseEntity<UserView> getById(@PathVariable("id") @Min(1) Long id)
@@ -52,6 +62,14 @@ public class UserController {
         return ResponseEntity.ok(assembler.toModel(user));
     }
 
+    /**
+     * Sign in by username and password response entity.
+     *
+     * @param signInRequest the sign in request
+     * @param response      the response
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @PostMapping("/sign-in")
     public ResponseEntity<UserView> signInByUsernameAndPassword(@RequestBody @Valid SignInRequest signInRequest,
                                                                 HttpServletResponse response)
@@ -62,6 +80,14 @@ public class UserController {
         return ResponseEntity.ok(assembler.toModel(user));
     }
 
+    /**
+     * Gets all users.
+     *
+     * @param pageable                the pageable
+     * @param pagedResourcesAssembler the paged resources assembler
+     * @return the all users
+     * @throws ResourceNotFoundException the resource not found exception
+     */
     @AdminRole
     @GetMapping
     public ResponseEntity<PagedModel<UserView>> getAllUsers(@PageableDefault(size = Integer.MAX_VALUE) Pageable pageable,
@@ -74,6 +100,16 @@ public class UserController {
         return ResponseEntity.ok(pagedModel);
     }
 
+    /**
+     * Sign up response entity.
+     *
+     * @param signUpRequest        the sign up request
+     * @param uriComponentsBuilder the uri components builder
+     * @param response             the response
+     * @return the response entity
+     * @throws ResourceAlreadyExistException the resource already exist exception
+     * @throws InnerServiceException         the inner service exception
+     */
     @PostMapping("/sign-up")
     public ResponseEntity<Object> signUp(@RequestBody @Valid SignUpRequest signUpRequest,
                                          UriComponentsBuilder uriComponentsBuilder,
@@ -90,6 +126,15 @@ public class UserController {
                 .build();
     }
 
+    /**
+     * Update part of user response entity.
+     *
+     * @param id        the id
+     * @param patchUser the patch user
+     * @return the response entity
+     * @throws ResourceNotFoundException the resource not found exception
+     * @throws BadParametersException    the bad parameters exception
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN') or @securityProvider.hasUserId(authentication,#id)")
     @PatchMapping("/{id}")
     public ResponseEntity<UserView> updatePartOfUser(@PathVariable("id") @Min(1) Long id,
@@ -102,6 +147,16 @@ public class UserController {
         return ResponseEntity.ok(assembler.toModel(updatedUser));
     }
 
+    /**
+     * Sign in by social response entity.
+     *
+     * @param token                the token
+     * @param error                the error
+     * @param uriComponentsBuilder the uri components builder
+     * @param response             the response
+     * @return the response entity
+     * @throws InnerServiceException the inner service exception
+     */
     @GetMapping("/oauth2/callback")
     public ResponseEntity<Object> signInBySocial(@RequestParam(value = TOKEN_QUERY_PARAMETER, required = false) String token,
                                                  @RequestParam(value = ERROR_QUERY_PARAMETER, required = false) String error,

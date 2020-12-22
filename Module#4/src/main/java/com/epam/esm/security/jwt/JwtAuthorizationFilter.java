@@ -14,6 +14,9 @@ import java.io.IOException;
 
 import static org.springframework.util.StringUtils.hasText;
 
+/**
+ * The type Jwt authorization filter.
+ */
 @Component
 @Slf4j
 @AllArgsConstructor

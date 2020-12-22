@@ -10,6 +10,9 @@ import org.springframework.hateoas.server.core.Relation;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The type Gift certificate view.
+ */
 @Data
 @Relation(collectionRelation = "giftCertificates")
 @EqualsAndHashCode(callSuper = false)
@@ -31,6 +34,12 @@ public class GiftCertificateView extends RepresentationModel<GiftCertificateView
     @JsonIgnoreProperties("giftCertificates")
     private List<TagView> tags;
 
+    /**
+     * From gift certificate to gift certificate view gift certificate view.
+     *
+     * @param giftCertificate the gift certificate
+     * @return the gift certificate view
+     */
     public static GiftCertificateView fromGiftCertificateToGiftCertificateView(GiftCertificate giftCertificate) {
         GiftCertificateView giftCertificateView = new GiftCertificateView();
         giftCertificateView.setId(giftCertificate.getId());

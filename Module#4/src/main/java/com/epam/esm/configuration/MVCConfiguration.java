@@ -6,9 +6,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+/**
+ * The type Mvc configuration.
+ */
 @Configuration
 public class MVCConfiguration {
 
+    /**
+     * Local validator factory bean local validator factory bean.
+     *
+     * @return the local validator factory bean
+     */
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean() {
         LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
@@ -16,6 +24,11 @@ public class MVCConfiguration {
         return localValidatorFactoryBean;
     }
 
+    /**
+     * Message source message source.
+     *
+     * @return the message source
+     */
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();

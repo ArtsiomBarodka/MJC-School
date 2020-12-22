@@ -18,6 +18,9 @@ import static com.epam.esm.rest.handler.RestResponseConstants.ACCESS_DENIED_EXCE
 import static com.epam.esm.rest.handler.RestResponseConstants.EXCEPTION_ACCESS_DENIED_ERROR_CODE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * The type Rest access denied handler.
+ */
 @Component
 @AllArgsConstructor
 public class RestAccessDeniedHandler implements AccessDeniedHandler {

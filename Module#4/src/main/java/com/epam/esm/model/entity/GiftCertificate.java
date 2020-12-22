@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The type Gift certificate.
+ */
 @Data
 @Entity
 @Table(name = "certificate")
@@ -39,6 +42,9 @@ public class GiftCertificate {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
 
+    /**
+     * Instantiates a new Gift certificate.
+     */
     public GiftCertificate() {
         tags = new ArrayList<>();
     }
